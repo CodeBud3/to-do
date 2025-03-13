@@ -1,20 +1,28 @@
-import express, { Application, Request, Response } from "express";
-import "dotenv/config";
-import router from "./routes";
+import express, { Application } from "express";
+import authRoutes from "./routes/auth.routes";
+import errorMiddleware from "./middlewares/errorMiddleware";
+import cors from "cors";
+import morgan from "morgan";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 5000;
 
 // Middleware
+app.use(cors());
+app.use(morgan("dev"));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use("/", router);
-// Example route
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to to-do App");
+// Routes
+app.use("/api/auth", authRoutes);
+
+// Health check
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.use(errorMiddleware);
+
+export default app;
