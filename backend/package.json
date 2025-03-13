@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --env-file=.env dist/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only --env-file=.env src/server.ts",
-    "build": "tsc --build"
+    "dev-start": "node --env-file=.env dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only --env-file=.dsenv src/server.ts",
+    "build": "tsc --build",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
