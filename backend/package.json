@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "start": "node --env-file=.env dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only --env-file=.env src/server.ts",
     "build": "tsc --build"
   },
   "keywords": [],
@@ -17,7 +17,6 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "D": "^1.0.0",
-    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
