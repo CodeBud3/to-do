@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { ValidationError } from "../utils/ErrorHandler";
 import sendResponse from "../utils/responseHelper";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+import { clearSession, setSession } from "../helpers/auth.helper";
 
 export const register = async (
   req: Request,
@@ -30,9 +28,7 @@ export const register = async (
     await user.save();
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "24h",
-    });
+    setSession(user, res);
 
     const data = {
       user: {
@@ -40,7 +36,6 @@ export const register = async (
         name: user.name,
         email: user.email,
       },
-      token,
     };
     sendResponse(res, 201, true, "User registered successfully", data);
   } catch (error: any) {
@@ -68,10 +63,8 @@ export const login = async (
       return next(new ValidationError(["Invalid credentials"]));
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: "24h",
-    });
+    // Generate and set JWT token
+    setSession(user, res);
 
     const data = {
       user: {
@@ -79,9 +72,18 @@ export const login = async (
         name: user.name,
         email: user.email,
       },
-      token,
     };
+
     sendResponse(res, 200, true, "Login successful", data);
+  } catch (error: any) {
+    return next(error);
+  }
+};
+
+export const logout = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    clearSession(res);
+    sendResponse(res, 200, true, "Logged out successfully");
   } catch (error: any) {
     return next(error);
   }
@@ -101,14 +103,15 @@ export const forgotPassword = async (
       return next(new ValidationError(["User not found"]));
     }
 
-    // In a real application, you would:
     // 1. Generate a password reset token
     // 2. Save it to the user document with an expiration
     // 3. Send an email with the reset link
-
-    res.json({
-      message: "Password reset instructions sent to your email",
-    });
+    sendResponse(
+      res,
+      200,
+      true,
+      "Password reset instructions sent to your email"
+    );
   } catch (error: any) {
     return next(error);
   }

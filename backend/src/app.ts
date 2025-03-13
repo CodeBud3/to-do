@@ -1,9 +1,10 @@
 import express, { Application } from "express";
-import authRoutes from "./routes/auth.routes";
-import errorMiddleware from "./middlewares/errorMiddleware";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import authRoutes from "./routes/auth.routes";
+import errorMiddleware from "./middlewares/errorMiddleware";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ const app: Application = express();
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
