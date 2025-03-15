@@ -119,3 +119,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.nav-bar-box-model {
+  @apply h-15 w-full px-5 py-1;
+}
+
+.flex-center {
+  @apply flex items-center justify-center;
+}
+.page-box-model {
+  height: calc(
+    100vh - calc(var(--spacing) * 15)
+  ); /* 15 is height of the nav-bar */
+}

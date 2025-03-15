@@ -1,10 +1,16 @@
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
+
+import Navbar from "./components/modules/navbar/Navbar";
+import LoginPage from "./pages/auth/LoginPage";
 
 function App() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-svh">
-      <Button>Click me</Button>
-    </div>
+    <>
+      <Navbar></Navbar>
+      <div className="page-box-model">
+        <LoginPage></LoginPage>
+      </div>
+    </>
   );
 }
 
