@@ -5,14 +5,34 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { buildSchema, getDefaultValues } from "@/utils/formHelper";
 import { FormElement } from "./FormElement/FormElement";
+import { FormConfig } from "@/types/auth.types";
 
-const signUpConfig = [
+const signUpConfig: FormConfig[] = [
+  {
+    key: "firstName",
+    label: "First Name",
+    type: "text",
+    placeholder: "Enter your first name",
+    validation: z.string().min(2, {
+      message: "First name must be at least 2 characters.",
+    }),
+    group: 1,
+  },
+  {
+    key: "lastName",
+    label: "Last Name",
+    type: "text",
+    placeholder: "Enter your last name",
+    validation: z.string().min(2, {
+      message: "Last name must be at least 2 characters.",
+    }),
+    group: 1,
+  },
   {
     key: "email",
     label: "Email",
     type: "email",
     placeholder: "Enter your email address",
-    value: "",
     validation: z.string().min(2, {
       message: "Username must be at least 2 characters.",
     }),
@@ -22,13 +42,32 @@ const signUpConfig = [
     label: "Password",
     type: "password",
     placeholder: "Enter your password",
-    value: "",
-    validation: z.string().min(1, {
-      message: "Password must be at least 1 character.",
+    validation: z.string().min(6, {
+      message: "Password must be at least 6 character.",
     }),
   },
+  {
+    key: "confirmPassword",
+    label: "Confirm Password",
+    type: "password",
+    placeholder: "Enter your password",
+    validation: z.string().min(6, {
+      message: "Password must be at least 6 character.",
+    }),
+  },
+  {
+    key: "tnc",
+    label: "I agree to the Terms of Services and Privacy Policy",
+    type: "checkbox",
+    validation: z.boolean().default(false).optional(),
+  },
 ];
-const formSchema = z.object(buildSchema(signUpConfig));
+const formSchema = z
+  .object(buildSchema(signUpConfig))
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
 
 export function SignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({

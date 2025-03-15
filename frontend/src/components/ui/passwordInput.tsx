@@ -27,7 +27,7 @@ function PasswordInput({
         className="absolute right-0 text-gray-500 top-0 h-9 w-9 flex items-center justify-center rounded-full border-0 focus:outline-none focus:ring-0"
         onClick={() => setShowPassword((showPassword) => !showPassword)}
       >
-        {showPassword ? <Eye className=""></Eye> : <EyeOff></EyeOff>}
+        {showPassword ? <EyeOff /> : <Eye />}
       </button>
     </div>
   );

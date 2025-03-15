@@ -10,36 +10,56 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/passwordInput";
+import { FormConfig } from "@/types/auth.types";
+import {
+  ControllerRenderProps,
+  UseFormReturn,
+  type FieldValues,
+} from "react-hook-form";
 
-export function FormElement(props: any) {
-  const getInputByType = (c: any, field: any) => {
+interface FormElementProps {
+  onSubmit: (value: any) => void;
+  form: UseFormReturn;
+  formConfig: FormConfig[];
+}
+export function FormElement(props: FormElementProps) {
+  const getInputByType = (
+    c: FormConfig,
+    field: ControllerRenderProps<FieldValues, string>
+  ) => {
     switch (c.type) {
       case "password":
         return (
           <>
             <FormLabel>{c.label}</FormLabel>
-            <PasswordInput
-              type={c.type}
-              placeholder={c.placeholder}
-              {...field}
-            />
+            <FormControl>
+              <PasswordInput
+                type={c.type}
+                placeholder={c.placeholder}
+                {...field}
+              />
+            </FormControl>
           </>
         );
       case "checkbox":
         return (
           <div className="flex flex-row-reverse justify-end space-x-2">
             <FormLabel className="text-gray-500">{c.label}</FormLabel>
-            <Checkbox
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            ></Checkbox>
+            <FormControl>
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              ></Checkbox>
+            </FormControl>
           </div>
         );
       default:
         return (
           <>
             <FormLabel>{c.label}</FormLabel>
-            <Input type={c.type} placeholder={c.placeholder} {...field} />
+            <FormControl>
+              <Input type={c.type} placeholder={c.placeholder} {...field} />
+            </FormControl>
           </>
         );
     }
@@ -48,7 +68,7 @@ export function FormElement(props: any) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {formConfig.map((c: any) => {
+        {formConfig.map((c: FormConfig) => {
           return (
             <FormField
               control={form.control}
@@ -56,7 +76,7 @@ export function FormElement(props: any) {
               key={c.key}
               render={({ field }) => (
                 <FormItem className="flex flex-col flex-wrap gap-x-1">
-                  <FormControl>{getInputByType(c, field)}</FormControl>
+                  {getInputByType(c, field)}
                   <FormMessage />
                 </FormItem>
               )}

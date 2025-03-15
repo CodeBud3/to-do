@@ -1,15 +1,27 @@
-export const buildSchema = (configs: any) => {
-  const schema: any = {};
-  configs.forEach((c: any) => {
+import { FormConfig, InitialValue } from "@/types/auth.types";
+
+const defaultValueMap: { [key: string]: InitialValue } = {
+  checkbox: false,
+  text: "",
+  password: "",
+  radio: "option1",
+  number: 0,
+  date: new Date(),
+  email: "",
+  url: "",
+};
+export const buildSchema = (configs: FormConfig[]) => {
+  const schema: { [key: string]: any } = {};
+  configs.forEach((c: FormConfig) => {
     schema[c.key] = c.validation;
   });
   return schema;
 };
 
-export const getDefaultValues = (configs: any) => {
-  const defaults: any = {};
-  configs.forEach((c: any) => {
-    defaults[c.key] = c.value;
+export const getDefaultValues = (configs: FormConfig[]) => {
+  const defaults: { [key: string]: InitialValue } = {};
+  configs.forEach((c: FormConfig) => {
+    defaults[c.key] = c.initialValue || defaultValueMap[c.type];
   });
   return defaults;
 };

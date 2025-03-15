@@ -5,14 +5,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { buildSchema, getDefaultValues } from "@/utils/formHelper";
 import { FormElement } from "./FormElement/FormElement";
+import { FormConfig } from "@/types/auth.types";
 
-const loginConfig = [
+const loginConfig: FormConfig[] = [
   {
     key: "email",
     label: "Email",
     type: "email",
     placeholder: "Enter your email address",
-    value: "",
     validation: z.string().min(2, {
       message: "Username must be at least 2 characters.",
     }),
@@ -22,16 +22,14 @@ const loginConfig = [
     label: "Password",
     type: "password",
     placeholder: "Enter your password",
-    value: "",
-    validation: z.string().min(1, {
-      message: "Password must be at least 1 character.",
+    validation: z.string().min(6, {
+      message: "Password must be at least 6 character.",
     }),
   },
   {
     key: "rememberMe",
     label: "Remember Me",
     type: "checkbox",
-    value: false,
     validation: z.boolean().default(false).optional(),
   },
 ];
