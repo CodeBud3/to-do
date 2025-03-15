@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { User } from "../models/User";
-import { ValidationError } from "../utils/ErrorHandler";
+import { AuthorizationError, ValidationError } from "../utils/ErrorHandler";
 import sendResponse from "../utils/responseHelper";
 import { clearSession, setSession } from "../helpers/auth.helper";
 
@@ -10,7 +10,7 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -20,7 +20,8 @@ export const register = async (
 
     // Create new user
     const user = new User({
-      name,
+      firstName,
+      lastName,
       email,
       password,
     });
@@ -33,7 +34,8 @@ export const register = async (
     const data = {
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
       },
     };
@@ -69,12 +71,37 @@ export const login = async (
     const data = {
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
       },
     };
 
     sendResponse(res, 200, true, "Login successful", data);
+  } catch (error: any) {
+    return next(error);
+  }
+};
+
+export const fetchUserDetails = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return next(new AuthorizationError(["Authroization failed"]));
+    }
+    const data = {
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      },
+    };
+    sendResponse(res, 200, true, "User details fetched successfully", data);
   } catch (error: any) {
     return next(error);
   }

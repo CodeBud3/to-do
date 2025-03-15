@@ -16,6 +16,11 @@ class AppError extends Error {
   }
 }
 
+class AuthorizationError extends AppError {
+  constructor(details: any) {
+    super(401, "Authorization Error", "UNAUTHORIZED", details);
+  }
+}
 class ValidationError extends AppError {
   constructor(details: any) {
     super(400, "Validation Error", "VALIDATION_ERROR", details);
@@ -28,4 +33,4 @@ class NotFoundError extends AppError {
   }
 }
 
-export { AppError, ValidationError, NotFoundError };
+export { AppError, ValidationError, NotFoundError, AuthorizationError };

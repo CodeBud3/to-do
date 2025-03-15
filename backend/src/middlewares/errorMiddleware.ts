@@ -18,9 +18,16 @@ const errorMiddleware: ErrorRequestHandler = (
     });
   }
 
-  return sendResponse(res, 500, false, "Internal Server Error", null, {
-    code: "INTERNAL_ERROR",
-  });
+  return sendResponse(
+    res,
+    500,
+    false,
+    "Something went wrong! Please try again in sometime.",
+    null,
+    {
+      code: "INTERNAL_ERROR",
+    }
+  );
 };
 
 export default errorMiddleware;
