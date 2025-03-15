@@ -7,9 +7,9 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 const SESSION_KEY = process.env.SESSION_KEY || "session-token";
 const NODE_ENV = process.env.NODE_ENV || "dev";
 const COOKIE_CONFIG: any = {
-  httpOnly: true, // Prevent XSS attacks
-  secure: NODE_ENV != "dev", // HTTPS in production
-  sameSite: "strict", // Prevent CSRF attacks
+  httpOnly: NODE_ENV != "dev", // Prevent XSS attacks
+  secure: true, // HTTPS in production
+  sameSite: "none", // Prevent CSRF attacks
   maxAge: dayToMs(7),
 };
 

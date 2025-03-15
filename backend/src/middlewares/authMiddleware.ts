@@ -4,6 +4,7 @@ import { User } from "../models/User";
 import { AuthorizationError } from "../utils/ErrorHandler";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const SESSION_KEY = process.env.SESSION_KEY || "session-token";
 
 interface JwtPayload {
   userId: string;
@@ -30,12 +31,14 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies.token;
+    const token = req.cookies[SESSION_KEY];
+    console.log(token, SESSION_KEY, req.cookies);
     if (!token) {
       return next(new AuthorizationError(["Unauthorized"]));
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    console.log(decoded);
     const user = await User.findById(decoded.userId);
 
     if (!user) {
@@ -52,6 +55,7 @@ export const authenticate = async (
 
     next();
   } catch (error: any) {
+    console.error(error);
     next(new AuthorizationError(["Authorization failed"]));
   }
 };

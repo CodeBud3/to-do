@@ -35,8 +35,8 @@ export interface SignUpCredentials {
 }
 
 export interface LoginCredentials {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
 }
 
 export interface AuthResponse {
