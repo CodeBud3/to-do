@@ -1,7 +1,21 @@
-import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "@/components/Layout";
+import Dashboard from "@/pages/Dashboard";
+import LoginPage from "@/pages/LoginPage";
+import SignUpPage from "@/pages/SignupPage";
 
-function App() {
-  return <>Welcome to To-DO App</>;
-}
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;

@@ -1,8 +1,10 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 
 export interface IUser extends Document {
-  name: string;
+  _id: Types.ObjectId;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role: "admin" | "manager" | "member";
@@ -11,9 +13,14 @@ export interface IUser extends Document {
 
 const userSchema = new Schema(
   {
-    name: {
+    firstName: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, "First name is required"],
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      required: [true, "Last name is required"],
       trim: true,
     },
     email: {

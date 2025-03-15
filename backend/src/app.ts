@@ -8,7 +8,13 @@ import errorMiddleware from "./middlewares/errorMiddleware";
 const app: Application = express();
 
 // Middleware
-app.use(cors());
+console.log(process.env.CLIENT_URL);
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true, // Allow cookies to be sent
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
