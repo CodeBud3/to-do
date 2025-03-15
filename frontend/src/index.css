@@ -128,7 +128,10 @@
   @apply flex items-center justify-center;
 }
 .page-box-model {
+  display: flex;
+  flex-direction: column;
   height: calc(
     100vh - calc(var(--spacing) * 15)
   ); /* 15 is height of the nav-bar */
+  overflow: auto;
 }

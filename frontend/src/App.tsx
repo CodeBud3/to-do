@@ -1,18 +1,21 @@
-// import { Button } from "@/components/ui/button";
-
-import Navbar from "./components/modules/navbar/Navbar";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "@/components/Layout";
+import Dashboard from "./pages/auth/Dashboard";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignupPage";
 
-function App() {
+const App = () => {
   return (
-    <>
-      <Navbar></Navbar>
-      <div className="page-box-model">
-        <SignUpPage></SignUpPage>
-      </div>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+        </Route>
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
