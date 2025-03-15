@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type InputType =
   | "checkbox"
   | "radio"
@@ -9,11 +11,12 @@ export type InputType =
   | "url";
 
 export type InitialValue = string | boolean | number | Date;
-export interface FormConfig {
-  key: string;
+
+export interface FormConfig<T extends string = string> {
+  key: T;
   label: string;
   type: InputType;
-  validation: any;
+  validation?: z.ZodType<any>;
   required?: boolean;
   errorMessage?: string;
   disabled?: boolean;
@@ -21,4 +24,24 @@ export interface FormConfig {
   placeholder?: string;
   initialValue?: InitialValue;
   group?: number;
+}
+
+export interface SignUpCredentials {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  tnc?: boolean;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+  error?: any;
 }
