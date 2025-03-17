@@ -31,10 +31,12 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies[SESSION_KEY];
-    console.log(token, SESSION_KEY, req.cookies);
+    let token = req.cookies[SESSION_KEY];
     if (!token) {
-      return next(new AuthorizationError(["Unauthorized"]));
+      token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        return next(new AuthorizationError(["Unauthorized"]));
+      }
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;

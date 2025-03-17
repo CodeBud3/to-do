@@ -8,9 +8,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+  const { isUserLoggedIn } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isUserLoggedIn) {
+      navigate("/");
+      return;
+    }
+  }, [isUserLoggedIn, navigate]);
   return (
     <>
       <div className="login fixed flex justify-end items-center nav-bar-box-model top-0 right-0">

@@ -3,10 +3,9 @@ import {
   LoginCredentials,
   SignUpCredentials,
 } from "@/types/auth.types";
-import axios from "axios";
+import axios from "@/api/interceptors/interceptors";
 
-const API_URL =
-  import.meta.env.VITE_API_URL || "https://to-do-test-cjnr.onrender.com";
+const API_URL = "/api/auth";
 
 export const register = async (
   credentials: SignUpCredentials
@@ -35,8 +34,19 @@ export const forgotPassword = async (
 };
 
 export const getLoggedInUser = async (): Promise<AuthResponse> => {
-  const response = await axios.get<AuthResponse>(`${API_URL}/profile`, {
+  const response = await axios.get(`${API_URL}/profile`, {
     withCredentials: true,
   });
+  return response.data;
+};
+
+export const logOut = async (): Promise<AuthResponse> => {
+  const response = await axios.post(
+    `${API_URL}/logout`,
+    {},
+    {
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
