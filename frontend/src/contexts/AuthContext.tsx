@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // 🔹 Logout Function
   const logout = () => {
     setToken(null);
+    setUser(null);
     localStorage.removeItem("token");
     logOut().catch((e) => {
       console.error("Logout failed", e.message);
