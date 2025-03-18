@@ -6,9 +6,9 @@ import { z } from "zod";
 import { buildSchema, getDefaultValues } from "@/utils/formHelper";
 import { FormElement } from "./FormElement/FormElement";
 import { loginConfig } from "./config";
-import { getLoggedInUser, login } from "@/api/auth";
+import { login } from "@/api/auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { AuthResponse, UserData } from "@/types/auth.types";
+import { AuthResponse } from "@/types/auth.types";
 import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object(buildSchema(loginConfig));
