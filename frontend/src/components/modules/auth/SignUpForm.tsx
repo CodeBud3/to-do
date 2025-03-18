@@ -6,6 +6,8 @@ import { FormElement } from "./FormElement/FormElement";
 import { register } from "@/api/auth";
 import { signUpConfig } from "./config";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z
   .object(buildSchema(signUpConfig))
@@ -19,7 +21,8 @@ export function SignUpForm() {
     resolver: zodResolver(formSchema),
     defaultValues: getDefaultValues(signUpConfig),
   });
-
+  const navigate = useNavigate();
+  const { updateAuth } = useAuth();
   const passwordWatcher = form.watch("password");
   useEffect(() => {
     // validate only if confirmPassword is dirty.
@@ -33,7 +36,8 @@ export function SignUpForm() {
     const { confirmPassword, ...payload } = values;
     register(payload)
       .then((data) => {
-        console.log(data);
+        updateAuth(data.data.user);
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
