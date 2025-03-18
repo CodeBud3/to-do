@@ -13,11 +13,13 @@ const COOKIE_CONFIG: any = {
   maxAge: dayToMs(7),
 };
 
-export const setSession = (user: IUser, res: Response): void => {
+export const setSession = (user: IUser, res: Response): string => {
   const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
     expiresIn: "7d",
   });
+  res.header;
   res.cookie(SESSION_KEY, token, COOKIE_CONFIG);
+  return token;
 };
 
 export const clearSession = (res: Response): void => {

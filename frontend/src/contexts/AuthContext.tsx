@@ -1,70 +1,43 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-}
+import { logOut } from "@/api/auth";
+import { User, AuthContextType } from "@/types/auth.types";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = () => {
-  return useContext(AuthContext) as AuthContextType;
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  return context;
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem("token")
+  );
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  // 🔹 Fetch user session on app load
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data } = await axios.get("/api/auth/me", {
-          withCredentials: true,
-        });
-        setUser(data.user);
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
+  const isUserLoggedIn = !!token;
   // 🔹 Login Function
-  const login = async (email: string, password: string) => {
-    await axios.post(
-      "/api/auth/login",
-      { email, password },
-      { withCredentials: true }
-    );
-    const { data } = await axios.get("/api/auth/me", { withCredentials: true });
-    setUser(data.user);
-    navigate("/dashboard");
+  const updateAuth = (user: User) => {
+    let { token, ...userDetails } = user;
+    token = token || "";
+    setToken(token);
+    setUser(userDetails);
+    localStorage.setItem("token", token);
   };
 
   // 🔹 Logout Function
-  const logout = async () => {
-    await axios.post("/api/auth/logout", {}, { withCredentials: true });
-    setUser(null);
-    navigate("/login");
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+    logOut().catch((e) => {
+      console.error("Logout failed", e.message);
+    });
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ isUserLoggedIn, updateAuth, user, setUser, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -42,6 +42,26 @@ export interface LoginCredentials {
 export interface AuthResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data: UserData;
   error?: any;
+}
+
+export interface UserData {
+  user: User;
+}
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: "admin" | "manager" | "member";
+  token?: string;
+}
+
+export interface AuthContextType {
+  isUserLoggedIn: boolean;
+  updateAuth: (user: User) => void;
+  setUser: (user: User) => void;
+  user: User | null;
+  logout: () => void;
 }

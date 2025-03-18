@@ -29,7 +29,7 @@ export const register = async (
     await user.save();
 
     // Generate JWT token
-    setSession(user, res);
+    const token = setSession(user, res);
 
     const data = {
       user: {
@@ -37,6 +37,7 @@ export const register = async (
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        token,
       },
     };
     sendResponse(res, 201, true, "User registered successfully", data);
@@ -66,7 +67,7 @@ export const login = async (
     }
 
     // Generate and set JWT token
-    setSession(user, res);
+    const token = setSession(user, res);
 
     const data = {
       user: {
@@ -74,6 +75,7 @@ export const login = async (
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        token,
       },
     };
 
