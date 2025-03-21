@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { emailValidator, nameValidator, passwordValidator } from "./validators";
+import {
+  emailValidator,
+  nameValidator,
+  passwordValidator,
+  requiredValidator,
+} from "./validators";
 
 export const registerSchema = z.object({
   body: z.object({
@@ -12,7 +17,7 @@ export const registerSchema = z.object({
 
 export const loginSchema = z.object({
   body: z.object({
-    email: emailValidator,
-    password: passwordValidator,
+    email: requiredValidator("Email"),
+    password: requiredValidator("Password"),
   }),
 });

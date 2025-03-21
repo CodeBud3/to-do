@@ -57,13 +57,13 @@ export const login = async (
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return next(new ValidationError(["Invalid credentials"]));
+      return next(new ValidationError(["Incorrect email or password."]));
     }
 
     // Check password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      return next(new ValidationError(["Invalid credentials"]));
+      return next(new ValidationError(["Incorrect email or password."]));
     }
 
     // Generate and set JWT token

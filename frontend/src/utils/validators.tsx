@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const requiredValidator = (label: string) =>
-  z.string().min(1, { message: `${label} is required` });
+  z.string().min(1, { message: `${label} is required.` });
 
 export const nameValidator = z
   .string()

@@ -5,9 +5,11 @@ import { buildSchema, getDefaultValues } from "@/utils/formHelper";
 import { FormElement } from "./FormElement/FormElement";
 import { register } from "@/api/auth";
 import { signUpConfig } from "./config";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { handleError } from "@/utils/errorHandler";
+import { ErrorMessage } from "@/components/ui/errorMessage";
 
 const formSchema = z
   .object(buildSchema(signUpConfig))
@@ -17,6 +19,8 @@ const formSchema = z
   });
 
 export function SignUpForm() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: getDefaultValues(signUpConfig),
@@ -33,22 +37,31 @@ export function SignUpForm() {
   }, [passwordWatcher, form.trigger]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    setErrors([]);
     const { confirmPassword, ...payload } = values;
     register(payload)
       .then((data) => {
         updateAuth(data.data.user);
+        setLoading(false);
         navigate("/");
       })
       .catch((error) => {
+        setLoading(false);
         console.log(error);
+        setErrors(handleError(error));
       });
   }
   return (
-    <FormElement
-      onSubmit={onSubmit}
-      form={form}
-      formConfig={signUpConfig}
-      submitBtnLabel="Create account"
-    ></FormElement>
+    <>
+      {errors.length > 0 && <ErrorMessage errors={errors}></ErrorMessage>}
+      <FormElement
+        onSubmit={onSubmit}
+        form={form}
+        formConfig={signUpConfig}
+        submitBtnLabel="Create account"
+        loading={loading}
+      ></FormElement>
+    </>
   );
 }
