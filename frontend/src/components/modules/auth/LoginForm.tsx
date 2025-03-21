@@ -11,11 +11,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AuthResponse } from "@/types/auth.types";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { handleError } from "@/utils/errorHandler";
+import { ErrorMessage } from "@/components/ui/errorMessage";
 
 const formSchema = z.object(buildSchema(loginConfig));
 
 export function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const { updateAuth } = useAuth();
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -24,8 +27,8 @@ export function LoginForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     setLoading(true);
+    setErrors([]);
     const { rememberMe, ...payload } = values;
     login(payload)
       .then((data: AuthResponse) => {
@@ -36,10 +39,12 @@ export function LoginForm() {
       .catch((error) => {
         setLoading(false);
         console.log("failed to login", error);
+        setErrors(handleError(error));
       });
   }
   return (
     <>
+      {errors.length > 0 && <ErrorMessage errors={errors}></ErrorMessage>}
       <FormElement
         onSubmit={onSubmit}
         form={form}
