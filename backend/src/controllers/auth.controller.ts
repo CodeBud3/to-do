@@ -13,7 +13,7 @@ export const register = async (
     const { firstName, lastName, email, password } = req.body;
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return next(new ValidationError(["Email already registered"]));
     }
@@ -55,7 +55,7 @@ export const login = async (
     const { email, password } = req.body;
 
     // Find user by email
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return next(new ValidationError(["Incorrect email or password."]));
     }
@@ -127,7 +127,7 @@ export const forgotPassword = async (
     const { email } = req.body;
 
     // Check if user exists
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return next(new ValidationError(["User not found"]));
     }
