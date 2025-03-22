@@ -21,3 +21,9 @@ export const loginSchema = z.object({
     password: requiredValidator("Password"),
   }),
 });
+
+export const emailSchema = z.object({
+  params: z.object({
+    email: emailValidator,
+  }),
+});

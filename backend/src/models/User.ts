@@ -40,6 +40,10 @@ const userSchema = new Schema(
       enum: ["admin", "manager", "member"],
       default: "member",
     },
+    auth_token: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );
