@@ -40,49 +40,25 @@ export const authenticate = async (
     }
 
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    console.log(decoded);
     const user = await User.findById(decoded.userId);
 
     if (!user) {
       return next(new AuthorizationError(["Invalid token"]));
     }
 
-    req.user = {
-      id: user._id.toString(),
-      firstName: user.firstName.toString(),
-      lastName: user.lastName.toString(),
-      role: user.role,
-      email: user.email,
-    };
-
-    next();
-  } catch (error: any) {
-    console.error(error);
-    next(new AuthorizationError(["Authorization failed"]));
-  }
-};
-
-export const authenticateAdmin = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return next(new AuthorizationError(["Unauthorized"]));
-    }
-    const user = await User.findOne({ auth_token: token });
-
-    if (!user) {
-      return next(new AuthorizationError(["Invalid token"]));
+    if (req.path.startsWith("/admin/")) {
+      if (
+        user.role !== "admin" ||
+        user.email === req.params.email?.toLowerCase()
+      ) {
+        return next(
+          new AuthorizationError([
+            "Unauthorized. You are not allowed to perform this operation.",
+          ])
+        );
+      }
     }
 
-    if (user.role !== "admin") {
-      return next(
-        new AuthorizationError(["Unauthorized. You are not an admin."])
-      );
-    }
     req.user = {
       id: user._id.toString(),
       firstName: user.firstName.toString(),

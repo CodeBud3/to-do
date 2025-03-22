@@ -8,7 +8,6 @@ import errorMiddleware from "./middlewares/errorMiddleware";
 const app: Application = express();
 
 // Middleware
-console.log(process.env.CLIENT_URL);
 app.use(
   cors({
     origin: process.env.CLIENT_URL,

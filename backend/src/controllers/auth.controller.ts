@@ -1,8 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../models/User";
+import { IUser, User } from "../models/User";
 import { AuthorizationError, ValidationError } from "../utils/ErrorHandler";
 import sendResponse from "../utils/responseHelper";
-import { clearSession, setSession } from "../helpers/auth.helper";
+import {
+  clearSession,
+  generateApiToken,
+  setSession,
+} from "../helpers/auth.helper";
 
 export const register = async (
   req: Request,
@@ -166,6 +170,20 @@ export const deleteUser = async (
       return next(new ValidationError(["User not found"]));
     }
     sendResponse(res, 200, true, "User deleted successfully");
+  } catch (error: any) {
+    return next(error);
+  }
+};
+
+export const fetchApiToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user as IUser;
+    const token = generateApiToken(user);
+    sendResponse(res, 200, true, "API token generated successfully", token);
   } catch (error: any) {
     return next(error);
   }
