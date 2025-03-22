@@ -6,7 +6,11 @@ interface ErrorMessageProps {
   className?: string;
 }
 
-export const ErrorMessage = ({ errors, className }: ErrorMessageProps) => {
+export const ErrorMessage = ({
+  errors,
+  className,
+  ...attributes
+}: ErrorMessageProps) => {
   if (!errors) return null;
 
   const errorList = Array.isArray(errors) ? errors : [errors];
@@ -14,6 +18,7 @@ export const ErrorMessage = ({ errors, className }: ErrorMessageProps) => {
   return (
     <div
       className={cn("bg-red-100 text-red-700 p-3 rounded-md my-4", className)}
+      {...attributes}
     >
       <div className="flex items-center gap-2 font-semibold">
         <AlertTriangle className="h-5 w-5 text-red-700" />

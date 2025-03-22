@@ -1,7 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { buildSchema, getDefaultValues } from "@/utils/formHelper";
+import {
+  applyTestAttributes,
+  buildSchema,
+  getDefaultValues,
+} from "@/utils/formHelper";
 import { FormElement } from "./FormElement/FormElement";
 import { register } from "@/api/auth";
 import { signUpConfig } from "./config";
@@ -54,7 +58,12 @@ export function SignUpForm() {
   }
   return (
     <>
-      {errors.length > 0 && <ErrorMessage errors={errors}></ErrorMessage>}
+      {errors.length > 0 && (
+        <ErrorMessage
+          {...applyTestAttributes("sign-up", "form-errors")}
+          errors={errors}
+        ></ErrorMessage>
+      )}
       <FormElement
         onSubmit={onSubmit}
         form={form}

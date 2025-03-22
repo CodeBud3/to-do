@@ -41,12 +41,15 @@ export const getInputByType = (
     case "password":
       return (
         <>
-          <FormLabel>{c.label}</FormLabel>
+          <FormLabel {...applyTestAttributes("label", c.key)}>
+            {c.label}
+          </FormLabel>
           <FormControl>
             <PasswordInput
               type={c.type}
               placeholder={c.placeholder}
               {...field}
+              {...applyTestAttributes("field", c.key)}
             />
           </FormControl>
         </>
@@ -54,9 +57,15 @@ export const getInputByType = (
     case "checkbox":
       return (
         <div className="flex flex-row-reverse justify-end space-x-2">
-          <FormLabel className="text-gray-500">{c.label}</FormLabel>
+          <FormLabel
+            {...applyTestAttributes("label", c.key)}
+            className="text-gray-500"
+          >
+            {c.label}
+          </FormLabel>
           <FormControl>
             <Checkbox
+              {...applyTestAttributes("field", c.key)}
               checked={field.value}
               onCheckedChange={field.onChange}
             ></Checkbox>
@@ -66,11 +75,25 @@ export const getInputByType = (
     default:
       return (
         <>
-          <FormLabel>{c.label}</FormLabel>
+          <FormLabel {...applyTestAttributes("label", c.key)}>
+            {c.label}
+          </FormLabel>
           <FormControl>
-            <Input type={c.type} placeholder={c.placeholder} {...field} />
+            <Input
+              {...applyTestAttributes("field", c.key)}
+              type={c.type}
+              placeholder={c.placeholder}
+              {...field}
+            />
           </FormControl>
         </>
       );
   }
+};
+
+export const applyTestAttributes = (
+  type: string,
+  key: string
+): { [key: string]: boolean } => {
+  return { [`data-test-${type}-${key}`]: true };
 };

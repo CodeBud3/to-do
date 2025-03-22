@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import Loader from "@/components/ui/loader";
 import { FormConfig } from "@/types/auth.types";
-import { getInputByType } from "@/utils/formHelper";
+import { applyTestAttributes, getInputByType } from "@/utils/formHelper";
 import { UseFormReturn } from "react-hook-form";
 
 interface FormElementProps {
@@ -13,9 +13,10 @@ interface FormElementProps {
   loading: boolean;
 }
 export function FormElement(props: FormElementProps) {
-  const { form, onSubmit, formConfig, submitBtnLabel, loading } = props;
+  const { form, onSubmit, formConfig, submitBtnLabel, loading, ...attributes } =
+    props;
   return (
-    <Form {...form}>
+    <Form {...form} {...attributes}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {formConfig.map((c: FormConfig) => {
           return (
@@ -26,13 +27,18 @@ export function FormElement(props: FormElementProps) {
               render={({ field }) => (
                 <FormItem className="flex flex-col flex-wrap gap-x-1">
                   {getInputByType(c, field)}
-                  <FormMessage />
+                  <FormMessage {...applyTestAttributes("errormsg", c.key)} />
                 </FormItem>
               )}
             />
           );
         })}
-        <Button type="submit" disabled={loading} className="w-full">
+        <Button
+          type="submit"
+          {...applyTestAttributes("button", "submit")}
+          disabled={loading}
+          className="w-full"
+        >
           {submitBtnLabel}
           <span>{loading && <Loader></Loader>}</span>
         </Button>
