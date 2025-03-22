@@ -13,10 +13,9 @@ interface FormElementProps {
   loading: boolean;
 }
 export function FormElement(props: FormElementProps) {
-  const { form, onSubmit, formConfig, submitBtnLabel, loading, ...attributes } =
-    props;
+  const { form, onSubmit, formConfig, submitBtnLabel, loading } = props;
   return (
-    <Form {...form} {...attributes}>
+    <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {formConfig.map((c: FormConfig) => {
           return (
