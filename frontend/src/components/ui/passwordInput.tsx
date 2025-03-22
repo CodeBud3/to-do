@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
+import { applyTestAttributes } from "@/utils/formHelper";
 
 function PasswordInput({
   className,
@@ -23,6 +24,7 @@ function PasswordInput({
         {...props}
       />
       <button
+        {...applyTestAttributes("password", "visibility")}
         type="button"
         className="absolute right-0 text-gray-500 top-0 h-9 w-9 flex items-center justify-center rounded-full border-0 focus:outline-none focus:ring-0"
         onClick={() => setShowPassword((showPassword) => !showPassword)}

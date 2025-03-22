@@ -3,7 +3,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { buildSchema, getDefaultValues } from "@/utils/formHelper";
+import {
+  applyTestAttributes,
+  buildSchema,
+  getDefaultValues,
+} from "@/utils/formHelper";
 import { FormElement } from "./FormElement/FormElement";
 import { loginConfig } from "./config";
 import { login } from "@/api/auth";
@@ -44,7 +48,12 @@ export function LoginForm() {
   }
   return (
     <>
-      {errors.length > 0 && <ErrorMessage errors={errors}></ErrorMessage>}
+      {errors.length > 0 && (
+        <ErrorMessage
+          errors={errors}
+          {...applyTestAttributes("sign-in", "form-errors")}
+        ></ErrorMessage>
+      )}
       <FormElement
         onSubmit={onSubmit}
         form={form}
