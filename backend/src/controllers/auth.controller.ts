@@ -145,3 +145,28 @@ export const forgotPassword = async (
     return next(error);
   }
 };
+
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const email = req.params?.email;
+    if (!email) {
+      return next(new ValidationError(["Invalid email parameter"]));
+    }
+    if (req?.user?.role !== "admin") {
+      return next(new AuthorizationError(["Unauthorized action"]));
+    }
+
+    const deletedUser = await User.findOneAndDelete({ email });
+
+    if (!deletedUser) {
+      return next(new ValidationError(["User not found"]));
+    }
+    sendResponse(res, 200, true, "User deleted successfully");
+  } catch (error: any) {
+    return next(error);
+  }
+};

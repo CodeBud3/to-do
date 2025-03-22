@@ -61,3 +61,39 @@ export const authenticate = async (
     next(new AuthorizationError(["Authorization failed"]));
   }
 };
+
+export const authenticateAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return next(new AuthorizationError(["Unauthorized"]));
+    }
+    const user = await User.findOne({ auth_token: token });
+
+    if (!user) {
+      return next(new AuthorizationError(["Invalid token"]));
+    }
+
+    if (user.role !== "admin") {
+      return next(
+        new AuthorizationError(["Unauthorized. You are not an admin."])
+      );
+    }
+    req.user = {
+      id: user._id.toString(),
+      firstName: user.firstName.toString(),
+      lastName: user.lastName.toString(),
+      role: user.role,
+      email: user.email,
+    };
+
+    next();
+  } catch (error: any) {
+    console.error(error);
+    next(new AuthorizationError(["Authorization failed"]));
+  }
+};
