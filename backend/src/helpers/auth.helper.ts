@@ -25,3 +25,8 @@ export const setSession = (user: IUser, res: Response): string => {
 export const clearSession = (res: Response): void => {
   res.cookie(SESSION_KEY, "", { ...COOKIE_CONFIG, maxAge: 0 });
 };
+
+export const generateApiToken = (user: IUser): string => {
+  const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, {});
+  return token;
+};
