@@ -16,7 +16,11 @@ export function FormElement(props: FormElementProps) {
   const { form, onSubmit, formConfig, submitBtnLabel, loading } = props;
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
+        noValidate
+      >
         {formConfig.map((c: FormConfig) => {
           return (
             <FormField
