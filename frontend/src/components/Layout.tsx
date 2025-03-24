@@ -1,7 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Navbar from "./modules/navbar/Navbar";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Layout = () => {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  // Redirect '/' based on authentication status
+  if (location.pathname === "/") {
+    return <Navigate to={user ? "/dashboard" : "/login"} />;
+  }
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar></Navbar>
