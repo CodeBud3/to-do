@@ -13,7 +13,6 @@ import { loginConfig } from "./config";
 import { login } from "@/api/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthResponse } from "@/types/auth.types";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
@@ -24,7 +23,6 @@ export function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<string[]>([]);
   const { updateAuth } = useAuth();
-  const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: getDefaultValues(loginConfig),

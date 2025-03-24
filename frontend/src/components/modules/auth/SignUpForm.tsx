@@ -10,7 +10,6 @@ import { FormElement } from "./FormElement/FormElement";
 import { register } from "@/api/auth";
 import { signUpConfig } from "./config";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
@@ -29,7 +28,6 @@ export function SignUpForm() {
     resolver: zodResolver(formSchema),
     defaultValues: getDefaultValues(signUpConfig),
   });
-  const navigate = useNavigate();
   const { updateAuth } = useAuth();
   const passwordWatcher = form.watch("password");
   useEffect(() => {
