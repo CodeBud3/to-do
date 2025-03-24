@@ -59,6 +59,7 @@ export interface User {
 }
 
 export interface AuthContextType {
+  authloading: boolean;
   updateAuth: (user: User) => void;
   setUser: (user: User) => void;
   user: User | null;

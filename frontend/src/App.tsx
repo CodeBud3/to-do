@@ -1,24 +1,30 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Layout from "@/components/Layout";
-import Dashboard from "@/pages/Dashboard";
-import LoginPage from "@/pages/LoginPage";
-import SignUpPage from "@/pages/SignupPage";
 import { AuthProvider } from "./contexts/AuthContext";
-import PrivateRoute from "./pages/ProtectedRoute";
+import { lazy, Suspense } from "react";
+import GlobalLoader from "./components/ui/globalLoader";
+
+const PrivateRoute = lazy(() => import("@/pages/ProtectedRoute"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Layout = lazy(() => import("@/components/Layout"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const SignUpPage = lazy(() => import("@/pages/SignupPage"));
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignUpPage />} />
-            <Route element={<PrivateRoute />}>
-              <Route index element={<Dashboard />} />
+        <Suspense fallback={<GlobalLoader />}>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+              <Route element={<PrivateRoute />}>
+                <Route index element={<Dashboard />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
+            <Route path="*" element={<h1>404 Not Found</h1>} />
+          </Routes>
+        </Suspense>
       </Router>
     </AuthProvider>
   );
