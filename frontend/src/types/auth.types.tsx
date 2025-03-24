@@ -59,7 +59,6 @@ export interface User {
 }
 
 export interface AuthContextType {
-  isUserLoggedIn: boolean;
   updateAuth: (user: User) => void;
   setUser: (user: User) => void;
   user: User | null;

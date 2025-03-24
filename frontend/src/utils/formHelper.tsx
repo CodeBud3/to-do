@@ -95,5 +95,5 @@ export const applyTestAttributes = (
   type: string,
   key: string
 ): { [key: string]: boolean } => {
-  return { [`data-test-${type}-${key}`]: true };
+  return { [`data-test-${type}-${key.toLowerCase()}`]: true };
 };

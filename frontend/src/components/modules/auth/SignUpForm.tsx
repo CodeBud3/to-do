@@ -35,7 +35,6 @@ export function SignUpForm() {
   useEffect(() => {
     // validate only if confirmPassword is dirty.
     if (form.formState.dirtyFields.confirmPassword) {
-      console.log("Triggering confirm password validation");
       form.trigger("confirmPassword");
     }
   }, [passwordWatcher, form.trigger]);

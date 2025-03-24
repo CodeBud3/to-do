@@ -1,52 +1,54 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { User } from "../models/User";
+import { IUser } from "../models/User";
 import { AuthorizationError } from "../utils/ErrorHandler";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
-const SESSION_KEY = process.env.SESSION_KEY || "session-token";
-
-interface JwtPayload {
-  userId: string;
-  role: string;
-}
+import passport from "passport";
 
 declare global {
   namespace Express {
+    interface User extends IUser {}
     interface Request {
-      user?: {
-        id: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        role: string;
-      };
+      user?: User;
     }
   }
 }
 
-export const authenticate = async (
+export const authenticate = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    let token = req.cookies[SESSION_KEY];
-    if (!token) {
-      token = req.headers.authorization?.split(" ")[1];
-      if (!token) {
+  // Check OAuth authentication
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  // Check JWT Authentication
+  passport.authenticate(
+    "jwt",
+    { session: false },
+    (err: Error, user: IUser) => {
+      if (err || !user) {
         return next(new AuthorizationError(["Unauthorized"]));
       }
+      req.user = user;
+      next();
     }
+  )(req, res, next);
+};
 
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    const user = await User.findById(decoded.userId);
-
-    if (!user) {
-      return next(new AuthorizationError(["Invalid token"]));
-    }
-
-    if (req.path.startsWith("/admin/")) {
+export const authenticate_admin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Check JWT Authentication
+  passport.authenticate(
+    "jwt",
+    { session: false },
+    (err: Error, user: IUser) => {
+      if (err || !user) {
+        return next(new AuthorizationError(["Unauthorized"]));
+      }
       if (
         user.role !== "admin" ||
         user.email === req.params.email?.toLowerCase()
@@ -57,19 +59,8 @@ export const authenticate = async (
           ])
         );
       }
+      req.user = user;
+      next();
     }
-
-    req.user = {
-      id: user._id.toString(),
-      firstName: user.firstName.toString(),
-      lastName: user.lastName.toString(),
-      role: user.role,
-      email: user.email,
-    };
-
-    next();
-  } catch (error: any) {
-    console.error(error);
-    next(new AuthorizationError(["Authorization failed"]));
-  }
+  )(req, res, next);
 };
