@@ -40,12 +40,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     logOut()
       .then(() => {
-        setUser((user) => {
-          localStorage.removeItem("token");
-          window.location.href = "/login";
-          user = null;
-          return user;
-        });
+        setUser(null);
+        localStorage.removeItem("token");
+        window.location.href = "/login";
       })
       .catch((e) => {
         console.error("Logout failed", e.message);

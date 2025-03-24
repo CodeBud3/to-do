@@ -18,7 +18,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/dashboard");
       return;
     }
   }, [user, navigate]);
@@ -52,7 +52,7 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="hidden" onClick={handleGoogleLogin}>
+            <Button className="" onClick={handleGoogleLogin}>
               Sign in with google
             </Button>
             <LoginForm></LoginForm>

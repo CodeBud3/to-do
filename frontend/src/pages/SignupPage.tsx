@@ -18,7 +18,7 @@ export default function SignUpPage() {
   const navigate = useNavigate();
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/dashboard");
       return;
     }
   }, [user, navigate]);

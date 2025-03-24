@@ -9,14 +9,15 @@ export const SESSION_KEY = process.env.SESSION_KEY as string;
 const NODE_ENV = process.env.NODE_ENV || "dev";
 
 export const COOKIE_CONFIG: any = {
-  domain: process.env.COOKIE_DOMAIN,
-  path: "/",
   httpOnly: true, // Prevent XSS attacks
   secure: NODE_ENV != "dev", // HTTPS in production
-  sameSite: "lax", // Prevent CSRF attacks
+  sameSite: NODE_ENV != "dev" ? "none" : "lax", // Prevent CSRF attacks
   maxAge: dayToMs(7),
+  path: "/",
 };
-
+console.log(
+  `COOKIE_CONFIG :: ${COOKIE_CONFIG.secure} :: ${COOKIE_CONFIG.sameSite}`
+);
 export const SESSION_CONFIG: any = {
   secret: process.env.SESSION_SECRET!,
   resave: false,
