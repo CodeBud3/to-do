@@ -4,10 +4,12 @@ import bcrypt from "bcryptjs";
 export interface IUser extends Document {
   _id: Types.ObjectId;
   firstName: string;
-  lastName: string;
+  lastName?: string;
   email: string;
-  password: string;
+  password?: string;
   role: "admin" | "manager" | "member";
+  oAuthProfileId?: string;
+  provider?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -20,7 +22,6 @@ const userSchema = new Schema(
     },
     lastName: {
       type: String,
-      required: [true, "Last name is required"],
       trim: true,
     },
     email: {
@@ -32,8 +33,7 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters long"],
+      default: "",
     },
     role: {
       type: String,
@@ -42,6 +42,15 @@ const userSchema = new Schema(
     },
     auth_token: {
       type: String,
+      default: null,
+    },
+    oAuthProfileId: {
+      type: String,
+      default: null,
+    },
+    provider: {
+      type: String,
+      enum: ["google", "microsoft", "apple"],
       default: null,
     },
   },

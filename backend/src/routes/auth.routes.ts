@@ -14,20 +14,38 @@ import {
   loginSchema,
   emailSchema,
 } from "../validators/auth.validators";
-import { authenticate } from "../middlewares/authMiddleware";
+import {
+  authenticate,
+  authenticate_admin,
+} from "../middlewares/authMiddleware";
+import passport from "passport";
+
+const CLIENT_URL = process.env.CLIENT_URL;
 
 const router = express.Router();
 
 router.post("/register", validateRequest(registerSchema), register);
 router.post("/login", validateRequest(loginSchema), login);
-router.post("/logout", logout);
+router.post("/logout", authenticate, logout);
 router.get("/profile", authenticate, fetchUserDetails);
 router.post("/forgot-password", forgotPassword);
 router.get("/api-token", authenticate, fetchApiToken);
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: `${CLIENT_URL}/login`,
+    successRedirect: `${CLIENT_URL}/`,
+    session: true,
+  })
+);
 router.delete(
   "/admin/delete/:email",
   validateRequest(emailSchema),
-  authenticate,
+  authenticate_admin,
   deleteUser
 );
 

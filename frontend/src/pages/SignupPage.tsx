@@ -14,14 +14,14 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUpPage() {
-  const { isUserLoggedIn } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    if (isUserLoggedIn) {
+    if (user) {
       navigate("/");
       return;
     }
-  }, [isUserLoggedIn, navigate]);
+  }, [user, navigate]);
   return (
     <>
       <div className="login fixed flex justify-end items-center nav-bar-box-model top-0 right-0">

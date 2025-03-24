@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { IUser, User } from "../models/User";
 import { AuthorizationError, ValidationError } from "../utils/ErrorHandler";
 import sendResponse from "../utils/responseHelper";
 import {
   clearSession,
+  COOKIE_CONFIG,
   generateApiToken,
-  setSession,
+  generateToken,
 } from "../helpers/auth.helper";
+import { IUser, User } from "../models/User";
 
 export const register = async (
   req: Request,
@@ -33,7 +34,7 @@ export const register = async (
     await user.save();
 
     // Generate JWT token
-    const token = setSession(user, res);
+    const token = generateToken(user, res);
 
     const data = {
       user: {
@@ -71,7 +72,7 @@ export const login = async (
     }
 
     // Generate and set JWT token
-    const token = setSession(user, res);
+    const token = generateToken(user, res);
 
     const data = {
       user: {
@@ -116,7 +117,15 @@ export const fetchUserDetails = (
 export const logout = (req: Request, res: Response, next: NextFunction) => {
   try {
     clearSession(res);
-    sendResponse(res, 200, true, "Logged out successfully");
+    req.logout((err) => {
+      if (err) return next(err);
+      req.session.destroy((err) => {
+        if (err) return next(err);
+        // Manually clear the cookie
+        res.clearCookie("connect.sid", { ...COOKIE_CONFIG, maxAge: 0 });
+        sendResponse(res, 200, true, "Logged out successfully");
+      });
+    });
   } catch (error: any) {
     return next(error);
   }

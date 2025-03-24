@@ -11,34 +11,30 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [token, setToken] = useState<string | null>(() =>
-    localStorage.getItem("token")
-  );
   const [user, setUser] = useState<User | null>(null);
-  const isUserLoggedIn = !!token;
   // 🔹 Login Function
   const updateAuth = (user: User) => {
     let { token, ...userDetails } = user;
     token = token || "";
-    setToken(token);
     setUser(userDetails);
     localStorage.setItem("token", token);
   };
 
   // 🔹 Logout Function
   const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem("token");
-    logOut().catch((e) => {
-      console.error("Logout failed", e.message);
-    });
+    logOut()
+      .then(() => {
+        setUser(null);
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      })
+      .catch((e) => {
+        console.error("Logout failed", e.message);
+      });
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isUserLoggedIn, updateAuth, user, setUser, logout }}
-    >
+    <AuthContext.Provider value={{ updateAuth, user, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
