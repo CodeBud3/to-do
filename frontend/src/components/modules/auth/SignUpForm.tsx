@@ -47,7 +47,6 @@ export function SignUpForm() {
       .then((data) => {
         updateAuth(data.data.user);
         setLoading(false);
-        navigate("/");
       })
       .catch((error) => {
         setLoading(false);

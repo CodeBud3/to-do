@@ -31,7 +31,10 @@ axiosInstance.interceptors.response.use(
     console.error("Response Error:", error);
     if (error.response?.status === 401) {
       localStorage.removeItem("token"); // Auto logout on 401
-      window.location.href = "/login"; // Redirect to login
+      // Redirect to login only if in different path
+      if (window.location.pathname != "/login") {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }
