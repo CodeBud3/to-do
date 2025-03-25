@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { dayToMs } from "../helpers/common.helper";
 import { Response } from "express";
-import { IUser } from "../models/User";
+import { IUser, User } from "../models/User";
 import { getMongoStore } from "../config/db";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -46,9 +46,8 @@ export const generateApiToken = (user: IUser): string => {
 };
 
 export const extractProfile = (
-  profile: any,
-  provider: string
-): [string, string, string, string, string] => {
+  profile: any
+): [string, string, string, string] => {
   const id = profile.id || "";
   const email = profile.emails?.[0]?.value || "";
   let firstName = profile.displayName?.split(" ")[0] || "";
@@ -56,5 +55,39 @@ export const extractProfile = (
   if (!firstName) {
     firstName = email.split("@")[0];
   }
-  return [id, firstName, lastName, email, provider];
+  return [id, firstName, lastName, email];
+};
+
+export const handleAuthResponse = async (
+  profile: any,
+  provider: string,
+  done: any
+) => {
+  try {
+    const [id, firstName, lastName, email] = extractProfile(profile);
+    let user: IUser | null = await User.findOne({
+      email: email,
+    });
+    if (user && !user.oAuthProfileId) {
+      user.oAuthProfileId = id;
+      user.provider = provider;
+      await user.save();
+    }
+    if (!user) {
+      // Create new user
+      user = new User({
+        oAuthProfileId: id,
+        firstName,
+        lastName,
+        email,
+        provider,
+      });
+      await user.save();
+    }
+
+    return done(null, user);
+  } catch (error) {
+    console.error(error);
+    return done(error, false);
+  }
 };
