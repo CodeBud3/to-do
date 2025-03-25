@@ -10,11 +10,6 @@ const axiosInstance = axios.create({
 // Request Interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    console.log("Request Sent:", config);
     return config;
   },
   (error) => {
@@ -31,7 +26,6 @@ axiosInstance.interceptors.response.use(
   (error) => {
     console.error("Response Error:", error);
     if (error.response?.status === 401) {
-      localStorage.removeItem("token"); // Auto logout on 401
       // Redirect to login only if in protected path
       if (
         !["/login", "/signup"].includes(window.location.pathname.toLowerCase())
