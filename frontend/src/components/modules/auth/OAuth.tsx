@@ -1,22 +1,18 @@
 import { Button } from "@/components/ui/button";
+import { API_BASE_URL } from "@/config/config";
 import { applyTestAttributes } from "@/utils/formHelper";
 
 export default function OauthProvider() {
-  const handleGoogleLogin = () => {
-    window.open(
-      "https://to-do-test-cjnr.onrender.com/api/auth/google",
-      "_self"
-    );
+  const handleOAuthLogin = (provider: string) => {
+    window.open(`${API_BASE_URL}/api/auth/${provider}`, "_self");
   };
-  const handleMSLogin = () => {};
-  const handleAppleLogin = () => {};
   return (
     <>
       <div className="w-full flex gap-4 flex-wrap align-middle justify-between">
         <Button
           className="flex-1"
           variant="outline"
-          onClick={handleGoogleLogin}
+          onClick={() => handleOAuthLogin("google")}
           {...applyTestAttributes("signin", "google-auth")}
         >
           <img
@@ -29,7 +25,7 @@ export default function OauthProvider() {
         <Button
           className="flex-1"
           variant="outline"
-          onClick={handleMSLogin}
+          onClick={() => handleOAuthLogin("microsoft")}
           {...applyTestAttributes("signin", "ms-auth")}
         >
           <img
@@ -42,7 +38,7 @@ export default function OauthProvider() {
         <Button
           className="flex-1"
           variant="outline"
-          onClick={handleAppleLogin}
+          onClick={() => handleOAuthLogin("apple")}
           {...applyTestAttributes("signin", "apple-auth")}
         >
           <img
