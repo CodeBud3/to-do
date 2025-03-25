@@ -1,3 +1,4 @@
+import OauthProvider from "@/components/modules/auth/OAuth";
 import { SignUpForm } from "@/components/modules/auth/SignUpForm";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +49,7 @@ export default function SignUpPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <OauthProvider></OauthProvider>
             <SignUpForm></SignUpForm>
           </CardContent>
           <CardFooter className="flex-center">

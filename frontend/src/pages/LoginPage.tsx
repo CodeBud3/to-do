@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/modules/auth/LoginForm";
+import OauthProvider from "@/components/modules/auth/OAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,12 +24,6 @@ export default function LoginPage() {
     }
   }, [user, navigate]);
 
-  const handleGoogleLogin = () => {
-    window.open(
-      "https://to-do-test-cjnr.onrender.com/api/auth/google",
-      "_self"
-    );
-  };
   return (
     <>
       <div className="login fixed flex justify-end items-center nav-bar-box-model top-0 right-0">
@@ -55,9 +50,7 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="" onClick={handleGoogleLogin}>
-              Sign in with google
-            </Button>
+            <OauthProvider></OauthProvider>
             <LoginForm></LoginForm>
           </CardContent>
           <CardFooter className="flex-center">
