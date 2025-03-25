@@ -21,6 +21,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+process.env.NODE_ENV != "dev" && app.set("trust proxy", 1);
 app.use(session(SESSION_CONFIG));
 app.use(passport.initialize());
 app.use(passport.session());

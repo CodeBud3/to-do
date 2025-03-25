@@ -1,11 +1,15 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Navbar from "./modules/navbar/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
+import GlobalLoader from "./ui/globalLoader";
 
 const Layout = () => {
-  const { user } = useAuth();
+  const { user, authloading } = useAuth();
   const location = useLocation();
 
+  if (authloading) {
+    return <GlobalLoader></GlobalLoader>;
+  }
   // Redirect '/' based on authentication status
   if (location.pathname === "/") {
     return <Navigate to={user ? "/dashboard" : "/login"} />;
