@@ -30,10 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
   // Login Function
   const updateAuth = (user: User) => {
-    let { token, ...userDetails } = user;
-    token = token || "";
-    setUser(userDetails);
-    localStorage.setItem("token", token);
+    setUser(user);
   };
 
   // Logout Function
@@ -43,7 +40,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .then(() => {
         setUser(null);
         setAuthLoading(false);
-        localStorage.removeItem("token");
         window.location.href = "/login";
       })
       .catch((e) => {

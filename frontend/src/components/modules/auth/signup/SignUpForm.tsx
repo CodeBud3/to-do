@@ -1,5 +1,3 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,38 +6,49 @@ import {
   buildSchema,
   getDefaultValues,
 } from "@/utils/formHelper";
-import { FormElement } from "./FormElement/FormElement";
-import { loginConfig } from "./config";
-import { login } from "@/api/auth";
+import { FormElement } from "@/components/modules/auth/common/FormElement";
+import { register } from "@/api/auth";
+import { signUpConfig } from "@/configs/authFormConfig";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { AuthResponse } from "@/types/auth.types";
-import { useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 
-const formSchema = z.object(buildSchema(loginConfig));
+const formSchema = z
+  .object(buildSchema(signUpConfig))
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
 
-export function LoginForm() {
+export function SignUpForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const { updateAuth } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: getDefaultValues(loginConfig),
+    defaultValues: getDefaultValues(signUpConfig),
   });
+  const { updateAuth } = useAuth();
+  const passwordWatcher = form.watch("password");
+  useEffect(() => {
+    // validate only if confirmPassword is dirty.
+    if (form.formState.dirtyFields.confirmPassword) {
+      form.trigger("confirmPassword");
+    }
+  }, [passwordWatcher, form.trigger]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setErrors([]);
-    const { rememberMe, ...payload } = values;
-    login(payload)
-      .then((data: AuthResponse) => {
+    const { confirmPassword, ...payload } = values;
+    register(payload)
+      .then((data) => {
         updateAuth(data.data.user);
         setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
-        console.log("failed to login", error);
+        console.log(error);
         setErrors(handleError(error));
       });
   }
@@ -47,15 +56,15 @@ export function LoginForm() {
     <>
       {errors.length > 0 && (
         <ErrorMessage
+          {...applyTestAttributes("sign-up", "form-errors")}
           errors={errors}
-          {...applyTestAttributes("sign-in", "form-errors")}
         ></ErrorMessage>
       )}
       <FormElement
         onSubmit={onSubmit}
         form={form}
-        formConfig={loginConfig}
-        submitBtnLabel="Sign in"
+        formConfig={signUpConfig}
+        submitBtnLabel="Create account"
         loading={loading}
       ></FormElement>
     </>

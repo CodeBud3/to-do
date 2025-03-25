@@ -1,5 +1,5 @@
-import OauthProvider from "@/components/modules/auth/OAuth";
-import { SignUpForm } from "@/components/modules/auth/SignUpForm";
+import { LoginForm } from "@/components/modules/auth/login/LoginForm";
+import OauthProvider from "@/components/modules/auth/common/OAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +14,7 @@ import { applyTestAttributes } from "@/utils/formHelper";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function SignUpPage() {
+export default function LoginPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
@@ -23,15 +23,16 @@ export default function SignUpPage() {
       return;
     }
   }, [user, navigate]);
+
   if (user) {
     return <></>;
   }
   return (
     <>
       <div className="login fixed flex justify-end items-center nav-bar-box-model top-0 right-0">
-        <Button className="p-0" {...applyTestAttributes("nav", "signin-link")}>
-          <Link className="px-4 py-3" to="/login">
-            Login
+        <Button className="p-0" {...applyTestAttributes("nav", "signup-link")}>
+          <Link className="px-4 py-3" to="/signup">
+            Sign up
           </Link>
         </Button>
       </div>
@@ -39,28 +40,28 @@ export default function SignUpPage() {
         <Card className="w-150 self-center">
           <CardHeader>
             <CardTitle
-              {...applyTestAttributes("signup", "card-title")}
               className="flex-center text-2xl font-bold"
+              {...applyTestAttributes("signin", "card-title")}
             >
-              Create an account
+              Sign in to your account
             </CardTitle>
             <CardDescription
-              {...applyTestAttributes("signup", "card-desc")}
               className="flex-center font-medium"
+              {...applyTestAttributes("signin", "card-desc")}
             >
-              Enter your details below to create your account.
+              Enter your credentials below to sign in.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <OauthProvider></OauthProvider>
-            <SignUpForm></SignUpForm>
+            <LoginForm></LoginForm>
           </CardContent>
           <CardFooter className="flex-center">
             <p>
-              Already have an account?{" "}
+              Don't have an account?{" "}
               <b>
-                <Link {...applyTestAttributes("signin", "link")} to="/login">
-                  Sign in
+                <Link to="/signup" {...applyTestAttributes("signup", "link")}>
+                  Sign up
                 </Link>
               </b>
             </p>

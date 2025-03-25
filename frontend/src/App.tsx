@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { lazy, Suspense } from "react";
-import GlobalLoader from "./components/ui/globalLoader";
-
-const PrivateRoute = lazy(() => import("@/pages/ProtectedRoute"));
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Layout = lazy(() => import("@/components/Layout"));
-const LoginPage = lazy(() => import("@/pages/LoginPage"));
-const SignUpPage = lazy(() => import("@/pages/SignupPage"));
+import GlobalLoader from "@/components/ui/globalLoader";
+import Layout from "@/components/Layout";
+const PrivateRoute = lazy(() => import("@/components/modules/ProtectedRoute"));
+const Dashboard = lazy(
+  () => import("@/components/modules/dashboard/DashboardPage")
+);
+const LoginPage = lazy(() => import("@/components/modules/auth/LoginPage"));
+const SignUpPage = lazy(() => import("@/components/modules/auth/SignupPage"));
 
 const App = () => {
   return (

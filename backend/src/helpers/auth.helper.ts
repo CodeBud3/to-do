@@ -23,7 +23,7 @@ export const SESSION_CONFIG: any = {
   cookie: COOKIE_CONFIG,
 };
 
-export const generateToken = (user: IUser, res: Response): string => {
+export const generateToken = (user: IUser, res: Response): void => {
   const token = jwt.sign(
     { userId: user._id, role: user.role, email: user.email },
     JWT_SECRET,
@@ -32,7 +32,6 @@ export const generateToken = (user: IUser, res: Response): string => {
     }
   );
   res.cookie(SESSION_KEY, token, COOKIE_CONFIG);
-  return token;
 };
 export const clearSession = (res: Response): void => {
   res.cookie(SESSION_KEY, "", { ...COOKIE_CONFIG, maxAge: 0 });
