@@ -36,8 +36,8 @@ export default function LoginPage() {
           </Link>
         </Button>
       </div>
-      <div className="h-full flex justify-center items-center px-10">
-        <Card className="w-150">
+      <div className="h-full flex justify-center content-center p-10">
+        <Card className="w-150 self-center">
           <CardHeader>
             <CardTitle
               className="flex-center text-2xl font-bold"
