@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ErrorDetails } from "./error.types";
 
 export type InputType =
   | "checkbox"
@@ -43,7 +44,7 @@ export interface AuthResponse {
   success: boolean;
   message: string;
   data: UserData;
-  error?: any;
+  error?: ErrorDetails;
 }
 
 export interface UserData {

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/config/config";
+import { API_BASE_URL } from "@/configs/appConfig";
 import axios from "axios";
 
 // Create Axios instance

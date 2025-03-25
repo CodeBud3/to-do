@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { API_BASE_URL } from "@/config/config";
+import { API_BASE_URL } from "@/configs/appConfig";
 import { applyTestAttributes } from "@/utils/formHelper";
 
 export default function OauthProvider() {
