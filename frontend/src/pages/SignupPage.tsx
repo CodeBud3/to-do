@@ -23,11 +23,14 @@ export default function SignUpPage() {
       return;
     }
   }, [user, navigate]);
+  if (user) {
+    return <></>;
+  }
   return (
     <>
       <div className="login fixed flex justify-end items-center nav-bar-box-model top-0 right-0">
-        <Button>
-          <Link to="/login" {...applyTestAttributes("nav", "signin-link")}>
+        <Button className="p-0" {...applyTestAttributes("nav", "signin-link")}>
+          <Link className="px-4 py-3" to="/login">
             Login
           </Link>
         </Button>

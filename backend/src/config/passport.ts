@@ -57,6 +57,7 @@ passport.use(
         });
         if (user && !user.oAuthProfileId) {
           user.oAuthProfileId = id;
+          user.provider = "google";
           await user.save();
         }
         if (!user) {

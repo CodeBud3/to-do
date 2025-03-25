@@ -24,11 +24,14 @@ export default function LoginPage() {
     }
   }, [user, navigate]);
 
+  if (user) {
+    return <></>;
+  }
   return (
     <>
       <div className="login fixed flex justify-end items-center nav-bar-box-model top-0 right-0">
-        <Button>
-          <Link to="/signup" {...applyTestAttributes("nav", "signup-link")}>
+        <Button className="p-0" {...applyTestAttributes("nav", "signup-link")}>
+          <Link className="px-4 py-3" to="/signup">
             Sign up
           </Link>
         </Button>
