@@ -1,8 +1,9 @@
 import passport from "passport";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as MicrosoftStrategy } from "passport-microsoft";
 import { Request } from "express";
-import { extractProfileFromGoogle, SESSION_KEY } from "../helpers/auth.helper";
+import { extractProfile, SESSION_KEY } from "../helpers/auth.helper";
 import { IUser, User } from "../models/User";
 
 // 🔹 Custom function to extract JWT from both Header and Cookies
@@ -50,14 +51,16 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const [id, firstName, lastName, email, provider] =
-          extractProfileFromGoogle(profile);
+        const [id, firstName, lastName, email, provider] = extractProfile(
+          profile,
+          "google"
+        );
         let user: IUser | null = await User.findOne({
           email: email,
         });
         if (user && !user.oAuthProfileId) {
           user.oAuthProfileId = id;
-          user.provider = "google";
+          user.provider = provider;
           await user.save();
         }
         if (!user) {
@@ -81,6 +84,49 @@ passport.use(
   )
 );
 
+passport.use(
+  new MicrosoftStrategy(
+    {
+      clientID: process.env.MS_OAUTH2_CLIENT_ID!,
+      clientSecret: process.env.MS_OAUTH2_CLIENT_SECRET!,
+      callbackURL: `${process.env.HOST_URL}${process.env.MS_OAUTH2_REDIRECT_URL}`,
+      scope: ["openid", "email", "profile", "User.Read"], // Read basic user profile info
+      tenant: "common", // Supports multiple tenants
+    },
+    async (_: any, __: any, profile: any, done: any) => {
+      try {
+        const [id, firstName, lastName, email, provider] = extractProfile(
+          profile,
+          "microsoft"
+        );
+        let user: IUser | null = await User.findOne({
+          email: email,
+        });
+        if (user && !user.oAuthProfileId) {
+          user.oAuthProfileId = id;
+          user.provider = provider;
+          await user.save();
+        }
+        if (!user) {
+          // Create new user
+          user = new User({
+            oAuthProfileId: id,
+            firstName,
+            lastName,
+            email,
+            provider,
+          });
+          await user.save();
+        }
+
+        return done(null, user);
+      } catch (error) {
+        console.error(error);
+        return done(error, false);
+      }
+    }
+  )
+);
 // Serialize and Deserialize User
 passport.serializeUser((user: IUser, done) => {
   return done(null, user.id);

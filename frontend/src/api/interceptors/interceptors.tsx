@@ -1,8 +1,9 @@
+import { API_BASE_URL } from "@/config/config";
 import axios from "axios";
 
 // Create Axios instance
 const axiosInstance = axios.create({
-  baseURL: "https://to-do-test-cjnr.onrender.com", // Replace with your API URL
+  baseURL: API_BASE_URL, // Replace with your API URL
   withCredentials: true, // Ensures cookies (like HTTP-only JWT) are sent
 });
 

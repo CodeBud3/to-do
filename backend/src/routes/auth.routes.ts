@@ -42,6 +42,18 @@ router.get(
     session: true,
   })
 );
+// Redirect user to Microsoft login
+router.get("/microsoft", passport.authenticate("microsoft"));
+
+// Microsoft redirects back to this route after login
+router.get(
+  "/microsoft/callback",
+  passport.authenticate("microsoft", {
+    failureRedirect: `${CLIENT_URL}/login`,
+    successRedirect: `${CLIENT_URL}/dashboard`,
+    session: true, // Enable session storage
+  })
+);
 router.delete(
   "/admin/delete/:email",
   validateRequest(emailSchema),

@@ -9,7 +9,7 @@ const errorMiddleware: ErrorRequestHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error("Error:", err);
+  console.error("Error:", err.message);
 
   if (err instanceof AppError) {
     return sendResponse(res, err.statusCode, false, err.message, null, {

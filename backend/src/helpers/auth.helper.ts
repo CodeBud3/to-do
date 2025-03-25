@@ -15,9 +15,6 @@ export const COOKIE_CONFIG: any = {
   maxAge: dayToMs(7),
   path: "/",
 };
-console.log(
-  `COOKIE_CONFIG :: ${COOKIE_CONFIG.secure} :: ${COOKIE_CONFIG.sameSite}`
-);
 export const SESSION_CONFIG: any = {
   secret: process.env.SESSION_SECRET!,
   resave: false,
@@ -48,13 +45,16 @@ export const generateApiToken = (user: IUser): string => {
   );
 };
 
-export const extractProfileFromGoogle = (
-  profile: any
+export const extractProfile = (
+  profile: any,
+  provider: string
 ): [string, string, string, string, string] => {
   const id = profile.id || "";
   const email = profile.emails?.[0]?.value || "";
-  const firstName = profile.displayName?.split(" ")[0] || "";
+  let firstName = profile.displayName?.split(" ")[0] || "";
   const lastName = profile.displayName?.split(" ")?.[1] || "";
-  const provider = "google";
+  if (!firstName) {
+    firstName = email.split("@")[0];
+  }
   return [id, firstName, lastName, email, provider];
 };
