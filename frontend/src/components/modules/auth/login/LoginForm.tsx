@@ -13,7 +13,7 @@ import { loginConfig } from "@/configs/authFormConfig";
 import { login } from "@/api/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthResponse } from "@/types/auth.types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 import { passwordValidator } from "@/utils/validators";
@@ -29,6 +29,13 @@ export function LoginForm() {
     defaultValues: getDefaultValues(loginConfig),
   });
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail") || "";
+    if (savedEmail) {
+      form.setValue("email", savedEmail);
+      form.setValue("rememberMe", true);
+    }
+  }, []);
   const validateOnSubmit = (values: z.infer<typeof formSchema>) => {
     const fullSchema = formSchema.extend({
       password: passwordValidator,
@@ -48,6 +55,8 @@ export function LoginForm() {
       return;
     }
     const { rememberMe, ...payload } = values;
+    rememberMe && localStorage.setItem("rememberedEmail", payload.email);
+    !rememberMe && localStorage.removeItem("rememberedEmail");
     login(payload)
       .then((data: AuthResponse) => {
         updateAuth(data.data.user);
