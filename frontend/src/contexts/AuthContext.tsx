@@ -38,13 +38,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Logout Function
   const logout = () => {
+    setAuthLoading(true);
     logOut()
       .then(() => {
         setUser(null);
+        setAuthLoading(false);
         localStorage.removeItem("token");
         window.location.href = "/login";
       })
       .catch((e) => {
+        setAuthLoading(false);
         console.error("Logout failed", e.message);
       });
   };

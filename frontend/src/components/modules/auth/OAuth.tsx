@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { applyTestAttributes } from "@/utils/formHelper";
 
 export default function OauthProvider() {
   const handleGoogleLogin = () => {
@@ -7,6 +8,8 @@ export default function OauthProvider() {
       "_self"
     );
   };
+  const handleMSLogin = () => {};
+  const handleAppleLogin = () => {};
   return (
     <>
       <div className="w-full flex gap-4 flex-wrap align-middle justify-between">
@@ -14,6 +17,7 @@ export default function OauthProvider() {
           className="flex-1"
           variant="outline"
           onClick={handleGoogleLogin}
+          {...applyTestAttributes("signin", "google-auth")}
         >
           <img
             className="w-6 h-6"
@@ -25,24 +29,26 @@ export default function OauthProvider() {
         <Button
           className="flex-1"
           variant="outline"
-          onClick={handleGoogleLogin}
+          onClick={handleMSLogin}
+          {...applyTestAttributes("signin", "ms-auth")}
         >
           <img
             className="w-6 h-6"
             src="/icons/microsoft_logo.svg"
-            alt="Google Logo"
+            alt="MS Logo"
           />
           <span>Microsoft</span>
         </Button>
         <Button
           className="flex-1"
           variant="outline"
-          onClick={handleGoogleLogin}
+          onClick={handleAppleLogin}
+          {...applyTestAttributes("signin", "apple-auth")}
         >
           <img
             className="w-6 h-6"
             src="/icons/apple_logo.svg"
-            alt="Google Logo"
+            alt="Apple Logo"
           />
           <span>Apple</span>
         </Button>

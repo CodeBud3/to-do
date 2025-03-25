@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { applyTestAttributes } from "@/utils/formHelper";
 import { Code } from "lucide-react";
 
 export default function Navbar() {
@@ -17,7 +18,9 @@ export default function Navbar() {
       </div>
       {user && (
         <div className="profile flex-center">
-          <Button onClick={onLogout}>Logout {user?.firstName}</Button>
+          <Button onClick={onLogout} {...applyTestAttributes("nav", "logout")}>
+            Logout {user?.firstName}
+          </Button>
         </div>
       )}
     </div>
