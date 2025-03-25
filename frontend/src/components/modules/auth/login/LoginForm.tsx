@@ -16,6 +16,7 @@ import { AuthResponse } from "@/types/auth.types";
 import { useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
+import { passwordValidator } from "@/utils/validators";
 
 const formSchema = z.object(buildSchema(loginConfig));
 
@@ -28,9 +29,24 @@ export function LoginForm() {
     defaultValues: getDefaultValues(loginConfig),
   });
 
+  const validateOnSubmit = (values: z.infer<typeof formSchema>) => {
+    const fullSchema = formSchema.extend({
+      password: passwordValidator,
+    });
+
+    const result = fullSchema.safeParse(values);
+    return result;
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setErrors([]);
+    const result = validateOnSubmit(values);
+    if (!result.success) {
+      setErrors(["Incorrect email or password."]);
+      setLoading(false);
+      return;
+    }
     const { rememberMe, ...payload } = values;
     login(payload)
       .then((data: AuthResponse) => {
