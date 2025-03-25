@@ -35,8 +35,8 @@ export default function SignUpPage() {
           </Link>
         </Button>
       </div>
-      <div className="h-full flex justify-center items-center p-10">
-        <Card className="w-150">
+      <div className="h-full flex justify-center content-center p-10">
+        <Card className="w-150 self-center">
           <CardHeader>
             <CardTitle
               {...applyTestAttributes("signup", "card-title")}

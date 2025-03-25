@@ -21,7 +21,7 @@ const Layout = () => {
         <main className="flex-1">
           <Outlet /> {/* Render the current route */}
         </main>
-        <footer className="p-4 bg-gray-200 text-center">© 2025 My App</footer>
+        <footer className="p-4 bg-gray-200 text-center">© 2025 CodeBud</footer>
       </div>
     </div>
   );

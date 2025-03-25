@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "docker-start": "docker-compose up --build",
+    "docker-build-backend": "cd backend && docker build -t rakesh013595/to-do:test .",
+    "docker-push-backend": "cd backend && docker push rakesh013595/to-do:test",
     "frontend": "cd frontend && npm install && npm run dev",
-    "backend": "cd backend && npm install && npm run dev"
+    "backend": "cd backend && npm install && npm run dev",
+    "generate-key": "node -e console.log(require('crypto').randomBytes(32).toString('hex'));"
   },
   "author": "",
   "license": "ISC"

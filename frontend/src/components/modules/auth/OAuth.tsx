@@ -35,19 +35,6 @@ export default function OauthProvider() {
           />
           <span>Microsoft</span>
         </Button>
-        <Button
-          className="flex-1"
-          variant="outline"
-          onClick={() => handleOAuthLogin("apple")}
-          {...applyTestAttributes("signin", "apple-auth")}
-        >
-          <img
-            className="w-6 h-6"
-            src="/icons/apple_logo.svg"
-            alt="Apple Logo"
-          />
-          <span>Apple</span>
-        </Button>
       </div>
       <div className="flex w-full my-6 text-gray-500 items-center justify-center gap-4">
         <hr className="flex-2"></hr>
