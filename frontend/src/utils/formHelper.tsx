@@ -48,6 +48,7 @@ export const getInputByType = (
             <PasswordInput
               type={c.type}
               placeholder={c.placeholder}
+              visibilityKey={c.key}
               {...field}
               {...applyTestAttributes("field", c.key)}
             />
