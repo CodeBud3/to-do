@@ -11,10 +11,7 @@ export const fetchUserDetails = (
   next: NextFunction
 ) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return next(new AuthorizationError(["Authroization failed"]));
-    }
+    const user = req.user!;
     const data = {
       user: {
         id: user.id,
