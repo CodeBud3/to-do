@@ -6,15 +6,8 @@ import {
   fetchApiToken,
 } from "../controllers/auth.controller";
 import { validateRequest } from "../middlewares/validateReqMiddleware";
-import {
-  registerSchema,
-  loginSchema,
-  emailSchema,
-} from "../validators/auth.validators";
-import {
-  authenticate,
-  authenticate_admin,
-} from "../middlewares/authMiddleware";
+import { registerSchema, loginSchema } from "../validators/auth.validators";
+import { authenticate } from "../middlewares/authMiddleware";
 import passport from "passport";
 
 const CLIENT_URL = process.env.CLIENT_URL;

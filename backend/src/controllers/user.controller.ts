@@ -65,3 +65,19 @@ export const forgotPassword = async (
   const params = { email, resetLink };
   return sendResetEmail(params, res, next);
 };
+
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { password } = req.body;
+  const user = req.user!;
+  try {
+    user.password = password;
+    user.save();
+    sendResponse(res, 200, true, "Password reset successfull.");
+  } catch (error) {
+    return next(error);
+  }
+};

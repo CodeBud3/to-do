@@ -7,9 +7,14 @@ import {
   deleteUser,
   fetchUserDetails,
   forgotPassword,
+  resetPassword,
 } from "../controllers/user.controller";
 import { validateRequest } from "../middlewares/validateReqMiddleware";
-import { emailParamsSchema, emailSchema } from "../validators/auth.validators";
+import {
+  emailParamsSchema,
+  emailSchema,
+  passwordSchema,
+} from "../validators/user.validators";
 
 const router = express.Router();
 
@@ -22,5 +27,10 @@ router.delete(
   authenticate_admin,
   deleteUser
 );
-
+router.post(
+  "/reset-password",
+  validateRequest(passwordSchema),
+  authenticate,
+  resetPassword
+);
 export default router;
