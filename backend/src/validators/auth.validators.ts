@@ -22,8 +22,14 @@ export const loginSchema = z.object({
   }),
 });
 
-export const emailSchema = z.object({
+export const emailParamsSchema = z.object({
   params: z.object({
+    email: emailValidator,
+  }),
+});
+
+export const emailSchema = z.object({
+  body: z.object({
     email: emailValidator,
   }),
 });

@@ -33,9 +33,18 @@ export const generateToken = (user: IUser, res: Response): void => {
   );
   res.cookie(SESSION_KEY, token, COOKIE_CONFIG);
 };
+
+export const generateForgotPasswordToken = (user: IUser): string => {
+  // Generate JWT token valid for 15 minutes
+  return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, {
+    expiresIn: "15m",
+  });
+};
+
 export const clearSession = (res: Response): void => {
   res.cookie(SESSION_KEY, "", { ...COOKIE_CONFIG, maxAge: 0 });
 };
+
 export const generateApiToken = (user: IUser): string => {
   return jwt.sign(
     { userId: user.id, role: user.role, email: user.email },
