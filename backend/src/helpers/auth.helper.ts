@@ -36,9 +36,13 @@ export const generateToken = (user: IUser, res: Response): void => {
 
 export const generateForgotPasswordToken = (user: IUser): string => {
   // Generate JWT token valid for 15 minutes
-  return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, {
-    expiresIn: "15m",
-  });
+  return jwt.sign(
+    { userId: user._id, role: user.role, email: user.email },
+    JWT_SECRET!,
+    {
+      expiresIn: "15m",
+    }
+  );
 };
 
 export const clearSession = (res: Response): void => {

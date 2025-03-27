@@ -68,6 +68,7 @@ export const loginConfig: FormConfig<"email" | "password" | "rememberMe">[] = [
   {
     key: "password",
     label: "Password",
+    config: { forgotPassword: true, label: "Forgot Password?" },
     type: "password",
     placeholder: "Enter your password",
     validation: requiredValidator("Password"),
@@ -79,3 +80,31 @@ export const loginConfig: FormConfig<"email" | "password" | "rememberMe">[] = [
     validation: z.boolean().default(false).optional(),
   },
 ];
+
+export const forgotPasswordConfig: FormConfig<"email">[] = [
+  {
+    key: "email",
+    label: "Email",
+    type: "email",
+    placeholder: "Enter your email address",
+    validation: requiredValidator("Email").and(emailValidator),
+  },
+];
+
+export const resetPasswordConfig: FormConfig<"password" | "confirmPassword">[] =
+  [
+    {
+      key: "password",
+      label: "Password",
+      type: "password",
+      placeholder: "Enter your password",
+      validation: requiredValidator("Password").and(passwordValidator),
+    },
+    {
+      key: "confirmPassword",
+      label: "Confirm Password",
+      type: "password",
+      placeholder: "Enter your password",
+      validation: confirmPasswordValidator,
+    },
+  ];

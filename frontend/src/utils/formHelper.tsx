@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/passwordInput";
 import { FormConfig, InitialValue } from "@/types/auth.types";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 
 const defaultValueMap: { [key: string]: InitialValue } = {
@@ -41,8 +42,16 @@ export const getInputByType = (
     case "password":
       return (
         <>
-          <FormLabel {...applyTestAttributes("label", c.key)}>
+          <FormLabel
+            className="flex justify-between"
+            {...applyTestAttributes("label", c.key)}
+          >
             {c.label}
+            {c.config?.forgotPassword && (
+              <Link to="/forgot-password">
+                <div className="text-sm text-gray-500">{c.config.label}</div>
+              </Link>
+            )}
           </FormLabel>
           <FormControl>
             <PasswordInput

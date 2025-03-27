@@ -1,5 +1,3 @@
-import { LoginForm } from "@/components/modules/auth/forms/LoginForm";
-import OauthProvider from "@/components/modules/auth/common/OAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,25 +7,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useAuth } from "@/contexts/AuthContext";
 import { applyTestAttributes } from "@/utils/formHelper";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ResetPasswordForm } from "./forms/ResetPasswordForm";
+import { MoveLeft } from "lucide-react";
 
-export default function LoginPage() {
-  const { user } = useAuth();
+export default function ResetPasswordPage() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-      return;
-    }
-  }, [user, navigate]);
-
-  if (user) {
-    // To-Do: return loading screen
-    return <></>;
+  const token = searchParams.get("token");
+  if (!token) {
+    navigate("/login");
+    return;
   }
+
   return (
     <>
       <div className="login fixed flex justify-end items-center nav-bar-box-model top-0 right-0">
@@ -41,30 +35,30 @@ export default function LoginPage() {
         <Card className="w-150 self-center">
           <CardHeader>
             <CardTitle
+              {...applyTestAttributes("signup", "card-title")}
               className="flex-center text-2xl font-bold"
-              {...applyTestAttributes("signin", "card-title")}
             >
-              Sign in to your account
+              Reset your password
             </CardTitle>
             <CardDescription
+              {...applyTestAttributes("signup", "card-desc")}
               className="flex-center font-medium"
-              {...applyTestAttributes("signin", "card-desc")}
             >
-              Enter your credentials below to sign in.
+              Go ahead and set a new password
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <OauthProvider></OauthProvider>
-            <LoginForm></LoginForm>
+            <ResetPasswordForm token={token} />
           </CardContent>
           <CardFooter className="flex-center">
             <p>
-              Don't have an account?{" "}
-              <b>
-                <Link to="/signup" {...applyTestAttributes("signup", "link")}>
-                  Sign up
-                </Link>
-              </b>
+              <Link
+                className="flex gap-1 content-center align-center"
+                to="/login"
+                {...applyTestAttributes("login", "link")}
+              >
+                <MoveLeft className="w-4" /> Back to log in
+              </Link>
             </p>
           </CardFooter>
         </Card>
