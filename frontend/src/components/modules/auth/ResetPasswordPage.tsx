@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { applyTestAttributes } from "@/utils/formHelper";
-import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ResetPasswordForm } from "./forms/ResetPasswordForm";
 import { MoveLeft } from "lucide-react";
