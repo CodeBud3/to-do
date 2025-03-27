@@ -9,53 +9,45 @@ import {
   getDefaultValues,
 } from "@/utils/formHelper";
 import { FormElement } from "@/components/modules/auth/common/FormElement";
-import { loginConfig } from "@/configs/authFormConfig";
-import { login } from "@/api/auth";
-import { useAuth } from "@/contexts/AuthContext";
+import { forgotPasswordConfig } from "@/configs/authFormConfig";
 import { AuthResponse } from "@/types/auth.types";
 import { useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
-import { passwordValidator } from "@/utils/validators";
+import { forgotPassword } from "@/api/user";
+import { useAlertDialog } from "@/contexts/AlertDialogContext";
+import { useNavigate } from "react-router-dom";
 
-const formSchema = z.object(buildSchema(loginConfig));
+const formSchema = z.object(buildSchema(forgotPasswordConfig));
 
-export function LoginForm() {
+export function ForgotPasswordForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const { updateAuth } = useAuth();
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: getDefaultValues(loginConfig),
+    defaultValues: getDefaultValues(forgotPasswordConfig),
   });
-
-  const validateOnSubmit = (values: z.infer<typeof formSchema>) => {
-    const fullSchema = formSchema.extend({
-      password: passwordValidator,
-    });
-
-    const result = fullSchema.safeParse(values);
-    return result;
-  };
-
+  const { openDialog } = useAlertDialog();
   function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setErrors([]);
-    const result = validateOnSubmit(values);
-    if (!result.success) {
-      setErrors(["Incorrect email or password."]);
-      setLoading(false);
-      return;
-    }
-    const { rememberMe, ...payload } = values;
-    login(payload)
+    forgotPassword(values)
       .then((data: AuthResponse) => {
-        updateAuth(data.data.user);
         setLoading(false);
+        const params = {
+          title: "Password Reset",
+          description: data.message,
+          confirm: "Confirm",
+          cancel: false,
+          onConfirm: () => {
+            navigate("/login");
+          },
+        };
+        openDialog(params);
       })
       .catch((error) => {
         setLoading(false);
-        console.log("failed to login", error);
         setErrors(handleError(error));
       });
   }
@@ -70,8 +62,8 @@ export function LoginForm() {
       <FormElement
         onSubmit={onSubmit}
         form={form}
-        formConfig={loginConfig}
-        submitBtnLabel="Sign in"
+        formConfig={forgotPasswordConfig}
+        submitBtnLabel="Reset Password"
         loading={loading}
       ></FormElement>
     </>

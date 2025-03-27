@@ -25,6 +25,7 @@ export interface FormConfig<T extends string = string> {
   placeholder?: string;
   initialValue?: InitialValue;
   group?: number;
+  config?: { [key: string]: boolean | string };
 }
 
 export interface SignUpCredentials {

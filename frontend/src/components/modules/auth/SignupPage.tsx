@@ -1,5 +1,5 @@
 import OauthProvider from "@/components/modules/auth/common/OAuth";
-import { SignUpForm } from "@/components/modules/auth/signup/SignUpForm";
+import { SignUpForm } from "@/components/modules/auth/forms/SignUpForm";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,6 +24,7 @@ export default function SignUpPage() {
     }
   }, [user, navigate]);
   if (user) {
+    //  To-Do: return loading screen
     return <></>;
   }
   return (

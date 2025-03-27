@@ -1,0 +1,88 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  applyTestAttributes,
+  buildSchema,
+  getDefaultValues,
+} from "@/utils/formHelper";
+import { FormElement } from "@/components/modules/auth/common/FormElement";
+import { resetPasswordConfig } from "@/configs/authFormConfig";
+import { useEffect, useState } from "react";
+import { handleError } from "@/utils/errorHandler";
+import { ErrorMessage } from "@/components/ui/errorMessage";
+import { resetPassword } from "@/api/user";
+import { useNavigate } from "react-router-dom";
+import { useAlertDialog } from "@/contexts/AlertDialogContext";
+
+interface ResetPasswordProps {
+  token: string;
+}
+
+const formSchema = z
+  .object(buildSchema(resetPasswordConfig))
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
+export function ResetPasswordForm({ token }: ResetPasswordProps) {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<string[]>([]);
+  const { openDialog } = useAlertDialog();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: getDefaultValues(resetPasswordConfig),
+  });
+  const navigate = useNavigate();
+  const passwordWatcher = form.watch("password");
+  useEffect(() => {
+    // validate only if confirmPassword is dirty.
+    if (form.formState.dirtyFields.confirmPassword) {
+      form.trigger("confirmPassword");
+    }
+  }, [passwordWatcher, form.trigger]);
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    setErrors([]);
+    const { confirmPassword, ...payload } = values;
+    resetPassword(payload, token)
+      .then((data) => {
+        setLoading(false);
+        const params = {
+          title: "Password Reset",
+          description: data.message,
+          confirm: "Confirm",
+          cancel: false,
+          onConfirm: () => {
+            navigate("/login");
+          },
+        };
+        openDialog(params);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setErrors(handleError(error));
+      });
+  }
+  return (
+    <>
+      {errors.length > 0 && (
+        <ErrorMessage
+          {...applyTestAttributes("reset-password", "form-errors")}
+          errors={errors}
+        ></ErrorMessage>
+      )}
+      <FormElement
+        onSubmit={onSubmit}
+        form={form}
+        formConfig={resetPasswordConfig}
+        submitBtnLabel="Save"
+        loading={loading}
+      ></FormElement>
+    </>
+  );
+}

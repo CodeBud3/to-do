@@ -88,30 +88,6 @@ export const login = async (
   }
 };
 
-export const fetchUserDetails = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const user = req.user;
-    if (!user) {
-      return next(new AuthorizationError(["Authroization failed"]));
-    }
-    const data = {
-      user: {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-      },
-    };
-    sendResponse(res, 200, true, "User details fetched successfully", data);
-  } catch (error: any) {
-    return next(error);
-  }
-};
-
 export const logout = (req: Request, res: Response, next: NextFunction) => {
   try {
     clearSession(res);
@@ -124,59 +100,6 @@ export const logout = (req: Request, res: Response, next: NextFunction) => {
         sendResponse(res, 200, true, "Logged out successfully");
       });
     });
-  } catch (error: any) {
-    return next(error);
-  }
-};
-
-export const forgotPassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email } = req.body;
-
-    // Check if user exists
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return next(new ValidationError(["User not found"]));
-    }
-
-    // 1. Generate a password reset token
-    // 2. Save it to the user document with an expiration
-    // 3. Send an email with the reset link
-    sendResponse(
-      res,
-      200,
-      true,
-      "Password reset instructions sent to your email"
-    );
-  } catch (error: any) {
-    return next(error);
-  }
-};
-
-export const deleteUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const email = req.params?.email;
-    if (!email) {
-      return next(new ValidationError(["Invalid email parameter"]));
-    }
-    if (req?.user?.role !== "admin") {
-      return next(new AuthorizationError(["Unauthorized action"]));
-    }
-
-    const deletedUser = await User.findOneAndDelete({ email });
-
-    if (!deletedUser) {
-      return next(new ValidationError(["User not found"]));
-    }
-    sendResponse(res, 200, true, "User deleted successfully");
   } catch (error: any) {
     return next(error);
   }

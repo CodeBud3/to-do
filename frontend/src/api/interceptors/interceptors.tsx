@@ -26,10 +26,9 @@ axiosInstance.interceptors.response.use(
   (error) => {
     console.error("Response Error:", error);
     if (error.response?.status === 401) {
-      // Redirect to login only if in protected path
-      if (
-        !["/login", "/signup"].includes(window.location.pathname.toLowerCase())
-      ) {
+      // Redirect to login for paths other than /api/users/profile
+      if (error.response?.config?.url != "/api/users/profile") {
+        // To-Do: show a banner before logging out
         window.location.href = "/login";
       }
     }

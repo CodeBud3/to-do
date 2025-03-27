@@ -1,5 +1,3 @@
-import { LoginForm } from "@/components/modules/auth/forms/LoginForm";
-import OauthProvider from "@/components/modules/auth/common/OAuth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,8 +11,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { applyTestAttributes } from "@/utils/formHelper";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { MoveLeft } from "lucide-react";
+import { ForgotPasswordForm } from "./forms/ForgotPasswordForm";
 
-export default function LoginPage() {
+export default function ForgotPassword() {
   const { user } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function LoginPage() {
   }, [user, navigate]);
 
   if (user) {
-    // To-Do: return loading screen
+    // return loading screen
     return <></>;
   }
   return (
@@ -44,27 +44,27 @@ export default function LoginPage() {
               className="flex-center text-2xl font-bold"
               {...applyTestAttributes("signin", "card-title")}
             >
-              Sign in to your account
+              Forgot password?
             </CardTitle>
             <CardDescription
               className="flex-center font-medium"
               {...applyTestAttributes("signin", "card-desc")}
             >
-              Enter your credentials below to sign in.
+              No worries, we'll send you reset instructions.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <OauthProvider></OauthProvider>
-            <LoginForm></LoginForm>
+            <ForgotPasswordForm />
           </CardContent>
           <CardFooter className="flex-center">
             <p>
-              Don't have an account?{" "}
-              <b>
-                <Link to="/signup" {...applyTestAttributes("signup", "link")}>
-                  Sign up
-                </Link>
-              </b>
+              <Link
+                className="flex gap-1 content-center align-center"
+                to="/login"
+                {...applyTestAttributes("login", "link")}
+              >
+                <MoveLeft className="w-4" /> Back to log in
+              </Link>
             </p>
           </CardFooter>
         </Card>
