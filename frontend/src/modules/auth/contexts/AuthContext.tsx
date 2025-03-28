@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .catch((err) => {
           setAuthLoading(false);
           setUser(null);
-          console.error("Failed to fetch user profile", err);
         });
     }
   }, []);

@@ -14,9 +14,7 @@ export const forgotPassword = async (
 };
 
 export const getLoggedInUser = async (): Promise<AuthResponse> => {
-  const response = await axios.get(`${API_URL}/profile`, {
-    withCredentials: true,
-  });
+  const response = await axios.get(`${API_URL}/profile`);
   return response.data;
 };
 
