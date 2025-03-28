@@ -2,12 +2,12 @@ import express, { Application } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import authRoutes from "./routes/auth.routes";
-import userRoutes from "./routes/user.routes";
+import authRoutes from "./modules/auth/routes/auth.routes";
+import userRoutes from "./modules/user/routes/user.routes";
 import errorMiddleware from "./middlewares/errorMiddleware";
-import passport from "./config/passport";
+import passport from "./modules/auth/configs/passport";
 import session from "express-session";
-import { SESSION_CONFIG } from "./helpers/auth.helper";
+import { SESSION_CONFIG } from "./modules/auth/helpers/auth.helper";
 
 const app: Application = express();
 
