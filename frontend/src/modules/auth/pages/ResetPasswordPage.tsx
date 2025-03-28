@@ -34,13 +34,13 @@ export default function ResetPasswordPage() {
         <Card className="w-150 self-center">
           <CardHeader>
             <CardTitle
-              {...applyTestAttributes("signup", "card-title")}
+              {...applyTestAttributes("reset-password", "card-title")}
               className="flex-center text-2xl font-bold"
             >
               Reset your password
             </CardTitle>
             <CardDescription
-              {...applyTestAttributes("signup", "card-desc")}
+              {...applyTestAttributes("reset-password", "card-desc")}
               className="flex-center font-medium"
             >
               Go ahead and set a new password

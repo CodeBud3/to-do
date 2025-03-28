@@ -42,13 +42,13 @@ export default function ForgotPassword() {
           <CardHeader>
             <CardTitle
               className="flex-center text-2xl font-bold"
-              {...applyTestAttributes("signin", "card-title")}
+              {...applyTestAttributes("forgot-password", "card-title")}
             >
               Forgot password?
             </CardTitle>
             <CardDescription
               className="flex-center font-medium"
-              {...applyTestAttributes("signin", "card-desc")}
+              {...applyTestAttributes("forgot-password", "card-desc")}
             >
               No worries, we'll send you reset instructions.
             </CardDescription>
