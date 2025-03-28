@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
-import { sendEmail } from "../config/mailer";
-import sendResponse from "../utils/responseHelper";
+import { sendEmail } from "../../../config/mailer";
+import sendResponse from "../../../utils/responseHelper";
 
 export const sendResetEmail = async (
   params: any,
