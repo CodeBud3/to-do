@@ -1,0 +1,64 @@
+import { logOut } from "@/modules/auth/services/auth.service";
+import { getLoggedInUser } from "@/api/user";
+import {
+  User,
+  AuthContextType,
+  AuthResponse,
+} from "@/modules/auth/types/auth.types";
+import { createContext, useContext, useEffect, useState } from "react";
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  return context;
+};
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [authloading, setAuthLoading] = useState<boolean>(false);
+  useEffect(() => {
+    if (!user) {
+      setAuthLoading(true);
+      // fetch user profile
+      getLoggedInUser()
+        .then((data: AuthResponse) => {
+          setUser(data.data.user);
+          setAuthLoading(false);
+        })
+        .catch((err) => {
+          setAuthLoading(false);
+          setUser(null);
+          console.error("Failed to fetch user profile", err);
+        });
+    }
+  }, []);
+  // Login Function
+  const updateAuth = (user: User) => {
+    setUser(user);
+  };
+
+  // Logout Function
+  const logout = () => {
+    setAuthLoading(true);
+    logOut()
+      .then(() => {
+        setUser(null);
+        setAuthLoading(false);
+        window.location.href = "/login";
+      })
+      .catch((e) => {
+        setAuthLoading(false);
+        console.error("Logout failed", e.message);
+      });
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{ authloading, updateAuth, user, setUser, logout }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};

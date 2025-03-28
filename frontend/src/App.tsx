@@ -1,21 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider } from "./modules/auth/contexts/AuthContext";
 import { lazy, Suspense } from "react";
 import GlobalLoader from "@/components/ui/globalLoader";
-import Layout from "@/components/Layout";
+import Layout from "@/components/layout/Layout";
 import { AlertDialogProvider } from "./contexts/AlertDialogContext";
 
-const PrivateRoute = lazy(() => import("@/components/modules/ProtectedRoute"));
-const Dashboard = lazy(
-  () => import("@/components/modules/dashboard/DashboardPage")
-);
-const LoginPage = lazy(() => import("@/components/modules/auth/LoginPage"));
-const SignUpPage = lazy(() => import("@/components/modules/auth/SignupPage"));
+const ProtectedRoute = lazy(() => import("@/components/ProtectedRoute"));
+const Dashboard = lazy(() => import("@/modules/dashboard/pages/DashboardPage"));
+const LoginPage = lazy(() => import("@/modules/auth/pages/LoginPage"));
+const SignUpPage = lazy(() => import("@/modules/auth/pages/SignupPage"));
 const ForgotPassword = lazy(
-  () => import("@/components/modules/auth/ForgotPasswordPage")
+  () => import("@/modules/auth/pages/ForgotPasswordPage")
 );
 const ResetPasswordPage = lazy(
-  () => import("@/components/modules/auth/ResetPasswordPage")
+  () => import("@/modules/auth/pages/ResetPasswordPage")
 );
 
 const App = () => {
@@ -30,7 +28,7 @@ const App = () => {
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
-                <Route element={<PrivateRoute />}>
+                <Route element={<ProtectedRoute />}>
                   <Route path="/dashboard" element={<Dashboard />} />
                 </Route>
               </Route>

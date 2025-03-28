@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
-import { applyTestAttributes } from "@/utils/formHelper";
+import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 
 interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {

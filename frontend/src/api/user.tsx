@@ -1,5 +1,8 @@
-import axios from "@/api/interceptors/interceptors";
-import { AuthResponse, LoginCredentials } from "@/types/auth.types";
+import axios from "@/configs/interceptors";
+import {
+  AuthResponse,
+  LoginCredentials,
+} from "@/modules/auth/types/auth.types";
 
 const API_URL = "/api/users";
 
