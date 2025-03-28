@@ -3,7 +3,7 @@ import { User } from "../models/User";
 import { ValidationError } from "../../../utils/ErrorHandler";
 import sendResponse from "../../../utils/responseHelper";
 import { generateForgotPasswordToken } from "../../auth/helpers/auth.helper";
-import { sendResetEmail } from "../../../helpers/email.helper";
+import { sendResetEmail } from "../../auth/helpers/email.helper";
 import { IUser } from "../types/auth.types";
 
 export const fetchUserDetails = (

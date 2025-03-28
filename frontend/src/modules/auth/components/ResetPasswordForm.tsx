@@ -13,7 +13,8 @@ import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 import { resetPassword } from "@/api/user";
 import { useNavigate } from "react-router-dom";
-import { useAlertDialog } from "@/contexts/AlertDialogContext";
+import { AlertDialogComponent } from "@/hooks/AlertDialogHook/AlertDialogComponent";
+import { useAlertDialog } from "@/hooks/AlertDialogHook/AlertDialogHook";
 
 interface ResetPasswordProps {
   token: string;
@@ -29,7 +30,7 @@ const formSchema = z
 export function ResetPasswordForm({ token }: ResetPasswordProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const { openDialog } = useAlertDialog();
+  const { alertParams, showAlert, closeAlert } = useAlertDialog();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,7 +61,7 @@ export function ResetPasswordForm({ token }: ResetPasswordProps) {
             navigate("/login");
           },
         };
-        openDialog(params);
+        showAlert(params);
       })
       .catch((error) => {
         setLoading(false);
@@ -83,6 +84,11 @@ export function ResetPasswordForm({ token }: ResetPasswordProps) {
         submitBtnLabel="Save"
         loading={loading}
       ></FormElement>
+      <AlertDialogComponent
+        showAlert={showAlert}
+        alertParams={alertParams}
+        closeAlert={closeAlert}
+      />
     </>
   );
 }

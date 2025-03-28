@@ -15,8 +15,9 @@ import { useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 import { forgotPassword } from "@/api/user";
-import { useAlertDialog } from "@/contexts/AlertDialogContext";
+import { useAlertDialog } from "@/hooks/AlertDialogHook/AlertDialogHook";
 import { useNavigate } from "react-router-dom";
+import { AlertDialogComponent } from "@/hooks/AlertDialogHook/AlertDialogComponent";
 
 const formSchema = z.object(buildSchema(forgotPasswordConfig));
 
@@ -28,7 +29,7 @@ export function ForgotPasswordForm() {
     resolver: zodResolver(formSchema),
     defaultValues: getDefaultValues(forgotPasswordConfig),
   });
-  const { openDialog } = useAlertDialog();
+  const { alertParams, showAlert, closeAlert } = useAlertDialog();
   function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setErrors([]);
@@ -44,7 +45,7 @@ export function ForgotPasswordForm() {
             navigate("/login");
           },
         };
-        openDialog(params);
+        showAlert(params);
       })
       .catch((error) => {
         setLoading(false);
@@ -66,6 +67,11 @@ export function ForgotPasswordForm() {
         submitBtnLabel="Reset Password"
         loading={loading}
       ></FormElement>
+      <AlertDialogComponent
+        showAlert={showAlert}
+        alertParams={alertParams}
+        closeAlert={closeAlert}
+      />
     </>
   );
 }
