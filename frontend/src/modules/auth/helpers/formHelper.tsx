@@ -48,7 +48,10 @@ export const getInputByType = (
           >
             {c.label}
             {c.config?.forgotPassword && (
-              <Link to="/forgot-password">
+              <Link
+                to="/forgot-password"
+                {...applyTestAttributes("forgot-password", "link")}
+              >
                 <div className="text-sm text-gray-500">{c.config.label}</div>
               </Link>
             )}

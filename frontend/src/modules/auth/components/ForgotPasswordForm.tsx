@@ -57,7 +57,7 @@ export function ForgotPasswordForm() {
       {errors.length > 0 && (
         <ErrorMessage
           errors={errors}
-          {...applyTestAttributes("sign-in", "form-errors")}
+          {...applyTestAttributes("forgot-password", "form-errors")}
         ></ErrorMessage>
       )}
       <FormElement
