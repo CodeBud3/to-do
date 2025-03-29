@@ -1,5 +1,5 @@
 import { logOut } from "@/modules/auth/services/auth.service";
-import { getLoggedInUser } from "@/api/user";
+import { getLoggedInUser } from "@/modules/auth/services/user";
 import {
   User,
   AuthContextType,

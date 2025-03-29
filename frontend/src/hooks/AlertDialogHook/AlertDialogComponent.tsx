@@ -9,10 +9,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AlertHookType } from "./alert.types";
+import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 
 export function AlertDialogComponent({
   alertParams,
   closeAlert,
+  ...props
 }: AlertHookType) {
   if (!alertParams) return null;
   const cancelAndCloseAlert = () => {
@@ -30,7 +32,7 @@ export function AlertDialogComponent({
   };
   return (
     <AlertDialog open={!!alertParams} onOpenChange={closeAlert}>
-      <AlertDialogContent>
+      <AlertDialogContent {...props}>
         {(alertParams.title || alertParams.description) && (
           <AlertDialogHeader>
             {alertParams.title && (
@@ -45,12 +47,18 @@ export function AlertDialogComponent({
         )}
         <AlertDialogFooter>
           {alertParams.cancel && (
-            <AlertDialogCancel onClick={cancelAndCloseAlert}>
+            <AlertDialogCancel
+              {...applyTestAttributes("alert", "cancel")}
+              onClick={cancelAndCloseAlert}
+            >
               {alertParams.cancel}
             </AlertDialogCancel>
           )}
           {alertParams.confirm && (
-            <AlertDialogAction onClick={confirmAndcloseAlert}>
+            <AlertDialogAction
+              {...applyTestAttributes("alert", "confirm")}
+              onClick={confirmAndcloseAlert}
+            >
               {alertParams.confirm}
             </AlertDialogAction>
           )}

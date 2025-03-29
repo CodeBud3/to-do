@@ -1,4 +1,4 @@
-export const UNAUTHORIZED_RESPONSE = {
+export const UNAUTHORIZED_PROFILE_RESPONSE = {
   data: {
     success: false,
     message: "Authorization Error",
@@ -10,7 +10,7 @@ export const UNAUTHORIZED_RESPONSE = {
   },
 };
 
-export const AUTHORIZED_RESPONSE = {
+export const AUTHORIZED_PROFILE_RESPONSE = {
   data: {
     success: true,
     message: "User details fetched successfully",
@@ -22,5 +22,12 @@ export const AUTHORIZED_RESPONSE = {
         email: "johndoe@test.com",
       },
     },
+  },
+};
+
+export const PASSWORD_SUCCESS_RESPONSE = {
+  data: {
+    success: true,
+    message: "Please check your email for further instructions.",
   },
 };
