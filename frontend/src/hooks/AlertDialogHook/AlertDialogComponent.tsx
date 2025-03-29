@@ -14,6 +14,7 @@ import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 export function AlertDialogComponent({
   alertParams,
   closeAlert,
+  showAlert,
   ...props
 }: AlertHookType) {
   if (!alertParams) return null;
