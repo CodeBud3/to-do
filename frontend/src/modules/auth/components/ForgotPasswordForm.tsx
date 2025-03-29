@@ -14,7 +14,7 @@ import { AuthResponse } from "@/modules/auth/types/auth.types";
 import { useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
-import { forgotPassword } from "@/api/user";
+import { forgotPassword } from "@/modules/auth/services/user";
 import { useAlertDialog } from "@/hooks/AlertDialogHook/AlertDialogHook";
 import { useNavigate } from "react-router-dom";
 import { AlertDialogComponent } from "@/hooks/AlertDialogHook/AlertDialogComponent";
@@ -68,6 +68,7 @@ export function ForgotPasswordForm() {
         loading={loading}
       ></FormElement>
       <AlertDialogComponent
+        {...applyTestAttributes("forgot-password", "alert")}
         showAlert={showAlert}
         alertParams={alertParams}
         closeAlert={closeAlert}

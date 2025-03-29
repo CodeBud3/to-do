@@ -11,7 +11,7 @@ import { resetPasswordConfig } from "@/modules/auth/helpers/authFormConfig";
 import { useEffect, useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
-import { resetPassword } from "@/api/user";
+import { resetPassword } from "@/modules/auth/services/user";
 import { useNavigate } from "react-router-dom";
 import { AlertDialogComponent } from "@/hooks/AlertDialogHook/AlertDialogComponent";
 import { useAlertDialog } from "@/hooks/AlertDialogHook/AlertDialogHook";
