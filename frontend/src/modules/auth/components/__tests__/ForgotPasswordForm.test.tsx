@@ -1,5 +1,5 @@
 import {
-  PASSWORD_SUCCESS_RESPONSE,
+  FORGOT_PASSWORD_SUCCESS_RESPONSE,
   UNAUTHORIZED_PROFILE_RESPONSE,
 } from "@/modules/auth/services/__mocks__/user.service.data";
 import axiosInstance from "@/configs/interceptors";
@@ -48,7 +48,7 @@ describe("Test Forgot Password Form component for SUCCESS response", () => {
     });
     vi.spyOn(axiosInstance, "post").mockImplementation((url) => {
       if (url === "/api/users/forgot-password") {
-        return Promise.resolve(PASSWORD_SUCCESS_RESPONSE);
+        return Promise.resolve(FORGOT_PASSWORD_SUCCESS_RESPONSE);
       }
       return Promise.reject(new Error("Not Found"));
     });
@@ -67,7 +67,7 @@ describe("Test Forgot Password Form component for SUCCESS response", () => {
     });
 
     // click forgot password button
-    const button = screen.getByText("Reset Password");
+    const button = screen.getByTestId("button-submit");
     fireEvent.click(button);
 
     // check error message
@@ -97,7 +97,7 @@ describe("Test Forgot Password Form component for SUCCESS response", () => {
     await waitFor(() => {
       expect(screen.getByTestId("forgot-password-alert")).toBeInTheDocument();
       expect(
-        screen.getByText(PASSWORD_SUCCESS_RESPONSE.data.message)
+        screen.getByText(FORGOT_PASSWORD_SUCCESS_RESPONSE.data.message)
       ).toBeInTheDocument();
     });
 
@@ -125,7 +125,7 @@ describe("Test Forgot Password Form component for FAILURE response", () => {
     });
     vi.spyOn(axiosInstance, "post").mockImplementation((url) => {
       if (url === "/api/users/forgot-password") {
-        return Promise.reject(PASSWORD_SUCCESS_RESPONSE);
+        return Promise.reject(FORGOT_PASSWORD_SUCCESS_RESPONSE);
       }
       return Promise.reject(new Error("Not Found"));
     });

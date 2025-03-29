@@ -25,7 +25,7 @@ export const AUTHORIZED_PROFILE_RESPONSE = {
   },
 };
 
-export const PASSWORD_SUCCESS_RESPONSE = {
+export const FORGOT_PASSWORD_SUCCESS_RESPONSE = {
   data: {
     success: true,
     message: "Please check your email for further instructions.",
