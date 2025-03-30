@@ -12,13 +12,13 @@ import {
 } from "../../services/__mocks__/auth.service.data";
 import { LoginForm } from "../LoginForm";
 import {
-  INVALID_FIELD_VALUE,
-  VALID_FIELD_VALUE,
+  INVALID_FORM_FIELD_VALUE,
+  LOGIN_FORM_FIELDS,
+  VALID_FORM_FIELD_VALUE,
 } from "../__mocks__/authForm.data";
 vi.mock("@/modules/auth/contexts/AuthContext", () => ({
   useAuth: vi.fn(),
 }));
-const loginFields = ["Email", "Password"] as const;
 describe("Login Form component UI Validations", () => {
   beforeAll(() => {
     vi.resetAllMocks();
@@ -54,7 +54,7 @@ describe("Login Form component UI Validations", () => {
     expect(screen.getByText("Sign in")).toBeTruthy();
   });
 
-  test("should render error message when all the fields are empty", async () => {
+  test("should render error messages based on field validations", async () => {
     await act(async () => {
       render(
         <MemoryRouter>
@@ -63,65 +63,25 @@ describe("Login Form component UI Validations", () => {
       );
     });
     await waitFor(() => {
-      // click submit button
-      screen.getByTestId("button-submit").click();
-
-      // check error message
-      loginFields.forEach((field) => {
-        const errorLabel = screen.getByTestId(
-          `errormsg-${field.toLowerCase()}`
-        );
-        expect(errorLabel.textContent).equal(`${field} is required.`);
-      });
-    });
-  });
-
-  test("should render error message when invalid email is passed", async () => {
-    await act(async () => {
-      render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>
-      );
-    });
-    await waitFor(() => {
-      // click submit button
-      INVALID_FIELD_VALUE["email"].forEach((value) => {
-        const emailInput = screen.getByTestId("field-email");
-        fireEvent.change(emailInput, { target: { value } });
-
-        screen.getByTestId("button-submit").click();
-
-        const errorLabel = screen.getByTestId(`errormsg-email`);
-        expect(errorLabel.textContent).equal(`Enter a valid email address.`);
-      });
-    });
-  });
-
-  test("should render error message when invalid password is passed", async () => {
-    await act(async () => {
-      render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>
-      );
-    });
-    await waitFor(() => {
-      const emailInput = screen.getByTestId("field-email");
-      fireEvent.change(emailInput, {
-        target: { value: VALID_FIELD_VALUE["email"] },
-      });
-      INVALID_FIELD_VALUE["password"].forEach((value) => {
-        const passwordInput = screen.getByTestId("field-password");
-        fireEvent.change(passwordInput, { target: { value } });
-
-        screen.getByTestId("button-submit").click();
-
-        expect(screen.getByTestId(`sign-in-form-errors`)).toBeInTheDocument();
-        expect(
-          screen.getByText("Incorrect email or password.")
-        ).toBeInTheDocument();
-      });
+      for (let field of LOGIN_FORM_FIELDS) {
+        for (let value of INVALID_FORM_FIELD_VALUE[field.key]) {
+          const inputField = screen.getByTestId(field.fieldTestId);
+          value.data.forEach(async (data) => {
+            fireEvent.change(inputField, { target: { value: data } });
+            screen.getByTestId("button-submit").click();
+            await waitFor(() => {
+              const errorLabel = screen.getByTestId(field.errorTestId);
+              console.log(
+                data,
+                errorLabel.textContent,
+                value.errorMessage,
+                "Error message"
+              );
+              expect(errorLabel.textContent).equal(value.errorMessage);
+            });
+          });
+        }
+      }
     });
   });
 
@@ -136,23 +96,18 @@ describe("Login Form component UI Validations", () => {
     await waitFor(() => {
       // click submit button
 
-      loginFields.forEach((fieldName) => {
-        const fieldNameLowerCase =
-          fieldName.toLowerCase() as keyof typeof VALID_FIELD_VALUE;
-        const loginInput = screen.getByTestId(`field-${fieldNameLowerCase}`);
+      LOGIN_FORM_FIELDS.forEach((fieldName) => {
+        const loginInput = screen.getByTestId(fieldName.fieldTestId);
         fireEvent.change(loginInput, {
-          target: { value: VALID_FIELD_VALUE[fieldNameLowerCase] },
+          target: { value: VALID_FORM_FIELD_VALUE[fieldName.key] },
         });
       });
 
       screen.getByTestId("button-submit").click();
     });
     await waitFor(() => {
-      loginFields.forEach((fieldName) => {
-        const fieldNameLowerCase = fieldName.toLowerCase();
-        const errorLabel = screen.queryByTestId(
-          `errormsg-${fieldNameLowerCase}`
-        );
+      LOGIN_FORM_FIELDS.forEach((fieldName) => {
+        const errorLabel = screen.queryByTestId(fieldName.errorTestId);
         expect(errorLabel).not.toBeInTheDocument();
       });
     });
@@ -160,7 +115,7 @@ describe("Login Form component UI Validations", () => {
 
   test("should verify email is populated if user has opted for rememberMe and logged in successfully", async () => {
     vi.spyOn(global.Storage.prototype, "getItem").mockImplementation((key) => {
-      return key === "rememberedEmail" ? VALID_FIELD_VALUE["email"] : null;
+      return key === "rememberedEmail" ? VALID_FORM_FIELD_VALUE["email"] : null;
     });
     await act(async () => {
       render(
@@ -171,13 +126,13 @@ describe("Login Form component UI Validations", () => {
     });
     await waitFor(() => {
       const emailInput = screen.getByTestId("field-email");
-      expect(emailInput).toHaveValue(VALID_FIELD_VALUE["email"]);
+      expect(emailInput).toHaveValue(VALID_FORM_FIELD_VALUE["email"]);
 
       const rememberMeCheckbox = screen.getByTestId("field-rememberme");
       expect(rememberMeCheckbox).toHaveAttribute("data-state", "checked");
       const passwordInput = screen.getByTestId("field-password");
       fireEvent.change(passwordInput, {
-        target: { value: VALID_FIELD_VALUE["password"] },
+        target: { value: VALID_FORM_FIELD_VALUE["loginPassword"] },
       });
 
       fireEvent.click(screen.getByTestId("button-submit"));
@@ -223,12 +178,10 @@ describe("Login Form component FAILURE response", () => {
     await waitFor(() => {
       // click submit button
 
-      loginFields.forEach((fieldName) => {
-        const fieldNameLowerCase =
-          fieldName.toLowerCase() as keyof typeof VALID_FIELD_VALUE;
-        const loginInput = screen.getByTestId(`field-${fieldNameLowerCase}`);
+      LOGIN_FORM_FIELDS.forEach((fieldName) => {
+        const loginInput = screen.getByTestId(fieldName.fieldTestId);
         fireEvent.change(loginInput, {
-          target: { value: VALID_FIELD_VALUE[fieldNameLowerCase] },
+          target: { value: VALID_FORM_FIELD_VALUE[fieldName.key] },
         });
       });
 
