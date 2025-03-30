@@ -26,3 +26,32 @@ export const LOGIN_FAILURE_RESPONSE = {
     },
   },
 };
+
+export const REGISTER_SUCCESS_RESPONSE = {
+  data: {
+    success: true,
+    message: "User registered successfully",
+    data: {
+      user: {
+        id: "67e90cbe022fe25b7f225550",
+        firstName: "John",
+        lastName: "Doe",
+        email: "johndoe@test.com",
+      },
+    },
+  },
+};
+
+export const REGISTER_FAILURE_RESPONSE = {
+  response: {
+    data: {
+      success: false,
+      message: "Validation Error",
+      data: null,
+      error: {
+        code: "VALIDATION_ERROR",
+        details: ["Email already registered"],
+      },
+    },
+  },
+};
