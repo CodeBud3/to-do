@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { Task } from "../models/Task";
 import { ITask, TaskResponse } from "../types/task.types";
 import mongoose from "mongoose";
+import sendResponse from "../../../utils/responseHelper";
+import { ValidationError, NotFoundError, AuthorizationError, AppError } from "../../../utils/ErrorHandler";
 
 /**
  * Get all tasks for the authenticated user with optional filtering
@@ -11,11 +13,7 @@ export const getTasks = async (req: Request, res: Response, next: NextFunction):
     // Type assertion for the user object added by passport authentication
     const userId = req.user?._id;
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-      return;
+      return next(new AuthorizationError(["User not authenticated"]));
     }
 
     // Support filtering by query parameters
@@ -58,9 +56,8 @@ export const getTasks = async (req: Request, res: Response, next: NextFunction):
     // Log the operation
     console.log(`Retrieved ${tasks.length} tasks for user ${userId}`);
 
-    res.json({
-      success: true,
-      data: tasks,
+    sendResponse(res, 200, true, "Tasks retrieved successfully", {
+      tasks,
       pagination: {
         total: totalTasks,
         page,
@@ -84,37 +81,22 @@ export const getTask = async (req: Request, res: Response, next: NextFunction): 
 
     // Validate MongoDB ObjectId format
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
-      res.status(400).json({
-        success: false,
-        message: "Invalid task ID format"
-      });
-      return;
+      return next(new ValidationError(["Invalid task ID format"]));
     }
 
     // Ensure userId is defined
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "User not authenticated"
-      });
-      return;
+      return next(new AuthorizationError(["User not authenticated"]));
     }
 
     // Find task with owner check for security
     const task = await Task.findOne({ _id: taskId, user_id: userId.toString() });
     
     if (!task) {
-      res.status(404).json({
-        success: false,
-        message: "Task not found or you don't have permission to access it"
-      });
-      return;
+      return next(new NotFoundError("Task"));
     }
     
-    res.json({
-      success: true,
-      data: task
-    });
+    sendResponse(res, 200, true, "Task retrieved successfully", task);
   } catch (error) {
     console.error(`Error fetching task ${req.params.id}:`, error);
     next(error);
@@ -128,11 +110,7 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
   try {
     const userId = req.user?._id;
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-      return;
+      return next(new AuthorizationError(["User not authenticated"]));
     }
     
     // Get the highest sequence_num for this user to place the new task at the end
@@ -160,11 +138,7 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
     
     console.log(`Created new task (${task._id.toString()}) for user ${userId}`);
     
-    res.status(201).json({
-      success: true,
-      data: task,
-      message: "Task created successfully"
-    });
+    sendResponse(res, 201, true, "Task created successfully", task);
   } catch (error) {
     console.error("Error creating task:", error);
     next(error);
@@ -181,31 +155,19 @@ export const updateTask = async (req: Request, res: Response, next: NextFunction
     
     // Validate MongoDB ObjectId format
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
-      res.status(400).json({
-        success: false,
-        message: "Invalid task ID format"
-      });
-      return;
+      return next(new ValidationError(["Invalid task ID format"]));
     }
     
     // Ensure userId is defined
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "User not authenticated"
-      });
-      return;
+      return next(new AuthorizationError(["User not authenticated"]));
     }
     
     // Get the existing task with owner check for security
     const existingTask = await Task.findOne({ _id: taskId, user_id: userId.toString() });
     
     if (!existingTask) {
-      res.status(404).json({
-        success: false,
-        message: "Task not found or you don't have permission to update it"
-      });
-      return;
+      return next(new NotFoundError("Task"));
     }
     
     // Prepare update data
@@ -224,20 +186,12 @@ export const updateTask = async (req: Request, res: Response, next: NextFunction
     );
     
     if (!updatedTask) {
-      res.status(500).json({
-        success: false,
-        message: "Failed to update task"
-      });
-      return;
+      return next(new AppError(500, "Failed to update task", "UPDATE_ERROR"));
     }
     
     console.log(`Updated task ${taskId} for user ${userId}`);
     
-    res.json({
-      success: true,
-      data: updatedTask,
-      message: "Task updated successfully"
-    });
+    sendResponse(res, 200, true, "Task updated successfully", updatedTask);
   } catch (error) {
     console.error(`Error updating task ${req.params.id}:`, error);
     next(error);
@@ -254,31 +208,19 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
     
     // Validate MongoDB ObjectId format
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
-      res.status(400).json({
-        success: false,
-        message: "Invalid task ID format"
-      });
-      return;
+      return next(new ValidationError(["Invalid task ID format"]));
     }
     
     // Ensure userId is defined
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "User not authenticated"
-      });
-      return;
+      return next(new AuthorizationError(["User not authenticated"]));
     }
     
     // Find and delete with owner check for security
     const deletedTask = await Task.findOneAndDelete({ _id: taskId, user_id: userId.toString() });
     
     if (!deletedTask) {
-      res.status(404).json({
-        success: false,
-        message: "Task not found or you don't have permission to delete it"
-      });
-      return;
+      return next(new NotFoundError("Task"));
     }
     
     console.log(`Deleted task ${taskId} for user ${userId}`);
@@ -286,10 +228,7 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
     // Re-sequence the remaining tasks to maintain order
     await resequenceTasks(userId.toString());
     
-    res.json({
-      success: true,
-      message: "Task deleted successfully"
-    });
+    sendResponse(res, 200, true, "Task deleted successfully");
   } catch (error) {
     console.error(`Error deleting task ${req.params.id}:`, error);
     next(error);
@@ -312,11 +251,7 @@ export const reorderTasks = async (req: Request, res: Response, next: NextFuncti
     if (!userId) {
       await session.abortTransaction();
       session.endSession();
-      res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      });
-      return;
+      return next(new AuthorizationError(["User not authenticated"]));
     }
     
     // Verify all tasks belong to the user
@@ -331,11 +266,7 @@ export const reorderTasks = async (req: Request, res: Response, next: NextFuncti
         await session.abortTransaction();
         session.endSession();
         
-        res.status(404).json({
-          success: false,
-          message: `Task with ID ${taskUpdate.id} not found or you don't have permission to modify it`
-        });
-        return;
+        return next(new NotFoundError(`Task with ID ${taskUpdate.id}`));
       }
     }
     
@@ -356,11 +287,7 @@ export const reorderTasks = async (req: Request, res: Response, next: NextFuncti
     
     console.log(`Reordered ${tasks.length} tasks for user ${userId}`);
     
-    res.json({
-      success: true,
-      data: updatedTasks,
-      message: "Tasks reordered successfully"
-    });
+    sendResponse(res, 200, true, "Tasks reordered successfully", updatedTasks);
   } catch (error) {
     // Roll back transaction on error
     await session.abortTransaction();
