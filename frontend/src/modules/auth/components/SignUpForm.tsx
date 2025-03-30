@@ -48,7 +48,6 @@ export function SignUpForm() {
       })
       .catch((error) => {
         setLoading(false);
-        console.log(error);
         setErrors(handleError(error));
       });
   }
