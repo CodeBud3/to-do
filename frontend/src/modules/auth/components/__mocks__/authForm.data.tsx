@@ -6,6 +6,19 @@ export const LOGIN_FORM_FIELDS = [
     errorTestId: "errormsg-password",
   },
 ] as const;
+
+export const RESET_PASSWORD_FORM_FIELDS = [
+  {
+    key: "password",
+    fieldTestId: "field-password",
+    errorTestId: "errormsg-password",
+  },
+  {
+    key: "confirmPassword",
+    fieldTestId: "field-confirmpassword",
+    errorTestId: "errormsg-confirmpassword",
+  },
+] as const;
 export const INVALID_FORM_FIELD_VALUE = {
   email: [
     {
@@ -27,7 +40,11 @@ export const INVALID_FORM_FIELD_VALUE = {
       errorMessage: "Incorrect email or password.",
     },
   ],
-  registerPassword: [
+  password: [
+    {
+      data: [""],
+      errorMessage: "Password is required.",
+    },
     {
       data: ["p"],
       errorMessage: "Password must be at least 8 characters long.",
@@ -53,13 +70,23 @@ export const INVALID_FORM_FIELD_VALUE = {
       errorMessage: "Must include at least one number (0-9).",
     },
   ],
+  confirmPassword: [
+    {
+      data: [""],
+      errorMessage: "Please confirm your password.",
+    },
+    {
+      data: ["pass"],
+      errorMessage: "Passwords do not match",
+    },
+  ],
 };
 
 export const VALID_FORM_FIELD_VALUE = {
   email: "johndoe@test.com",
   loginPassword: "Test@001",
-  registerPassword: "Test@001",
-  registerConfirmPassword: "Test@001",
+  password: "Test@001",
+  confirmPassword: "Test@001",
 };
 
 export const TOKEN = "123abc#efg";

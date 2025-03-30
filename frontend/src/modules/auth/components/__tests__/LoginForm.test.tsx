@@ -71,12 +71,6 @@ describe("Login Form component UI Validations", () => {
             screen.getByTestId("button-submit").click();
             await waitFor(() => {
               const errorLabel = screen.getByTestId(field.errorTestId);
-              console.log(
-                data,
-                errorLabel.textContent,
-                value.errorMessage,
-                "Error message"
-              );
               expect(errorLabel.textContent).equal(value.errorMessage);
             });
           });
