@@ -70,8 +70,8 @@ describe("Login Form component UI Validations", () => {
             fireEvent.change(inputField, { target: { value: data } });
             screen.getByTestId("button-submit").click();
             await waitFor(() => {
-              const errorLabel = screen.getByTestId(field.errorTestId);
-              expect(errorLabel.textContent).equal(value.errorMessage);
+              const errorLabel = screen.queryByTestId(field.errorTestId);
+              expect(errorLabel?.textContent).equal(value.errorMessage);
             });
           });
         }
@@ -79,6 +79,32 @@ describe("Login Form component UI Validations", () => {
     });
   });
 
+  test("should render error message when invalid password is passed", async () => {
+    await act(async () => {
+      render(
+        <MemoryRouter>
+          <LoginForm />
+        </MemoryRouter>
+      );
+    });
+    await waitFor(() => {
+      const emailInput = screen.getByTestId("field-email");
+      fireEvent.change(emailInput, {
+        target: { value: VALID_FORM_FIELD_VALUE["email"] },
+      });
+      INVALID_FORM_FIELD_VALUE["password"].forEach((value) => {
+        const passwordInput = screen.getByTestId("field-password");
+        fireEvent.change(passwordInput, { target: { value } });
+
+        screen.getByTestId("button-submit").click();
+
+        expect(screen.getByTestId(`sign-in-form-errors`)).toBeInTheDocument();
+        expect(
+          screen.getByText("Incorrect email or password.")
+        ).toBeInTheDocument();
+      });
+    });
+  });
   test("should verify no error message is displayed when successfully logged in", async () => {
     await act(async () => {
       render(
