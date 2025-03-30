@@ -74,8 +74,8 @@ describe("RESET Password Form component for SUCCESS response", () => {
             fireEvent.change(inputField, { target: { value: data } });
             screen.getByTestId("button-submit").click();
             await waitFor(() => {
-              const errorLabel = screen.getByTestId(field.errorTestId);
-              expect(errorLabel.textContent).equal(value.errorMessage);
+              const errorLabel = screen.queryByTestId(field.errorTestId);
+              expect(errorLabel?.textContent).equal(value.errorMessage);
             });
           });
         }
