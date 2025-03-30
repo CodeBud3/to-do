@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 import { cva } from "class-variance-authority";
 interface LoaderProps {
   className?: string;
@@ -9,6 +10,7 @@ const Loader = ({ className }: LoaderProps) => {
   );
   return (
     <svg
+      {...applyTestAttributes("button", "loader")}
       aria-hidden="true"
       className={cn(labelVariants(), className)}
       viewBox="0 0 100 101"
