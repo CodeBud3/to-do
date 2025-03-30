@@ -11,15 +11,18 @@ import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ResetPasswordForm } from "../components/ResetPasswordForm";
 import { MoveLeft } from "lucide-react";
+import { useEffect } from "react";
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const token = searchParams.get("token");
-  if (!token) {
-    navigate("/login");
-    return;
-  }
+  const token = searchParams.get("token") || "";
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+  }, [navigate]);
 
   return (
     <>

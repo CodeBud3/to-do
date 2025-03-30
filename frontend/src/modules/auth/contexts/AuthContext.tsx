@@ -1,5 +1,5 @@
 import { logOut } from "@/modules/auth/services/auth.service";
-import { getLoggedInUser } from "@/api/user";
+import { getLoggedInUser } from "@/modules/auth/services/user";
 import {
   User,
   AuthContextType,
@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .catch((err) => {
           setAuthLoading(false);
           setUser(null);
-          console.error("Failed to fetch user profile", err);
         });
     }
   }, []);

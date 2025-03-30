@@ -107,6 +107,9 @@ export const getInputByType = (
 export const applyTestAttributes = (
   type: string,
   key: string
-): { [key: string]: boolean } => {
-  return { [`data-test-${type.toLowerCase()}-${key.toLowerCase()}`]: true };
+): { [key: string]: boolean | string } => {
+  return {
+    [`data-test-${type.toLowerCase()}-${key.toLowerCase()}`]: true,
+    "data-testid": `${type.toLowerCase()}-${key.toLowerCase()}`,
+  };
 };
