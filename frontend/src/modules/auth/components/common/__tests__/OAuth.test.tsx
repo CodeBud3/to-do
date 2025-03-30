@@ -5,7 +5,7 @@ import { API_BASE_URL } from "@/configs/appConfig";
 
 describe("OAuth component", () => {
   test("should verify google auth page is opened on click of Google button", () => {
-    const windowOpenSpy = vi.spyOn(window, "open");
+    const windowOpenSpy = vi.spyOn(window, "open").mockImplementation(vi.fn());
     render(<OauthProvider />);
     screen.getByTestId("signin-google-auth").click();
     expect(windowOpenSpy).toHaveBeenCalledWith(
@@ -14,7 +14,7 @@ describe("OAuth component", () => {
     );
   });
   test("should verify microsoft auth page is opened on click of Google button", () => {
-    const windowOpenSpy = vi.spyOn(window, "open");
+    const windowOpenSpy = vi.spyOn(window, "open").mockImplementation(vi.fn());
     render(<OauthProvider />);
     screen.getByTestId("signin-ms-auth").click();
     expect(windowOpenSpy).toHaveBeenCalledWith(

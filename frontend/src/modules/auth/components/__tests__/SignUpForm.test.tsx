@@ -1,8 +1,14 @@
 import { UNAUTHORIZED_PROFILE_RESPONSE } from "@/modules/auth/services/__mocks__/user.service.data";
 import axiosInstance from "@/configs/interceptors";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
-import { act } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+// import {  } from "react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import * as AuthContext from "@/modules/auth/contexts/AuthContext";
 
 import { MemoryRouter } from "react-router-dom";
@@ -67,21 +73,23 @@ describe("Signup Form component for SUCCESS response", () => {
       );
     });
 
-    await waitFor(() => {
-      for (let field of SIGN_UP_FORM_FIELDS) {
-        for (let value of INVALID_FORM_FIELD_VALUE[field.key]) {
-          const inputField = screen.getByTestId(field.fieldTestId);
-          value.data.forEach(async (data) => {
+    // await waitFor(() => {
+    for (let field of SIGN_UP_FORM_FIELDS) {
+      for (let value of INVALID_FORM_FIELD_VALUE[field.key]) {
+        const inputField = screen.getByTestId(field.fieldTestId);
+        for (let data of value.data) {
+          if (field.key != "tnc") {
             fireEvent.change(inputField, { target: { value: data } });
-            screen.getByTestId("button-submit").click();
-            await waitFor(() => {
-              const errorLabel = screen.queryByTestId(field.errorTestId);
-              expect(errorLabel?.textContent).equal(value.errorMessage);
-            });
+          }
+          screen.getByTestId("button-submit").click();
+          await waitFor(() => {
+            const errorLabel = screen.queryByTestId(field.errorTestId);
+            expect(errorLabel?.textContent).equal(value.errorMessage);
           });
         }
       }
-    });
+    }
+    // });
   });
 
   test("should display error message for confirmPassword if password is changed", async () => {
@@ -96,9 +104,11 @@ describe("Signup Form component for SUCCESS response", () => {
     await waitFor(() => {
       for (let field of SIGN_UP_FORM_FIELDS) {
         const inputField = screen.getByTestId(field.fieldTestId);
-        fireEvent.change(inputField, {
-          target: { value: VALID_FORM_FIELD_VALUE[field.key] },
-        });
+        if (field.key != "tnc") {
+          fireEvent.change(inputField, {
+            target: { value: VALID_FORM_FIELD_VALUE[field.key] },
+          });
+        }
       }
     });
     fireEvent.change(screen.getByTestId("field-password"), {

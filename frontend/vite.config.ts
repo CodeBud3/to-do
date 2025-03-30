@@ -23,6 +23,8 @@ export default defineConfig({
         "**/__mocks__/**",
         "./src/main.tsx",
         "./src/vite-env.d.ts",
+        "**/*.types.tsx",
+        "**/*.types.ts",
       ],
     },
   },

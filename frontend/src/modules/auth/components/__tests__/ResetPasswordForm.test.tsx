@@ -66,21 +66,21 @@ describe("RESET Password Form component for SUCCESS response", () => {
       );
     });
 
-    await waitFor(() => {
-      for (let field of RESET_PASSWORD_FORM_FIELDS) {
-        for (let value of INVALID_FORM_FIELD_VALUE[field.key]) {
-          const inputField = screen.getByTestId(field.fieldTestId);
-          value.data.forEach(async (data) => {
-            fireEvent.change(inputField, { target: { value: data } });
-            screen.getByTestId("button-submit").click();
-            await waitFor(() => {
-              const errorLabel = screen.queryByTestId(field.errorTestId);
-              expect(errorLabel?.textContent).equal(value.errorMessage);
-            });
+    // await waitFor(() => {
+    for (let field of RESET_PASSWORD_FORM_FIELDS) {
+      for (let value of INVALID_FORM_FIELD_VALUE[field.key]) {
+        const inputField = screen.getByTestId(field.fieldTestId);
+        for (let data of value.data) {
+          fireEvent.change(inputField, { target: { value: data } });
+          screen.getByTestId("button-submit").click();
+          await waitFor(() => {
+            const errorLabel = screen.queryByTestId(field.errorTestId);
+            expect(errorLabel?.textContent).equal(value.errorMessage);
           });
         }
       }
-    });
+    }
+    // });
   });
 
   test("should display error message for confirmPassword if password is changed", async () => {

@@ -55,3 +55,10 @@ export const REGISTER_FAILURE_RESPONSE = {
     },
   },
 };
+
+export const LOGOUT_SUCCESS_RESPONSE = {
+  data: {
+    success: true,
+    message: "User logged out successfully",
+  },
+};

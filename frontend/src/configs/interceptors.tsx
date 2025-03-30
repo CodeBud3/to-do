@@ -20,7 +20,6 @@ axiosInstance.interceptors.request.use(
 // Response Interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log("Response Received:", response);
     return response;
   },
   (error) => {

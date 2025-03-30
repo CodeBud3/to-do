@@ -62,7 +62,7 @@ export const INVALID_FORM_FIELD_VALUE = {
   lastName: [
     {
       data: [""],
-      errorMessage: "First name is required.",
+      errorMessage: "Last name is required.",
     },
     {
       data: ["a"],
@@ -92,6 +92,7 @@ export const INVALID_FORM_FIELD_VALUE = {
     {
       data: ["p", "password", "p@ssword", "p@ssword1", "p@ssworD"],
       errorMessage: "Incorrect email or password.",
+      verifyInScreen: true,
     },
   ],
   password: [

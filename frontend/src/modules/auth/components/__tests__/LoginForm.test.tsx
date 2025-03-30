@@ -3,8 +3,6 @@ import axiosInstance from "@/configs/interceptors";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { act } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import * as AuthContext from "@/modules/auth/contexts/AuthContext";
-import { authContextMock } from "../../contexts/__mocks__/AuthContext.data";
 import { MemoryRouter } from "react-router-dom";
 import {
   LOGIN_FAILURE_RESPONSE,
@@ -16,16 +14,10 @@ import {
   LOGIN_FORM_FIELDS,
   VALID_FORM_FIELD_VALUE,
 } from "../__mocks__/authForm.data";
-vi.mock("@/modules/auth/contexts/AuthContext", () => ({
-  useAuth: vi.fn(),
-}));
+import { AuthProvider } from "../../contexts/AuthContext";
 describe("Login Form component UI Validations", () => {
   beforeAll(() => {
     vi.resetAllMocks();
-    vi.spyOn(AuthContext, "useAuth").mockReturnValue({
-      ...authContextMock,
-      user: null,
-    });
     vi.spyOn(axiosInstance, "get").mockImplementation((url) => {
       if (url === "/api/users/profile") {
         return Promise.reject(UNAUTHORIZED_PROFILE_RESPONSE);
@@ -46,9 +38,11 @@ describe("Login Form component UI Validations", () => {
   test("renders without crashing", async () => {
     await act(async () => {
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>
+        <AuthProvider>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </AuthProvider>
       );
     });
     expect(screen.getByText("Sign in")).toBeTruthy();
@@ -57,34 +51,46 @@ describe("Login Form component UI Validations", () => {
   test("should render error messages based on field validations", async () => {
     await act(async () => {
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>
+        <AuthProvider>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </AuthProvider>
       );
     });
-    await waitFor(() => {
-      for (let field of LOGIN_FORM_FIELDS) {
-        for (let value of INVALID_FORM_FIELD_VALUE[field.key]) {
-          const inputField = screen.getByTestId(field.fieldTestId);
-          value.data.forEach(async (data) => {
-            fireEvent.change(inputField, { target: { value: data } });
-            screen.getByTestId("button-submit").click();
-            await waitFor(() => {
+    for (let field of LOGIN_FORM_FIELDS) {
+      for (let value of INVALID_FORM_FIELD_VALUE[field.key]) {
+        const inputField = screen.getByTestId(field.fieldTestId);
+        for (let data of value.data) {
+          fireEvent.change(inputField, { target: { value: data } });
+          if ("verifyInScreen" in value && value.verifyInScreen) {
+            const emailField = screen.getByTestId("field-email");
+            fireEvent.change(emailField, {
+              target: { value: VALID_FORM_FIELD_VALUE["email"] },
+            });
+          }
+          screen.getByTestId("button-submit").click();
+          await waitFor(() => {
+            if ("verifyInScreen" in value && value.verifyInScreen) {
+              expect(screen.getByText(value.errorMessage)).toBeInTheDocument();
+            } else {
               const errorLabel = screen.queryByTestId(field.errorTestId);
               expect(errorLabel?.textContent).equal(value.errorMessage);
-            });
+            }
           });
         }
       }
-    });
+    }
   });
 
   test("should render error message when invalid password is passed", async () => {
     await act(async () => {
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>
+        <AuthProvider>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </AuthProvider>
       );
     });
     await waitFor(() => {
@@ -108,9 +114,11 @@ describe("Login Form component UI Validations", () => {
   test("should verify no error message is displayed when successfully logged in", async () => {
     await act(async () => {
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>
+        <AuthProvider>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </AuthProvider>
       );
     });
     await waitFor(() => {
@@ -139,9 +147,11 @@ describe("Login Form component UI Validations", () => {
     });
     await act(async () => {
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>
+        <AuthProvider>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </AuthProvider>
       );
     });
     await waitFor(() => {
@@ -166,10 +176,6 @@ describe("Login Form component UI Validations", () => {
 describe("Login Form component FAILURE response", () => {
   beforeAll(() => {
     vi.resetAllMocks();
-    vi.spyOn(AuthContext, "useAuth").mockReturnValue({
-      ...authContextMock,
-      user: null,
-    });
     vi.spyOn(axiosInstance, "get").mockImplementation((url) => {
       if (url === "/api/users/profile") {
         return Promise.reject(UNAUTHORIZED_PROFILE_RESPONSE);
@@ -190,9 +196,11 @@ describe("Login Form component FAILURE response", () => {
   test("should verify error message is displayed when incorrect credential is entered", async () => {
     await act(async () => {
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>
+        <AuthProvider>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </AuthProvider>
       );
     });
     await waitFor(() => {
