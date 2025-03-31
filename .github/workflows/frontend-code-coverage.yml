@@ -29,7 +29,7 @@ jobs:
         run: npm install
 
       - name: Run Tests with Coverage
-        run: npm run test:coverage
+        run: npx vitest --coverage --coverage.reporter=json-summary --coverage.reporter=json
 
       - name: Check Coverage Threshold
         run: |
@@ -47,8 +47,8 @@ jobs:
           path: frontend/coverage
 
       - name: Post Coverage Summary to PR
-        uses: dorny/test-reporter@v1
+        uses: davelosert/vitest-coverage-report-action@v2
         with:
-          name: Coverage Report
-          path: frontend/coverage/coverage-final.json
-          reporter: vitest-json
+          name: Frontend Coverage Report
+          json-summary-path:: frontend/coverage/coverage-summary-frontend.json
+          json-final-path: frontend/coverage/coverage-final-frontend.json
