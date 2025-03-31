@@ -1,7 +1,10 @@
 name: Frontend Tests
 
 on:
+  push:
+    branches: ["prestaging"]
   pull_request:
+    branches: ["prestaging"]
     paths:
       - "frontend/**" # Runs only if files in frontend/ change
 
