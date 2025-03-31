@@ -106,7 +106,7 @@ describe("RESET Password Form component for SUCCESS response", () => {
     screen.getByTestId("button-submit").click();
     await waitFor(() => {
       const errorLabel = screen.getByTestId("errormsg-confirmpassword");
-      expect(errorLabel.textContent).equal("Passwords do not match");
+      expect(errorLabel.textContent).equal("Passwords do not match.");
     });
   });
   test("should render alert message for successful reset", async () => {

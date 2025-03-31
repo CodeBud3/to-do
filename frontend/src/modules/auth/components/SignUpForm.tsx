@@ -18,7 +18,7 @@ const formSchema = z
   .object(buildSchema(signUpConfig))
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
-    message: "Passwords do not match",
+    message: "Passwords do not match.",
   });
 
 export function SignUpForm() {

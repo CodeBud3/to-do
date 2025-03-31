@@ -132,7 +132,7 @@ export const INVALID_FORM_FIELD_VALUE = {
     },
     {
       data: ["pass"],
-      errorMessage: "Passwords do not match",
+      errorMessage: "Passwords do not match.",
     },
   ],
   tnc: [
