@@ -1,0 +1,58 @@
+name: Code Coverage Check
+
+on:
+  pull_request:
+    branches: ["prestaging"]
+    paths:
+      - "frontend/**" # Run only if frontend files change
+
+jobs:
+  test-coverage:
+    name: Run Tests and Check Coverage
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend # Ensure commands run inside the frontend directory
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm" # Adjust if using Yarn or PNPM
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Run Tests with Coverage
+        run: |
+          cd frontend
+          npm run test:coverage
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: frontend/coverage
+
+      - name: Post Coverage Summary to PR
+        uses: dorny/test-reporter@v1
+        with:
+          name: Coverage Report
+          path: frontend/coverage/lcov-report/index.html
+          reporter: lcov
+
+      - name: Check Coverage Threshold
+        run: |
+          COVERAGE=$(node -p "require('./coverage/coverage-summary.json').total.statements.pct")
+          echo "Code Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+            echo "❌ Code coverage is below 90%! Failing the build."
+            exit 1
+          fi
