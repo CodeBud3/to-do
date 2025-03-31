@@ -121,6 +121,7 @@ describe("Layout Component", () => {
       expect(screen.queryByTestId("nav-logout")).toBeInTheDocument();
     });
   });
+
   afterAll(() => {
     vi.clearAllMocks();
   });
