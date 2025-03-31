@@ -60,7 +60,6 @@ export const forgotPassword = async (
     );
   }
   const token = generateForgotPasswordToken(user);
-
   // Create Reset Link
   const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
   const params = { email, resetLink };
