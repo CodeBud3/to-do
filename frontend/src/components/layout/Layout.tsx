@@ -14,6 +14,7 @@ const Layout = () => {
   if (location.pathname === "/") {
     return <Navigate to={user ? "/dashboard" : "/login"} />;
   }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar></Navbar>

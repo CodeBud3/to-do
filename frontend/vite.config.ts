@@ -18,6 +18,8 @@ export default defineConfig({
     setupFiles: "./src/test/setup.ts", // Setup file for global configs
     coverage: {
       provider: "v8",
+      reporter: ["text", "json-summary", "json", "html"], // Generate JSON for test-reporter
+      reportsDirectory: "./coverage",
       exclude: [
         ...configDefaults.exclude,
         "**/__mocks__/**",
@@ -26,6 +28,12 @@ export default defineConfig({
         "**/*.types.tsx",
         "**/*.types.ts",
       ],
+      thresholds: {
+        lines: 90,
+        branches: 80,
+        functions: 80,
+        statements: 90,
+      },
     },
   },
 });
