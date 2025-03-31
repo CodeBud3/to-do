@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - prestaging
+    paths:
+      - "frontend/**"
 
 jobs:
   deploy:
