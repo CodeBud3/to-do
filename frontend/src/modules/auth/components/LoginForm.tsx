@@ -64,7 +64,6 @@ export function LoginForm() {
       })
       .catch((error) => {
         setLoading(false);
-        console.log("failed to login", error);
         setErrors(handleError(error));
       });
   }

@@ -24,7 +24,7 @@ const formSchema = z
   .object(buildSchema(resetPasswordConfig))
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
-    message: "Passwords do not match",
+    message: "Passwords do not match.",
   });
 
 export function ResetPasswordForm({ token }: ResetPasswordProps) {
@@ -65,7 +65,6 @@ export function ResetPasswordForm({ token }: ResetPasswordProps) {
       })
       .catch((error) => {
         setLoading(false);
-        console.log(error);
         setErrors(handleError(error));
       });
   }
@@ -88,6 +87,7 @@ export function ResetPasswordForm({ token }: ResetPasswordProps) {
         showAlert={showAlert}
         alertParams={alertParams}
         closeAlert={closeAlert}
+        {...applyTestAttributes("reset-password", "alert")}
       />
     </>
   );

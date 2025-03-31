@@ -47,9 +47,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAuthLoading(false);
         window.location.href = "/login";
       })
-      .catch((e) => {
+      .catch(() => {
         setAuthLoading(false);
-        console.error("Logout failed", e.message);
       });
   };
 

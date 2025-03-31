@@ -9,8 +9,13 @@
     "docker-push-backend": "cd backend && docker push rakesh013595/to-do:test",
     "frontend": "cd frontend && npm install && npm run dev",
     "backend": "cd backend && npm install && npm run dev",
-    "generate-key": "node -e console.log(require('crypto').randomBytes(32).toString('hex'));"
+    "generate-key": "node -e console.log(require('crypto').randomBytes(32).toString('hex'));",
+    "prepare": "husky install"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^15.5.0"
+  }
 }
