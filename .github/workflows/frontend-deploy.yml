@@ -13,4 +13,4 @@ jobs:
     steps:
       - name: Trigger Deployment Hook
         run: |
-          curl "https://api.render.com/deploy/srv-cv68biqn91rc73bcuv0g?key=Ww42GaSIYUA"
+          curl ${{ secrets.RENDER_DEPLOY_HOOK }}
