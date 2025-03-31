@@ -18,6 +18,8 @@ export default defineConfig({
     setupFiles: "./src/test/setup.ts", // Setup file for global configs
     coverage: {
       provider: "v8",
+      reporter: ["json", "text", "html"], // Generate JSON for test-reporter
+      reportsDirectory: "./coverage",
       exclude: [
         ...configDefaults.exclude,
         "**/__mocks__/**",
