@@ -109,6 +109,7 @@ describe("RESET Password Form component for SUCCESS response", () => {
       expect(errorLabel.textContent).equal("Passwords do not match.");
     });
   });
+
   test("should render alert message for successful reset", async () => {
     const mockNavigate = vi.fn();
     vi.spyOn(reactRouterDom, "useNavigate").mockReturnValue(mockNavigate);

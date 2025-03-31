@@ -128,7 +128,6 @@ describe("Signup Form component for SUCCESS response", () => {
         </MemoryRouter>
       );
     });
-
     await waitFor(() => {
       for (let field of SIGN_UP_FORM_FIELDS) {
         const inputField = screen.getByTestId(field.fieldTestId);
