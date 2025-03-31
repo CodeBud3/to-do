@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import axiosInstance from "../interceptors";
 import "axios";
-import { waitFor } from "@testing-library/react";
 
 declare module "axios" {
   export interface AxiosInterceptorManager<V> {
