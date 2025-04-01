@@ -2,7 +2,7 @@ import { useAuth } from "@/modules/auth/contexts/AuthContext";
 import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 import { Code } from "lucide-react";
 import { Link } from "react-router-dom";
-import DropdownMenuComponent from "@/hooks/DropdownMenu/DropdownMenuComponent";
+import DropdownMenuComponent from "@/components/wrappers/DropdownMenu/DropdownMenuComponent";
 import { Button } from "../ui/button";
 import { Menu } from "./types/layout.types";
 
