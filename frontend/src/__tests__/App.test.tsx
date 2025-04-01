@@ -149,31 +149,61 @@ describe("App Component protected routes", () => {
     });
   });
 
-  test("renders dashboard page when navigating to public routes", async () => {
-    window.history.pushState({}, "Home Page", "/");
+  test("renders dashboard page when navigating to empty routes", async () => {
     await act(async () => {
       render(<App />);
     });
+
+    window.history.pushState({}, "Home Page", "/");
+
     await waitFor(() => {
       expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+    });
+  });
+
+  test("renders dashboard page when navigating to login route", async () => {
+    await act(async () => {
+      render(<App />);
     });
 
     window.history.pushState({}, "Login Page", "/login");
+
     await waitFor(() => {
       expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+    });
+  });
+
+  test("renders dashboard page when navigating to signup route", async () => {
+    await act(() => {
+      render(<App />);
     });
 
     window.history.pushState({}, "Signup Page", "/signup");
+
     await waitFor(() => {
       expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+    });
+  });
+
+  test("renders dashboard page when navigating to forgot password route", async () => {
+    await act(() => {
+      render(<App />);
     });
 
     window.history.pushState({}, "Forgot password Page", "/forgot-password");
+
     await waitFor(() => {
       expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
     });
+  });
 
-    window.history.pushState({}, "Reset Page", "/reset-password");
+  test("renders dashboard page when navigating to reset password route", async () => {
+    await act(() => {
+      render(<App />);
+    });
+
+    window.history.pushState({}, "Reset password Page", "/reset-password");
+
     await waitFor(() => {
       expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
     });
