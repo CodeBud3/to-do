@@ -13,8 +13,8 @@ import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 import { resetPassword } from "@/modules/auth/services/user";
 import { useNavigate } from "react-router-dom";
-import { AlertDialogComponent } from "@/hooks/AlertDialogHook/AlertDialogComponent";
-import { useAlertDialog } from "@/hooks/AlertDialogHook/AlertDialogHook";
+import { AlertDialogComponent } from "@/hooks/AlertDialog/AlertDialogComponent";
+import { useAlertDialog } from "@/hooks/AlertDialog/useAlertDialog";
 
 interface ResetPasswordProps {
   token: string;

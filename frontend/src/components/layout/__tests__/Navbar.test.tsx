@@ -18,15 +18,6 @@ import {
 } from "@/modules/auth/services/__mocks__/user.service.data";
 import { LOGOUT_SUCCESS_RESPONSE } from "@/modules/auth/services/__mocks__/auth.service.data";
 
-// Mock window
-Object.defineProperty(window, "location", {
-  value: {
-    ...window.location,
-    assign: vi.fn(),
-    replace: vi.fn(),
-  },
-  writable: true,
-});
 describe("Layout Component", () => {
   afterEach(() => {
     vi.resetAllMocks();
@@ -49,7 +40,7 @@ describe("Layout Component", () => {
       );
     });
 
-    expect(screen.queryByTestId("nav-logout")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("nav-profile")).not.toBeInTheDocument();
     expect(screen.getByTestId("nav-logo")).toBeInTheDocument();
   });
 
@@ -78,7 +69,7 @@ describe("Layout Component", () => {
       );
     });
 
-    expect(screen.queryByTestId("nav-logout")).toBeInTheDocument();
+    expect(screen.queryByTestId("nav-profile")).toBeInTheDocument();
     expect(screen.getByTestId("nav-logo")).toBeInTheDocument();
   });
 
@@ -92,10 +83,12 @@ describe("Layout Component", () => {
         </AuthProvider>
       );
     });
-    const button = screen.getByTestId("nav-logout");
+    const profileButton = screen.getByTestId("nav-profile");
+    fireEvent.click(profileButton);
+    const button = screen.getByTestId("menu-logout");
     fireEvent.click(button);
     await waitFor(() => {
-      expect(screen.queryByTestId("nav-logout")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("nav-profile")).not.toBeInTheDocument();
     });
   });
 
@@ -115,10 +108,12 @@ describe("Layout Component", () => {
         </AuthProvider>
       );
     });
-    const button = screen.getByTestId("nav-logout");
+    const profileButton = screen.getByTestId("nav-profile");
+    fireEvent.click(profileButton);
+    const button = screen.getByTestId("menu-logout");
     fireEvent.click(button);
     await waitFor(() => {
-      expect(screen.queryByTestId("nav-logout")).toBeInTheDocument();
+      expect(screen.queryByTestId("nav-profile")).toBeInTheDocument();
     });
   });
 

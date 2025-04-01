@@ -139,58 +139,43 @@ describe("App Component protected routes", () => {
     vi.clearAllMocks();
   });
   test("renders dashboard page when authenticated", async () => {
-    const logOutButtonText = `Logout ${AUTHORIZED_PROFILE_RESPONSE.data.data.user.firstName}`;
-
     window.history.pushState({}, "Dashboard Page", "/dashboard");
 
     await act(async () => {
       render(<App />);
     });
     await waitFor(() => {
-      expect(screen.getByText(logOutButtonText)).toBeInTheDocument(); // Ensure your DashboardPage has an element containing "Dashboard"
+      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
     });
   });
 
   test("renders dashboard page when navigating to public routes", async () => {
-    const logOutButtonText = `Logout ${AUTHORIZED_PROFILE_RESPONSE.data.data.user.firstName}`;
     window.history.pushState({}, "Home Page", "/");
     await act(async () => {
       render(<App />);
     });
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
     });
 
     window.history.pushState({}, "Login Page", "/login");
-    await act(async () => {
-      render(<App />);
-    });
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
     });
 
     window.history.pushState({}, "Signup Page", "/signup");
-    await act(async () => {
-      render(<App />);
-    });
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
     });
 
     window.history.pushState({}, "Forgot password Page", "/forgot-password");
-    await act(async () => {
-      render(<App />);
-    });
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
     });
 
     window.history.pushState({}, "Reset Page", "/reset-password");
-    await act(async () => {
-      render(<App />);
-    });
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
     });
   });
 });

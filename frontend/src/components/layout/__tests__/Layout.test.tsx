@@ -61,7 +61,7 @@ describe("Layout Component", () => {
       </MemoryRouter>
     );
 
-    expect(screen.queryByTestId("nav-logout")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("nav-profile")).not.toBeInTheDocument();
     expect(screen.getByTestId("nav-logo")).toBeInTheDocument();
   });
 
@@ -77,7 +77,7 @@ describe("Layout Component", () => {
         <Layout />
       </MemoryRouter>
     );
-    expect(screen.queryByTestId("nav-logout")).toBeInTheDocument();
+    expect(screen.queryByTestId("nav-profile")).toBeInTheDocument();
     expect(screen.getByTestId("nav-logo")).toBeInTheDocument();
   });
 
