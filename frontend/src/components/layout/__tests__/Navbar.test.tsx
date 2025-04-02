@@ -1,10 +1,4 @@
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { afterAll, describe, expect, test, vi } from "vitest";
 import { AuthProvider } from "@/modules/auth/contexts/AuthContext";
 import { MemoryRouter } from "react-router-dom";
