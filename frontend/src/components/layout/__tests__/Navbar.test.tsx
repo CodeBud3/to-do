@@ -40,11 +40,11 @@ describe("Layout Component", () => {
       );
     });
 
-    expect(screen.queryByTestId("nav-profile")).not.toBeInTheDocument();
-    expect(screen.getByTestId("nav-logo")).toBeInTheDocument();
+    expect(screen.queryByTestId("sidenav-trigger")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("nav-logo")).toBeInTheDocument();
   });
 
-  test("renders both Logo and Logout button when user is logged in", async () => {
+  test("renders only sidenav when user is logged in", async () => {
     vi.spyOn(axiosInstance, "get").mockImplementation((url) => {
       if (url === "/api/users/profile") {
         return Promise.resolve(AUTHORIZED_PROFILE_RESPONSE);
@@ -69,52 +69,8 @@ describe("Layout Component", () => {
       );
     });
 
-    expect(screen.queryByTestId("nav-profile")).toBeInTheDocument();
-    expect(screen.getByTestId("nav-logo")).toBeInTheDocument();
-  });
-
-  test("should not show logout button once logged out", async () => {
-    await act(async () => {
-      render(
-        <AuthProvider>
-          <MemoryRouter>
-            <Navbar />
-          </MemoryRouter>
-        </AuthProvider>
-      );
-    });
-    const profileButton = screen.getByTestId("nav-profile");
-    fireEvent.click(profileButton);
-    const button = screen.getByTestId("menu-logout");
-    fireEvent.click(button);
-    await waitFor(() => {
-      expect(screen.queryByTestId("nav-profile")).not.toBeInTheDocument();
-    });
-  });
-
-  test("should show logout button to retry if logout fails", async () => {
-    vi.spyOn(axiosInstance, "post").mockImplementation((url) => {
-      if (url === "/api/auth/logout") {
-        return Promise.reject(LOGOUT_SUCCESS_RESPONSE);
-      }
-      return Promise.reject(new Error("Not Found"));
-    });
-    await act(async () => {
-      render(
-        <AuthProvider>
-          <MemoryRouter>
-            <Navbar />
-          </MemoryRouter>
-        </AuthProvider>
-      );
-    });
-    const profileButton = screen.getByTestId("nav-profile");
-    fireEvent.click(profileButton);
-    const button = screen.getByTestId("menu-logout");
-    fireEvent.click(button);
-    await waitFor(() => {
-      expect(screen.queryByTestId("nav-profile")).toBeInTheDocument();
-    });
+    expect(screen.queryByTestId("sidenav-trigger")).toBeInTheDocument();
+    expect(screen.queryByTestId("nav-logo")).not.toBeInTheDocument();
   });
 
   afterAll(() => {

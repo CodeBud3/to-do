@@ -61,11 +61,11 @@ describe("Layout Component", () => {
       </MemoryRouter>
     );
 
-    expect(screen.queryByTestId("nav-profile")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("sidenav-trigger")).not.toBeInTheDocument();
     expect(screen.getByTestId("nav-logo")).toBeInTheDocument();
   });
 
-  test("navigate to dashboard screen, if path is / and user is not logged in", async () => {
+  test("navigate to dashboard screen, if path is / and user is logged in", async () => {
     vi.spyOn(AuthContext, "useAuth").mockReturnValue({
       ...authContextMock,
     });
@@ -77,8 +77,7 @@ describe("Layout Component", () => {
         <Layout />
       </MemoryRouter>
     );
-    expect(screen.queryByTestId("nav-profile")).toBeInTheDocument();
-    expect(screen.getByTestId("nav-logo")).toBeInTheDocument();
+    expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
   });
 
   afterAll(() => {

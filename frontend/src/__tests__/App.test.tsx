@@ -128,6 +128,17 @@ test("renders reset-password page when navigating to /reset-password with token"
 describe("App Component protected routes", () => {
   beforeAll(() => {
     vi.resetAllMocks();
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query) => ({
+        matches: false, // Default match result
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
     vi.spyOn(axiosInstance, "get").mockImplementation((url) => {
       if (url === "/api/users/profile") {
         return Promise.resolve(AUTHORIZED_PROFILE_RESPONSE);
@@ -145,7 +156,7 @@ describe("App Component protected routes", () => {
       render(<App />);
     });
     await waitFor(() => {
-      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
     });
   });
 
@@ -157,7 +168,7 @@ describe("App Component protected routes", () => {
     window.history.pushState({}, "Home Page", "/");
 
     await waitFor(() => {
-      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
     });
   });
 
@@ -169,7 +180,7 @@ describe("App Component protected routes", () => {
     window.history.pushState({}, "Login Page", "/login");
 
     await waitFor(() => {
-      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
     });
   });
 
@@ -181,7 +192,7 @@ describe("App Component protected routes", () => {
     window.history.pushState({}, "Signup Page", "/signup");
 
     await waitFor(() => {
-      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
     });
   });
 
@@ -193,7 +204,7 @@ describe("App Component protected routes", () => {
     window.history.pushState({}, "Forgot password Page", "/forgot-password");
 
     await waitFor(() => {
-      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
     });
   });
 
@@ -205,7 +216,7 @@ describe("App Component protected routes", () => {
     window.history.pushState({}, "Reset password Page", "/reset-password");
 
     await waitFor(() => {
-      expect(screen.getByTestId("nav-profile")).toBeInTheDocument();
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
     });
   });
 });
