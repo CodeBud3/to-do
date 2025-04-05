@@ -5,23 +5,20 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "./modules/auth/configs/passport";
 import { SESSION_CONFIG } from "./modules/auth/helpers/auth.helper";
-import dotenv from "dotenv";
-import "./modules/auth/configs/passport";
+import dotenv from "dotenv/config";
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './docs/swagger';
 import { swaggerProtect } from './middlewares/swaggerProtect';
+import errorMiddleware from "./middlewares/errorMiddleware";
 
 // Import routes
 import authRoutes from "./modules/auth/routes/auth.routes";
 import userRoutes from "./modules/user/routes/user.routes";
 import taskRoutes from "./modules/task/routes/task.routes";
-import errorMiddleware from "./middlewares/errorMiddleware";
-
-dotenv.config();
-
-const app: Express = express();
 
 // Middleware
+const app: Express = express();
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL,

@@ -1,6 +1,6 @@
 import swaggerJSDoc from 'swagger-jsdoc';
-import { taskSchema } from '../schemas/task.schema';
-import { taskPaths } from '../paths/tasks.paths';
+import { taskSchema } from './schemas/task.schema';
+import { taskPaths } from './paths/tasks.paths';
 
 // Basic information about our API
 const swaggerDefinition = {
