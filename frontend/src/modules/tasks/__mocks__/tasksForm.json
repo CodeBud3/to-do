@@ -11,14 +11,6 @@
       "required": true
     },
     {
-      "id": "fieldId2",
-      "key": "description",
-      "label": "Description",
-      "type": "textarea",
-      "placeholder": "Enter description",
-      "required": true
-    },
-    {
       "id": "fieldId3",
       "key": "description",
       "label": "Description",

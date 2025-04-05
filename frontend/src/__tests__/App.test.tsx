@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import App from "../App";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import axiosInstance from "@/configs/interceptors";
@@ -7,6 +7,8 @@ import {
   AUTHORIZED_PROFILE_RESPONSE,
   UNAUTHORIZED_PROFILE_RESPONSE,
 } from "@/modules/auth/services/__mocks__/user.service.data";
+import { MockPointerEvent } from "@/test/setup";
+import { LOGOUT_SUCCESS_RESPONSE } from "@/modules/auth/services/__mocks__/auth.service.data";
 
 describe("App Component public routes", () => {
   beforeAll(() => {
@@ -217,6 +219,37 @@ describe("App Component protected routes", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
+    });
+  });
+
+  test("should logout successfully and navigate to login", async () => {
+    vi.spyOn(axiosInstance, "post").mockImplementation((url) => {
+      if (url === "/api/auth/logout") {
+        return Promise.resolve(LOGOUT_SUCCESS_RESPONSE);
+      }
+      return Promise.reject(new Error("Not Found"));
+    });
+
+    await act(() => {
+      render(<App />);
+    });
+
+    await waitFor(() => {
+      const userProfile = screen.getByTestId("side-nav-user-profile");
+      fireEvent.pointerDown(
+        userProfile,
+        new MockPointerEvent("pointerdown", {
+          ctrlKey: false,
+          button: 0,
+        })
+      );
+    });
+    await waitFor(() => {
+      const logout = screen.getByTestId("menu-logout");
+      fireEvent.click(logout);
+    });
+    await waitFor(() => {
+      expect(screen.getByText(`Sign in to your account`)).toBeInTheDocument();
     });
   });
 });

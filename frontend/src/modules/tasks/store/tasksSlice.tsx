@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-// import axios from "@/configs/interceptors";
-import axios from "axios";
+import axios from "@/configs/interceptors";
 import { Task } from "../types/task.types";
 
 const API_URL = "src/modules/tasks/__mocks__/tasks.json";
