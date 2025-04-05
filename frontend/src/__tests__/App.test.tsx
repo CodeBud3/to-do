@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import App from "../App";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import axiosInstance from "@/configs/interceptors";
@@ -7,6 +7,8 @@ import {
   AUTHORIZED_PROFILE_RESPONSE,
   UNAUTHORIZED_PROFILE_RESPONSE,
 } from "@/modules/auth/services/__mocks__/user.service.data";
+import { MockPointerEvent } from "@/test/setup";
+import { LOGOUT_SUCCESS_RESPONSE } from "@/modules/auth/services/__mocks__/auth.service.data";
 
 describe("App Component public routes", () => {
   beforeAll(() => {
@@ -128,6 +130,17 @@ test("renders reset-password page when navigating to /reset-password with token"
 describe("App Component protected routes", () => {
   beforeAll(() => {
     vi.resetAllMocks();
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query) => ({
+        matches: false, // Default match result
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
     vi.spyOn(axiosInstance, "get").mockImplementation((url) => {
       if (url === "/api/users/profile") {
         return Promise.resolve(AUTHORIZED_PROFILE_RESPONSE);
@@ -139,58 +152,104 @@ describe("App Component protected routes", () => {
     vi.clearAllMocks();
   });
   test("renders dashboard page when authenticated", async () => {
-    const logOutButtonText = `Logout ${AUTHORIZED_PROFILE_RESPONSE.data.data.user.firstName}`;
-
     window.history.pushState({}, "Dashboard Page", "/dashboard");
 
     await act(async () => {
       render(<App />);
     });
     await waitFor(() => {
-      expect(screen.getByText(logOutButtonText)).toBeInTheDocument(); // Ensure your DashboardPage has an element containing "Dashboard"
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
     });
   });
 
-  test("renders dashboard page when navigating to public routes", async () => {
-    const logOutButtonText = `Logout ${AUTHORIZED_PROFILE_RESPONSE.data.data.user.firstName}`;
-    window.history.pushState({}, "Home Page", "/");
+  test("renders dashboard page when navigating to empty routes", async () => {
     await act(async () => {
       render(<App />);
     });
+
+    window.history.pushState({}, "Home Page", "/");
+
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
+    });
+  });
+
+  test("renders dashboard page when navigating to login route", async () => {
+    await act(async () => {
+      render(<App />);
     });
 
     window.history.pushState({}, "Login Page", "/login");
-    await act(async () => {
-      render(<App />);
-    });
+
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
+    });
+  });
+
+  test("renders dashboard page when navigating to signup route", async () => {
+    await act(() => {
+      render(<App />);
     });
 
     window.history.pushState({}, "Signup Page", "/signup");
-    await act(async () => {
-      render(<App />);
-    });
+
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
+    });
+  });
+
+  test("renders dashboard page when navigating to forgot password route", async () => {
+    await act(() => {
+      render(<App />);
     });
 
     window.history.pushState({}, "Forgot password Page", "/forgot-password");
-    await act(async () => {
-      render(<App />);
-    });
+
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
+    });
+  });
+
+  test("renders dashboard page when navigating to reset password route", async () => {
+    await act(() => {
+      render(<App />);
     });
 
-    window.history.pushState({}, "Reset Page", "/reset-password");
-    await act(async () => {
+    window.history.pushState({}, "Reset password Page", "/reset-password");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("sidenav-trigger")).toBeInTheDocument();
+    });
+  });
+
+  test("should logout successfully and navigate to login", async () => {
+    vi.spyOn(axiosInstance, "post").mockImplementation((url) => {
+      if (url === "/api/auth/logout") {
+        return Promise.resolve(LOGOUT_SUCCESS_RESPONSE);
+      }
+      return Promise.reject(new Error("Not Found"));
+    });
+
+    await act(() => {
       render(<App />);
     });
+
     await waitFor(() => {
-      expect(screen.getAllByText(logOutButtonText).length).toBeGreaterThan(0);
+      const userProfile = screen.getByTestId("side-nav-user-profile");
+      fireEvent.pointerDown(
+        userProfile,
+        new MockPointerEvent("pointerdown", {
+          ctrlKey: false,
+          button: 0,
+        })
+      );
+    });
+    await waitFor(() => {
+      const logout = screen.getByTestId("menu-logout");
+      fireEvent.click(logout);
+    });
+    await waitFor(() => {
+      expect(screen.getByText(`Sign in to your account`)).toBeInTheDocument();
     });
   });
 });

@@ -1,5 +1,3 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,9 +13,9 @@ import { useState } from "react";
 import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 import { forgotPassword } from "@/modules/auth/services/user";
-import { useAlertDialog } from "@/hooks/AlertDialogHook/AlertDialogHook";
+import { useAlertDialog } from "@/hooks/AlertDialog/useAlertDialog";
 import { useNavigate } from "react-router-dom";
-import { AlertDialogComponent } from "@/hooks/AlertDialogHook/AlertDialogComponent";
+import { AlertDialogComponent } from "@/hooks/AlertDialog/AlertDialogComponent";
 
 const formSchema = z.object(buildSchema(forgotPasswordConfig));
 

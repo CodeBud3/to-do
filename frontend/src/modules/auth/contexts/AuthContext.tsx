@@ -45,7 +45,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .then(() => {
         setUser(null);
         setAuthLoading(false);
-        window.location.href = "/login";
       })
       .catch(() => {
         setAuthLoading(false);

@@ -12,17 +12,23 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ResetPasswordForm } from "../components/ResetPasswordForm";
 import { MoveLeft } from "lucide-react";
 import { useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const token = searchParams.get("token") || "";
   useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+      return;
+    }
     if (!token) {
       navigate("/login");
       return;
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
   return (
     <>

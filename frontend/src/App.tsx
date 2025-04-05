@@ -14,6 +14,7 @@ const ForgotPassword = lazy(
 const ResetPasswordPage = lazy(
   () => import("@/modules/auth/pages/ResetPasswordPage")
 );
+const TasksPage = lazy(() => import("@/modules/tasks/pages/TasksPage"));
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
               <Route path="/signup" element={<SignUpPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/tasks" element={<TasksPage />} />
               </Route>
             </Route>
             <Route path="*" element={<h1>404 Not Found</h1>} />
