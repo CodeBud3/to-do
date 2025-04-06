@@ -9,3 +9,15 @@ export interface Task {
   user_id: string;
   tags: string[];
 }
+
+export interface TaskResponse {
+  data: Task;
+}
+
+export interface TaskDataResponse {
+  tasks: Task[];
+}
+
+export interface GetTaskResponse {
+  data: TaskDataResponse;
+}

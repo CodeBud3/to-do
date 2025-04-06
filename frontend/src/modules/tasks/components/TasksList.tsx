@@ -4,12 +4,11 @@ import { fetchTasks } from "../store/tasksSlice";
 import { RootState, AppDispatch } from "../store/store";
 import { Columns } from "./ColumnDef/Columns";
 import { DataTable } from "./DataTable/DataTable";
+import { TaskForm } from "./TaskForm/TaskForm";
 
 export default function TasksList() {
   const dispatch = useDispatch<AppDispatch>();
-  const { tasks, loading, error } = useSelector(
-    (state: RootState) => state.tasks
-  );
+  const { tasks } = useSelector((state: RootState) => state.tasks);
 
   useEffect(() => {
     // setData(getData());
@@ -17,10 +16,11 @@ export default function TasksList() {
   }, [dispatch]);
 
   return (
-    <div>
-      {loading && <p>Loading tasks...</p>}
-      {error && <p>Error: {error}</p>}
-      <div className="container mx-auto py-10">
+    <div className="container mx-auto py-7">
+      <div className="table-actions flex justify-end">
+        <TaskForm />
+      </div>
+      <div className="py-3">
         <DataTable columns={Columns} data={tasks} />
       </div>
     </div>
