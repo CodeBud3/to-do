@@ -33,7 +33,7 @@ export function LoginForm() {
       form.setValue("email", savedEmail);
       form.setValue("rememberMe", true);
     }
-  }, []);
+  }, [form]);
   const validateOnSubmit = (values: z.infer<typeof formSchema>) => {
     const fullSchema = formSchema.extend({
       password: passwordValidator,
@@ -53,8 +53,11 @@ export function LoginForm() {
       return;
     }
     const { rememberMe, ...payload } = values;
-    rememberMe && localStorage.setItem("rememberedEmail", payload.email);
-    !rememberMe && localStorage.removeItem("rememberedEmail");
+    if (rememberMe) {
+      localStorage.setItem("rememberedEmail", payload.email);
+    } else {
+      localStorage.removeItem("rememberedEmail");
+    }
     login(payload)
       .then((data: AuthResponse) => {
         updateAuth(data.data.user);

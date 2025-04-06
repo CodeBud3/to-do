@@ -1,18 +1,18 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "@/configs/interceptors";
-import { Task } from "../types/task.types";
+import { GetTaskResponse, TaskResponse, Task } from "../types/task.types";
 
-const API_URL = "src/modules/tasks/__mocks__/tasks.json";
+const API_URL = "/api/tasks";
 
 // Fetch Tasks
 export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
-  const response = await axios.get<Task[]>(API_URL);
+  const response = await axios.get<GetTaskResponse>(API_URL);
   return response.data;
 });
 
 // Add Task
 export const addTask = createAsyncThunk("tasks/addTask", async (task: Task) => {
-  const response = await axios.post<Task>(`${API_URL}`, task);
+  const response = await axios.post<TaskResponse>(`${API_URL}`, task);
   return response.data;
 });
 
@@ -20,7 +20,10 @@ export const addTask = createAsyncThunk("tasks/addTask", async (task: Task) => {
 export const updateTask = createAsyncThunk(
   "tasks/updateTask",
   async (task: Task) => {
-    const response = await axios.put<Task>(`${API_URL}/${task.id}`, task);
+    const response = await axios.put<TaskResponse>(
+      `${API_URL}/${task.id}`,
+      task
+    );
     return response.data;
   }
 );
@@ -55,21 +58,32 @@ const tasksSlice = createSlice({
       .addCase(fetchTasks.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchTasks.fulfilled, (state, action: PayloadAction<Task[]>) => {
-        state.loading = false;
-        state.tasks = action.payload;
-      })
+      .addCase(
+        fetchTasks.fulfilled,
+        (state, action: PayloadAction<GetTaskResponse>) => {
+          state.loading = false;
+          state.tasks = action.payload?.data?.tasks;
+        }
+      )
       .addCase(fetchTasks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message ?? "Something went wrong";
       })
-      .addCase(addTask.fulfilled, (state, action: PayloadAction<Task>) => {
-        state.tasks.push(action.payload);
-      })
-      .addCase(updateTask.fulfilled, (state, action: PayloadAction<Task>) => {
-        const index = state.tasks.findIndex((t) => t.id === action.payload.id);
-        if (index !== -1) state.tasks[index] = action.payload;
-      })
+      .addCase(
+        addTask.fulfilled,
+        (state, action: PayloadAction<TaskResponse>) => {
+          state.tasks.push(action.payload.data);
+        }
+      )
+      .addCase(
+        updateTask.fulfilled,
+        (state, action: PayloadAction<TaskResponse>) => {
+          const index = state.tasks.findIndex(
+            (t) => t.id === action.payload.data.id
+          );
+          if (index !== -1) state.tasks[index] = action.payload.data;
+        }
+      )
       .addCase(deleteTask.fulfilled, (state, action: PayloadAction<string>) => {
         state.tasks = state.tasks.filter((task) => task.id !== action.payload);
       });

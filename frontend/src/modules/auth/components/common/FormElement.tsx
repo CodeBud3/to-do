@@ -9,7 +9,7 @@ import {
 import { UseFormReturn } from "react-hook-form";
 
 interface FormElementProps {
-  onSubmit: (value: any) => void;
+  onSubmit: (value) => void;
   form: UseFormReturn;
   formConfig: FormConfig[];
   submitBtnLabel: string;
@@ -21,7 +21,7 @@ export function FormElement(props: FormElementProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4"
+        className="space-y-4 contents"
         noValidate
       >
         {formConfig.map((c: FormConfig) => {

@@ -1,7 +1,16 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import { DateTimePickerForm } from "@/components/ui/date-time-picker";
 import { FormControl, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/passwordInput";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { FormConfig, InitialValue } from "@/modules/auth/types/auth.types";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -10,10 +19,11 @@ import { z } from "zod";
 const defaultValueMap: { [key: string]: InitialValue } = {
   checkbox: false,
   text: "",
+  textarea: "",
   password: "",
   radio: "option1",
   number: 0,
-  date: new Date(),
+  select: "",
   email: "",
   url: "",
 };
@@ -84,6 +94,57 @@ export const getInputByType = (
             ></Checkbox>
           </FormControl>
         </div>
+      );
+    case "textarea":
+      return (
+        <>
+          <FormLabel {...applyTestAttributes("label", c.key)}>
+            {c.label}
+          </FormLabel>
+          <FormControl>
+            <Textarea
+              {...applyTestAttributes("field", c.key)}
+              placeholder={c.placeholder}
+              {...field}
+            />
+          </FormControl>
+        </>
+      );
+    case "select":
+      return (
+        <>
+          <FormLabel {...applyTestAttributes("label", c.key)}>
+            {c.label}
+          </FormLabel>
+          <FormControl>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={c.placeholder} />
+              </SelectTrigger>
+              <SelectContent>
+                {c.options?.map((option) => (
+                  <SelectItem key={option.key} value={option.key}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormControl>
+        </>
+      );
+    case "datetime":
+      return (
+        <>
+          <FormLabel {...applyTestAttributes("label", c.key)}>
+            {c.label}
+          </FormLabel>
+          <FormControl>
+            <DateTimePickerForm
+              handleChange={field.onChange}
+              value={field.value}
+            />
+          </FormControl>
+        </>
       );
     default:
       return (

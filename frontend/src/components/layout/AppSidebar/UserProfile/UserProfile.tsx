@@ -37,7 +37,7 @@ export function UserProfile() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <SidebarMenuButton
               {...applyTestAttributes("side-nav", "user-profile")}
               size="lg"

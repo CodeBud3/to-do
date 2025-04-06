@@ -38,7 +38,7 @@
       "label": "Status",
       "type": "select",
       "placeholder": "Select status",
-      "default": "to-do",
+      "default": "toDo",
       "required": false,
       "choices": [
         { "id": "choice1", "key": "toDo", "label": "To do" },
