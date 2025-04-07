@@ -10,20 +10,38 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
 
 interface DateTimePickerFormProps {
   value: string;
   handleChange: (date: string) => void;
 }
 export function DateTimePickerForm(props: DateTimePickerFormProps) {
+  const [dateTime, setDateTime] = useState<Date>(new Date());
+  const [openPopOver, setOpenPopOver] = useState<boolean>(false);
+
+  const onCancel = () => {
+    setOpenPopOver(false);
+  };
+
+  const onSave = () => {
+    props.handleChange(dateTime.toISOString());
+    setOpenPopOver(false);
+  };
   function handleDateSelect(date: Date | undefined) {
     if (date) {
-      props.handleChange(date.toISOString());
+      setDateTime(date);
     }
   }
 
+  useEffect(() => {
+    if (props.value) {
+      setDateTime(new Date(props.value));
+    }
+  }, [props.value]);
+
   function handleTimeChange(type: "hour" | "minute" | "ampm", value: string) {
-    const currentDate = props.value ? new Date(props.value) : new Date();
+    const currentDate = dateTime;
     const newDate = new Date(currentDate);
 
     if (type === "hour") {
@@ -40,18 +58,19 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
       }
     }
 
-    props.handleChange(newDate.toISOString());
+    setDateTime(newDate);
   }
 
   return (
-    <Popover>
+    <Popover open={openPopOver} onOpenChange={setOpenPopOver}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
           className={cn(
             "w-full pl-3 text-left font-normal",
-            !props.value && "text-muted-foreground"
+            !dateTime && "text-muted-foreground"
           )}
+          onClick={() => setOpenPopOver(true)}
         >
           {props.value ? (
             format(new Date(props.value), "MM/dd/yyyy hh:mm aa")
@@ -63,12 +82,22 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <div className="sm:flex">
-          <Calendar
-            mode="single"
-            selected={new Date(props.value)}
-            onSelect={handleDateSelect}
-            initialFocus
-          />
+          <div>
+            <Calendar
+              mode="single"
+              selected={dateTime}
+              onSelect={handleDateSelect}
+              initialFocus
+            />
+            <div className="flex gap-3 justify-center">
+              <Button onClick={onCancel} variant="secondary">
+                Cancel
+              </Button>
+              <Button onClick={onSave} variant="default">
+                Save
+              </Button>
+            </div>
+          </div>
           <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
             <ScrollArea className="w-64 sm:w-auto">
               <div className="flex sm:flex-col p-2">
@@ -79,8 +108,7 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
                       key={hour}
                       size="icon"
                       variant={
-                        props.value &&
-                        new Date(props.value).getHours() % 12 === hour % 12
+                        dateTime && dateTime.getHours() % 12 === hour % 12
                           ? "default"
                           : "ghost"
                       }
@@ -100,8 +128,7 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
                     key={minute}
                     size="icon"
                     variant={
-                      props.value &&
-                      new Date(props.value).getMinutes() === minute
+                      dateTime && dateTime.getMinutes() === minute
                         ? "default"
                         : "ghost"
                     }
@@ -123,11 +150,9 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
                     key={ampm}
                     size="icon"
                     variant={
-                      props.value &&
-                      ((ampm === "AM" &&
-                        new Date(props.value).getHours() < 12) ||
-                        (ampm === "PM" &&
-                          new Date(props.value).getHours() >= 12))
+                      dateTime &&
+                      ((ampm === "AM" && dateTime.getHours() < 12) ||
+                        (ampm === "PM" && dateTime.getHours() >= 12))
                         ? "default"
                         : "ghost"
                     }

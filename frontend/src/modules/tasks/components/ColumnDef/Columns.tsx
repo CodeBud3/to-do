@@ -51,6 +51,9 @@ export const Columns: ColumnDef<Task>[] = [
       accessorKey: field.key,
       header: (columnObj: HeaderContext<Task, unknown>) =>
         sortButton(columnObj, field.label),
+      cell: ({ row }: CellContext<Task, unknown>) => (
+        <span>{row.getValue(field.key)}</span>
+      ),
     };
   }),
 ];
