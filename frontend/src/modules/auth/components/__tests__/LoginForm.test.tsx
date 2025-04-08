@@ -64,29 +64,33 @@ describe("Login Form component UI Validations", () => {
         </Provider>
       );
     });
-    for (const field of LOGIN_FORM_FIELDS) {
-      for (const value of INVALID_FORM_FIELD_VALUE[field.key]) {
-        const inputField = screen.getByTestId(field.fieldTestId);
-        for (const data of value.data) {
-          fireEvent.change(inputField, { target: { value: data } });
-          if ("verifyInScreen" in value && value.verifyInScreen) {
-            const emailField = screen.getByTestId("field-email");
-            fireEvent.change(emailField, {
-              target: { value: VALID_FORM_FIELD_VALUE["email"] },
+    await waitFor(async () => {
+      for (const field of LOGIN_FORM_FIELDS) {
+        for (const value of INVALID_FORM_FIELD_VALUE[field.key]) {
+          const inputField = screen.getByTestId(field.fieldTestId);
+          for (const data of value.data) {
+            fireEvent.change(inputField, { target: { value: data } });
+            if ("verifyInScreen" in value && value.verifyInScreen) {
+              const emailField = screen.getByTestId("field-email");
+              fireEvent.change(emailField, {
+                target: { value: VALID_FORM_FIELD_VALUE["email"] },
+              });
+            }
+            screen.getByTestId("button-submit").click();
+            await waitFor(() => {
+              if ("verifyInScreen" in value && value.verifyInScreen) {
+                expect(
+                  screen.getByText(value.errorMessage)
+                ).toBeInTheDocument();
+              } else {
+                const errorLabel = screen.queryByTestId(field.errorTestId);
+                expect(errorLabel?.textContent).equal(value.errorMessage);
+              }
             });
           }
-          screen.getByTestId("button-submit").click();
-          await waitFor(() => {
-            if ("verifyInScreen" in value && value.verifyInScreen) {
-              expect(screen.getByText(value.errorMessage)).toBeInTheDocument();
-            } else {
-              const errorLabel = screen.queryByTestId(field.errorTestId);
-              expect(errorLabel?.textContent).equal(value.errorMessage);
-            }
-          });
         }
       }
-    }
+    });
   });
 
   test("should render error message when invalid password is passed", async () => {

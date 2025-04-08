@@ -111,8 +111,10 @@ describe("Signup Form component for SUCCESS response", () => {
         }
       }
     });
-    fireEvent.change(screen.getByTestId("field-password"), {
-      target: { value: `${VALID_FORM_FIELD_VALUE["password"]}a` },
+    await waitFor(() => {
+      fireEvent.change(screen.getByTestId("field-password"), {
+        target: { value: `${VALID_FORM_FIELD_VALUE["password"]}a` },
+      });
     });
     screen.getByTestId("button-submit").click();
     await waitFor(() => {
