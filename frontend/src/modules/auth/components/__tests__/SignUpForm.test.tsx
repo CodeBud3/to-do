@@ -73,23 +73,23 @@ describe("Signup Form component for SUCCESS response", () => {
       );
     });
 
-    // await waitFor(() => {
-    for (let field of SIGN_UP_FORM_FIELDS) {
-      for (let value of INVALID_FORM_FIELD_VALUE[field.key]) {
-        const inputField = screen.getByTestId(field.fieldTestId);
-        for (let data of value.data) {
-          if (field.key != "tnc") {
-            fireEvent.change(inputField, { target: { value: data } });
+    await waitFor(async () => {
+      for (const field of SIGN_UP_FORM_FIELDS) {
+        for (const value of INVALID_FORM_FIELD_VALUE[field.key]) {
+          const inputField = screen.getByTestId(field.fieldTestId);
+          for (const data of value.data) {
+            if (field.key != "tnc") {
+              fireEvent.change(inputField, { target: { value: data } });
+            }
+            screen.getByTestId("button-submit").click();
+            await waitFor(() => {
+              const errorLabel = screen.queryByTestId(field.errorTestId);
+              expect(errorLabel?.textContent).equal(value.errorMessage);
+            });
           }
-          screen.getByTestId("button-submit").click();
-          await waitFor(() => {
-            const errorLabel = screen.queryByTestId(field.errorTestId);
-            expect(errorLabel?.textContent).equal(value.errorMessage);
-          });
         }
       }
-    }
-    // });
+    });
   });
 
   test("should display error message for confirmPassword if password is changed", async () => {
@@ -102,7 +102,7 @@ describe("Signup Form component for SUCCESS response", () => {
     });
 
     await waitFor(() => {
-      for (let field of SIGN_UP_FORM_FIELDS) {
+      for (const field of SIGN_UP_FORM_FIELDS) {
         const inputField = screen.getByTestId(field.fieldTestId);
         if (field.key != "tnc") {
           fireEvent.change(inputField, {
@@ -129,7 +129,7 @@ describe("Signup Form component for SUCCESS response", () => {
       );
     });
     await waitFor(() => {
-      for (let field of SIGN_UP_FORM_FIELDS) {
+      for (const field of SIGN_UP_FORM_FIELDS) {
         const inputField = screen.getByTestId(field.fieldTestId);
         if (field.key != "tnc") {
           fireEvent.change(inputField, {
@@ -176,7 +176,7 @@ describe("Signup Form component for FAILURE response", () => {
     });
 
     await waitFor(() => {
-      for (let field of SIGN_UP_FORM_FIELDS) {
+      for (const field of SIGN_UP_FORM_FIELDS) {
         const inputField = screen.getByTestId(field.fieldTestId);
 
         if (field.key != "tnc") {
