@@ -5,17 +5,16 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "./modules/auth/configs/passport";
 import { SESSION_CONFIG } from "./modules/auth/helpers/auth.helper";
-import dotenv from "dotenv/config";
-import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './docs/swagger';
-import { swaggerProtect } from './middlewares/swaggerProtect';
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./docs/swagger";
+import { swaggerProtect } from "./middlewares/swaggerProtect";
 import errorMiddleware from "./middlewares/errorMiddleware";
 
 // Import routes
 import authRoutes from "./modules/auth/routes/auth.routes";
 import userRoutes from "./modules/user/routes/user.routes";
 import taskRoutes from "./modules/task/routes/task.routes";
-
+import formRoutes from "./modules/form/routes/form.routes";
 // Middleware
 const app: Express = express();
 
@@ -38,20 +37,25 @@ app.use(passport.session());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
-
+app.use("/api/forms", formRoutes);
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
 // Swagger API Documentation with protection
-app.use('/api-docs', swaggerProtect, swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  explorer: true,
-  customCss: '.swagger-ui .topbar { display: none }',
-  swaggerOptions: {
-    persistAuthorization: true,
-  }
-}));
+app.use(
+  "/api-docs",
+  swaggerProtect,
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    customCss: ".swagger-ui .topbar { display: none }",
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  })
+);
 
 app.use(errorMiddleware);
 

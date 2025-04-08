@@ -9,12 +9,19 @@ import {
 } from "../helpers/auth.helper";
 import { User } from "../../user/models/User";
 import { IUser } from "../../user/types/auth.types";
+import { createUser } from "../../user/helpers/user.helpers";
+import {
+  commitTransaction,
+  rollBackTransaction,
+  startTransaction,
+} from "../../../config/db";
 
 export const register = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
+  const session = await startTransaction();
   try {
     const { firstName, lastName, email, password } = req.body;
 
@@ -25,15 +32,17 @@ export const register = async (
     }
 
     // Create new user
-    const user = new User({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
+    const user = await createUser(
+      {
+        firstName,
+        lastName,
+        email,
+        password,
+      } as IUser,
+      session
+    );
 
-    await user.save();
-
+    await commitTransaction(session);
     // Generate JWT token
     generateToken(user, res);
 
@@ -47,7 +56,8 @@ export const register = async (
     };
     sendResponse(res, 201, true, "User registered successfully", data);
   } catch (error: any) {
-    return next();
+    await rollBackTransaction(session);
+    return next(error);
   }
 };
 

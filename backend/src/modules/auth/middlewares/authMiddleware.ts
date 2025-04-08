@@ -2,12 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import { IUser } from "../../user/types/auth.types";
 import { AuthorizationError } from "../../../utils/ErrorHandler";
+import { IForm } from "../../form/types/form.types";
 
 declare global {
   namespace Express {
     interface User extends IUser {}
     interface Request {
       user?: User;
+      form?: IForm;
     }
   }
 }

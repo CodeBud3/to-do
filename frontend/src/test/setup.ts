@@ -15,7 +15,6 @@ const listeners: any = {};
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => {
-    console.log("Inside mock window matchmedi");
     return {
       matches: false, // Change to true if you need to test dark mode or other conditions
       media: query,

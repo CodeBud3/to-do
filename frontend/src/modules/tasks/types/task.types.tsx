@@ -1,13 +1,8 @@
+export type FieldType = string | string[] | number | boolean;
 export interface Task {
   id: string;
-  title: string;
-  description: string;
-  priority: string;
-  status: string;
-  due_date: string;
-  stack_rank: number;
-  user_id: string;
-  tags: string[];
+  fields: { [key: string]: FieldType };
+  sequence_num: number;
 }
 
 export interface TaskResponse {

@@ -3,6 +3,8 @@ import { AuthProvider } from "./modules/auth/contexts/AuthContext";
 import { lazy, Suspense } from "react";
 import GlobalLoader from "@/components/ui/globalLoader";
 import Layout from "@/components/layout/Layout";
+import { Provider } from "react-redux";
+import store from "./store/store";
 
 const ProtectedRoute = lazy(() => import("@/components/layout/ProtectedRoute"));
 const Dashboard = lazy(() => import("@/modules/dashboard/pages/DashboardPage"));
@@ -18,25 +20,27 @@ const TasksPage = lazy(() => import("@/modules/tasks/pages/TasksPage"));
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <Suspense fallback={<GlobalLoader />}>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/tasks" element={<TasksPage />} />
+    <Provider store={store}>
+      <AuthProvider>
+        <Router>
+          <Suspense fallback={<GlobalLoader />}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/tasks" element={<TasksPage />} />
+                </Route>
               </Route>
-            </Route>
-            <Route path="*" element={<h1>404 Not Found</h1>} />
-          </Routes>
-        </Suspense>
-      </Router>
-    </AuthProvider>
+              <Route path="*" element={<h1>404 Not Found</h1>} />
+            </Routes>
+          </Suspense>
+        </Router>
+      </AuthProvider>
+    </Provider>
   );
 };
 

@@ -8,7 +8,9 @@ import {
 import { ArrowUpDown } from "lucide-react";
 import { Task } from "../../types/task.types";
 import { Checkbox } from "@/components/ui/checkbox";
-import { taskForms } from "../../configs/taskForms";
+import { FormFields } from "@/modules/forms/types/form.types";
+import { fetchCellValue } from "@/modules/forms/utils/form.utils";
+
 const sortButton = ({ column }: { column: Column<Task> }, label: string) => {
   // sorting to happen at server
   return (
@@ -44,16 +46,21 @@ const tableActionColumn = {
   enableSorting: false,
   enableHiding: false,
 };
-export const Columns: ColumnDef<Task>[] = [
-  tableActionColumn,
-  ...taskForms.fields.map((field) => {
-    return {
-      accessorKey: field.key,
-      header: (columnObj: HeaderContext<Task, unknown>) =>
-        sortButton(columnObj, field.label),
-      cell: ({ row }: CellContext<Task, unknown>) => (
-        <span>{row.getValue(field.key)}</span>
-      ),
-    };
-  }),
-];
+
+export const fetchTableColumns = (fields: FormFields[]): ColumnDef<Task>[] => {
+  if (!fields) {
+    return [];
+  }
+  return [
+    tableActionColumn,
+    ...fields.map((field) => {
+      return {
+        accessorKey: field.internalName,
+        header: (columnObj: HeaderContext<Task, unknown>) =>
+          sortButton(columnObj, field.label),
+        cell: ({ row }: CellContext<Task, unknown>) =>
+          fetchCellValue(row, field),
+      };
+    }),
+  ];
+};

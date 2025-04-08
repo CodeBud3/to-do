@@ -15,6 +15,8 @@ import { act, render, screen } from "@testing-library/react";
 import SidebarLayout from "../SidebarLayout";
 import Dashboard from "@/modules/dashboard/pages/DashboardPage";
 import TasksPage from "@/modules/tasks/pages/TasksPage";
+import { Provider } from "react-redux";
+import store from "@/store/store";
 
 vi.mock("@/hooks/use-mobile", () => ({
   useIsMobile: () => false,
@@ -35,13 +37,15 @@ describe("Sidebar Layout component with dashboard", () => {
   beforeEach(async () => {
     await act(async () => {
       render(
-        <AuthProvider>
-          <MemoryRouter>
-            <SidebarLayout>
-              <Dashboard></Dashboard>
-            </SidebarLayout>
-          </MemoryRouter>
-        </AuthProvider>
+        <Provider store={store}>
+          <AuthProvider>
+            <MemoryRouter>
+              <SidebarLayout>
+                <Dashboard></Dashboard>
+              </SidebarLayout>
+            </MemoryRouter>
+          </AuthProvider>
+        </Provider>
       );
     });
   });
@@ -61,7 +65,6 @@ describe("Sidebar Layout component with dashboard", () => {
 describe("Sidebar Layout component with Tasks", () => {
   beforeAll(() => {
     vi.spyOn(axiosInstance, "get").mockImplementation((url: string) => {
-      console.log(url, "url");
       if (url === "/api/users/profile") {
         return Promise.resolve(AUTHORIZED_PROFILE_RESPONSE);
       } else if (url === "/src/modules/tasks/__mocks__/tasks.json") {
@@ -76,13 +79,15 @@ describe("Sidebar Layout component with Tasks", () => {
   beforeEach(async () => {
     await act(async () => {
       render(
-        <AuthProvider>
-          <MemoryRouter>
-            <SidebarLayout>
-              <TasksPage></TasksPage>
-            </SidebarLayout>
-          </MemoryRouter>
-        </AuthProvider>
+        <Provider store={store}>
+          <AuthProvider>
+            <MemoryRouter>
+              <SidebarLayout>
+                <TasksPage></TasksPage>
+              </SidebarLayout>
+            </MemoryRouter>
+          </AuthProvider>
+        </Provider>
       );
     });
   });

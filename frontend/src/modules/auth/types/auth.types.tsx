@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ErrorDetails } from "@/types/error.types";
-import { ChoiceType } from "@/modules/tasks/configs/taskForms";
+import { FormFieldOptions } from "@/modules/forms/types/form.types";
 
 export type InputType =
   | "checkbox"
@@ -22,11 +22,11 @@ export interface FormConfig<T extends string = string> {
   key: T;
   label: string;
   type: InputType;
-  validation?: z.ZodType<any> | null | undefined;
+  validation?: z.ZodType<unknown> | null | undefined;
   required?: boolean;
   errorMessage?: string;
   disabled?: boolean;
-  options?: ChoiceType[];
+  options?: FormFieldOptions[];
   placeholder?: string;
   initialValue?: InitialValue;
   group?: number;

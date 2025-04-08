@@ -1,17 +1,16 @@
 import { FormConfig } from "@/modules/auth/types/auth.types";
 import { requiredValidator } from "@/modules/auth/helpers/validators";
-import { taskForms } from "./taskForms";
 import { z } from "zod";
+import { FormFields } from "@/modules/forms/types/form.types";
 
-type FieldKey = (typeof taskForms.fields)[number]["key"];
-
-export const taskFormConfig: FormConfig<FieldKey>[] = taskForms.fields.map(
-  (field) => {
+export const buildFormConfig = (fields: FormFields[]): FormConfig<string>[] => {
+  return fields.map((field) => {
     return {
       ...field,
-      options: field.choices,
-      initialValue: field.default,
+      key: field.internalName,
+      initialValue: field.defaultValue,
+      options: field.options ? Object.values(field?.options) : [],
       validation: field.required ? requiredValidator(field.label) : z.any(),
     };
-  }
-);
+  });
+};

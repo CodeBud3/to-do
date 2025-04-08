@@ -6,7 +6,7 @@ export interface IUser extends Document {
   lastName?: string;
   email: string;
   password?: string;
-  role: "admin" | "manager" | "member";
+  role?: "admin" | "manager" | "member";
   oAuthProfileId?: string;
   provider?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
