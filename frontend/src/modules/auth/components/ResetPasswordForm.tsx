@@ -43,12 +43,13 @@ export function ResetPasswordForm({ token }: ResetPasswordProps) {
     if (form.formState.dirtyFields.confirmPassword) {
       form.trigger("confirmPassword");
     }
-  }, [passwordWatcher, form.trigger]);
+  }, [passwordWatcher, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setErrors([]);
-    const { confirmPassword, ...payload } = values;
+    const payload = { ...values };
+    delete payload.confirmPassword;
     resetPassword(payload, token)
       .then((data) => {
         setLoading(false);

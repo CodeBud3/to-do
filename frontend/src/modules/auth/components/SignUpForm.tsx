@@ -35,12 +35,13 @@ export function SignUpForm() {
     if (form.formState.dirtyFields.confirmPassword) {
       form.trigger("confirmPassword");
     }
-  }, [passwordWatcher, form.trigger]);
+  }, [passwordWatcher, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setErrors([]);
-    const { confirmPassword, ...payload } = values;
+    const payload = { ...values };
+    delete payload.confirmPassword;
     register(payload)
       .then((data) => {
         updateAuth(data.data.user);

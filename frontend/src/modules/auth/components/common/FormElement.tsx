@@ -6,21 +6,21 @@ import {
   applyTestAttributes,
   getInputByType,
 } from "@/modules/auth/helpers/formHelper";
-import { UseFormReturn } from "react-hook-form";
+import { FieldValues, SubmitHandler, UseFormReturn } from "react-hook-form";
 
-interface FormElementProps {
-  onSubmit: (value) => void;
+interface FormElementProps<T extends FieldValues> {
+  onSubmit: (values: T) => void;
   form: UseFormReturn;
   formConfig: FormConfig[];
   submitBtnLabel: string;
   loading: boolean;
 }
-export function FormElement(props: FormElementProps) {
+export function FormElement<T extends FieldValues>(props: FormElementProps<T>) {
   const { form, onSubmit, formConfig, submitBtnLabel, loading } = props;
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit as SubmitHandler<FieldValues>)}
         className="space-y-4 contents"
         noValidate
       >
