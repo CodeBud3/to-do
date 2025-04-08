@@ -21,9 +21,7 @@ const defaultValueMap: { [key: string]: InitialValue } = {
   text: "",
   textarea: "",
   password: "",
-  radio: "option1",
   number: 0,
-  select: "",
   email: "",
   url: "",
 };
