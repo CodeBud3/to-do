@@ -75,6 +75,10 @@ const tasksSlice = createSlice({
           state.tasks.push(action.payload.data);
         }
       )
+      .addCase(addTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? "Something went wrong";
+      })
       .addCase(
         updateTask.fulfilled,
         (state, action: PayloadAction<TaskResponse>) => {

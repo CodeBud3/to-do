@@ -14,8 +14,11 @@ export default function SidebarLayout({
   return (
     <SidebarProvider className="sidebar-custom">
       <AppSidebar />
-      <SidebarInset>
-        <SidebarTrigger {...applyTestAttributes("sidenav", "trigger")} />
+      <SidebarInset className="overflow-auto">
+        <SidebarTrigger
+          className="sticky top-0 left-0"
+          {...applyTestAttributes("sidenav", "trigger")}
+        />
         <main className="flex-1 px-7 py-1">{children}</main>
       </SidebarInset>
     </SidebarProvider>
