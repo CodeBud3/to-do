@@ -130,8 +130,8 @@ describe("RESET Password Form component for SUCCESS response", () => {
           target: { value: VALID_FORM_FIELD_VALUE[field.key] },
         });
       }
+      screen.getByTestId("button-submit").click();
     });
-    screen.getByTestId("button-submit").click();
     await waitFor(() => {
       const errorLabel = screen.queryByTestId("reset-password-form-errors");
       expect(errorLabel).not.toBeInTheDocument();
