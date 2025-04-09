@@ -43,7 +43,7 @@ export const DEFAULT_TASK_FIELDS: IFormFields[] = [
     ],
   },
   {
-    internalName: "due_data",
+    internalName: "due_date",
     label: "Due date",
     type: "datetime",
     placeholder: "Choose date & time",

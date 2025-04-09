@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "@/configs/interceptors";
 import { GetTaskResponse, TaskResponse, Task } from "../types/task.types";
+import { handleError } from "@/utils/errorHandler";
+import { AppError } from "@/types/error.types";
 
 const API_URL = "/api/tasks";
 
@@ -11,10 +13,19 @@ export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
 });
 
 // Add Task
-export const addTask = createAsyncThunk("tasks/addTask", async (task: Task) => {
-  const response = await axios.post<TaskResponse>(`${API_URL}`, task);
-  return response.data;
-});
+export const addTask = createAsyncThunk(
+  "tasks/addTask",
+  async (task: Task, thunkAPI) => {
+    try {
+      const response = await axios.post<TaskResponse>(`${API_URL}`, task);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      const message = handleError(error as AppError);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 // Update Task
 export const updateTask = createAsyncThunk(
@@ -75,10 +86,6 @@ const tasksSlice = createSlice({
           state.tasks.push(action.payload.data);
         }
       )
-      .addCase(addTask.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message ?? "Something went wrong";
-      })
       .addCase(
         updateTask.fulfilled,
         (state, action: PayloadAction<TaskResponse>) => {

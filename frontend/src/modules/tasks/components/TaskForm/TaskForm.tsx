@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import {
   applyTestAttributes,
+  buildFormErrorObject,
   buildSchema,
   getDefaultValues,
 } from "@/modules/auth/helpers/formHelper";
@@ -44,21 +45,35 @@ export const TaskForm = React.memo(({ taskForm }: TaskFormProps) => {
     (values: z.infer<typeof formSchema>) => {
       setLoading(true);
       const payload = values as Task;
-
-      setErrors(["Error"]);
       setErrors([]);
       dispatch(addTask(payload))
+        .unwrap()
         .then(() => {
           setLoading(false);
-          form.reset();
           setOpenSheet(false);
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          setLoading(false);
+          const formError = buildFormErrorObject(e);
+          if (Object.keys(formError).length > 0) {
+            for (const [key, value] of Object.entries(formError)) {
+              form.setError(key, value, { shouldFocus: true });
+            }
+          } else {
+            setErrors(["Something went wrong!"]);
+          }
+        });
     },
     [form, dispatch]
   );
+
+  const sheetStatusChange = (open: boolean) => {
+    setOpenSheet(open);
+    form.reset();
+  };
+
   return (
-    <Sheet open={openSheet} onOpenChange={setOpenSheet}>
+    <Sheet open={openSheet} onOpenChange={sheetStatusChange}>
       <SheetTrigger asChild>
         <Button variant="default">Add Task</Button>
       </SheetTrigger>

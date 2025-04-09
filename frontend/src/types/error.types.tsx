@@ -9,11 +9,12 @@ export interface ErrorResponse {
 export interface ErrorResponseData {
   success: boolean;
   message: string;
-  error?: ErrorDetails;
-  data?: any;
+  error?: ErrorDetails[];
+  data?: null;
 }
 
 export interface ErrorDetails {
   code: string;
-  details: any[];
+  message: string;
+  path: string[];
 }

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AnyZodObject } from "zod";
 import sendResponse from "../utils/responseHelper";
+import { ValidationError } from "../utils/ErrorHandler";
 
 export const validateRequest =
   (schema: AnyZodObject) =>
@@ -16,13 +17,6 @@ export const validateRequest =
       req.params = parsed.params;
       next();
     } catch (error: any) {
-      sendResponse(
-        res,
-        400,
-        false,
-        "Validation error",
-        undefined,
-        error.errors
-      );
+      return next(new ValidationError(error.errors));
     }
   };

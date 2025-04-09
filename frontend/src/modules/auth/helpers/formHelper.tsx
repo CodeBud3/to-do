@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { FormConfig, InitialValue } from "@/modules/auth/types/auth.types";
+import { ErrorDetails } from "@/types/error.types";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
@@ -24,6 +25,23 @@ const defaultValueMap: { [key: string]: InitialValue } = {
   number: 0,
   email: "",
   url: "",
+};
+
+export interface FormError {
+  [key: string]: {
+    message: string;
+    type: "manual";
+  };
+}
+export const buildFormErrorObject = (errors: ErrorDetails[]): FormError => {
+  const formErrors: FormError = {};
+  errors.forEach((error) => {
+    if (error?.path) {
+      const [_, key] = error.path;
+      formErrors[key] = { message: error.message, type: "manual" };
+    }
+  });
+  return formErrors;
 };
 export const buildSchema = <T extends string>(configs: FormConfig<T>[]) => {
   return configs.reduce((acc, c) => {
