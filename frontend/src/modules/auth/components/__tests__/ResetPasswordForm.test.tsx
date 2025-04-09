@@ -92,7 +92,7 @@ describe("RESET Password Form component for SUCCESS response", () => {
       );
     });
 
-    await waitFor(() => {
+    await act(() => {
       for (const field of RESET_PASSWORD_FORM_FIELDS) {
         const inputField = screen.getByTestId(field.fieldTestId);
         fireEvent.change(inputField, {
@@ -100,7 +100,7 @@ describe("RESET Password Form component for SUCCESS response", () => {
         });
       }
     });
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId("field-password"), {
         target: { value: `${VALID_FORM_FIELD_VALUE["password"]}a` },
       });
@@ -173,15 +173,16 @@ describe("Reset password Form component for FAILURE response", () => {
       );
     });
 
-    await waitFor(async () => {
+    await act(async () => {
       for (const field of RESET_PASSWORD_FORM_FIELDS) {
         const inputField = screen.getByTestId(field.fieldTestId);
         await fireEvent.change(inputField, {
           target: { value: VALID_FORM_FIELD_VALUE[field.key] },
         });
       }
+      screen.getByTestId("button-submit").click();
     });
-    screen.getByTestId("button-submit").click();
+
     await waitFor(() => {
       const errorLabel = screen.getByTestId("reset-password-form-errors");
       expect(errorLabel).toBeInTheDocument();
