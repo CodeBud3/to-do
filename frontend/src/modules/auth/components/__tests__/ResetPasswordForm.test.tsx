@@ -104,8 +104,8 @@ describe("RESET Password Form component for SUCCESS response", () => {
       fireEvent.change(screen.getByTestId("field-password"), {
         target: { value: `${VALID_FORM_FIELD_VALUE["password"]}a` },
       });
+      screen.getByTestId("button-submit").click();
     });
-    screen.getByTestId("button-submit").click();
     await waitFor(() => {
       const errorLabel = screen.getByTestId("errormsg-confirmpassword");
       expect(errorLabel.textContent).equal("Passwords do not match.");
