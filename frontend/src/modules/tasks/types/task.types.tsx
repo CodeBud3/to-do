@@ -1,7 +1,9 @@
 export type FieldType = string | string[] | number | boolean;
+
+export type TaskField = { [key: string]: FieldType };
 export interface Task {
   id: string;
-  fields: { [key: string]: FieldType };
+  fields: TaskField;
   sequence_num: number;
 }
 

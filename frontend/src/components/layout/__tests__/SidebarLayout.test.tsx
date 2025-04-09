@@ -67,7 +67,7 @@ describe("Sidebar Layout component with Tasks", () => {
     vi.spyOn(axiosInstance, "get").mockImplementation((url: string) => {
       if (url === "/api/users/profile") {
         return Promise.resolve(AUTHORIZED_PROFILE_RESPONSE);
-      } else if (url === "/src/modules/tasks/__mocks__/tasks.json") {
+      } else if (url === "/api/tasks") {
         return Promise.resolve([]);
       }
       return Promise.reject(new Error("Not Found"));

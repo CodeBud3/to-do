@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/sheet";
 import {
   applyTestAttributes,
-  buildFormErrorObject,
   buildSchema,
+  displayErrors,
   getDefaultValues,
 } from "@/modules/auth/helpers/formHelper";
 import React, { useCallback, useState } from "react";
@@ -21,9 +21,9 @@ import { FormElement } from "@/modules/auth/components/common/FormElement";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../store/store";
 import { addTask } from "../../services/tasksSlice";
-import { Task } from "../../types/task.types";
 import { Form } from "@/modules/forms/types/form.types";
 import { buildFormConfig } from "../../configs/taskFormConfig";
+import { FormError } from "@/modules/errors/error.types";
 
 interface TaskFormProps {
   taskForm: Form;
@@ -33,7 +33,7 @@ export const TaskForm = React.memo(({ taskForm }: TaskFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   // const { tasks } = useSelector((state: RootState) => state.tasks);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errors, setErrors] = useState<string[] | []>([]);
+  const [errors, setErrors] = useState<FormError[] | []>([]);
   const [openSheet, setOpenSheet] = useState<boolean>(false);
   const formSchema = z.object(buildSchema(taskFormConfig));
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,7 +44,7 @@ export const TaskForm = React.memo(({ taskForm }: TaskFormProps) => {
   const onSubmit = useCallback(
     (values: z.infer<typeof formSchema>) => {
       setLoading(true);
-      const payload = values as Task;
+      const payload = values;
       setErrors([]);
       dispatch(addTask(payload))
         .unwrap()
@@ -52,16 +52,9 @@ export const TaskForm = React.memo(({ taskForm }: TaskFormProps) => {
           setLoading(false);
           setOpenSheet(false);
         })
-        .catch((e) => {
+        .catch((error) => {
+          displayErrors(error, form, setErrors);
           setLoading(false);
-          const formError = buildFormErrorObject(e);
-          if (Object.keys(formError).length > 0) {
-            for (const [key, value] of Object.entries(formError)) {
-              form.setError(key, value, { shouldFocus: true });
-            }
-          } else {
-            setErrors(["Something went wrong!"]);
-          }
         });
     },
     [form, dispatch]

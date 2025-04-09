@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { User } from "../models/User";
-import { ValidationError } from "../../../utils/ErrorHandler";
+import { NotFoundError } from "../../../utils/ErrorHandler";
 import sendResponse from "../../../utils/responseHelper";
 import { generateForgotPasswordToken } from "../../auth/helpers/auth.helper";
 import { sendResetEmail } from "../../auth/helpers/email.helper";
@@ -44,7 +44,7 @@ export const deleteUser = async (
     const deletedUser = await deleteUserAndAssociations(email, session);
     if (!deletedUser) {
       await rollBackTransaction(session);
-      return next(new ValidationError(["User not found"]));
+      return next(new NotFoundError("User"));
     }
     await commitTransaction(session);
     sendResponse(res, 200, true, "User deleted successfully");

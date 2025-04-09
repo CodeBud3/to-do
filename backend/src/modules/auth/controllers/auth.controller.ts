@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ValidationError } from "../../../utils/ErrorHandler";
+import { FormValidationError } from "../../../utils/ErrorHandler";
 import sendResponse from "../../../utils/responseHelper";
 import {
   clearSession,
@@ -28,7 +28,9 @@ export const register = async (
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return next(new ValidationError(["Email already registered"]));
+      return next(
+        new FormValidationError([{ message: "Email already registered." }])
+      );
     }
 
     // Create new user
@@ -54,7 +56,7 @@ export const register = async (
         email: user.email,
       },
     };
-    sendResponse(res, 201, true, "User registered successfully", data);
+    sendResponse(res, 201, true, "User registered successfully.", data);
   } catch (error: any) {
     await rollBackTransaction(session);
     return next(error);
@@ -72,13 +74,17 @@ export const login = async (
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      return next(new ValidationError(["Incorrect email or password."]));
+      return next(
+        new FormValidationError([{ message: "Incorrect email or password." }])
+      );
     }
 
     // Check password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      return next(new ValidationError(["Incorrect email or password."]));
+      return next(
+        new FormValidationError([{ message: "Incorrect email or password." }])
+      );
     }
 
     // Generate and set JWT token

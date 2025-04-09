@@ -1,8 +1,13 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "@/configs/interceptors";
-import { GetTaskResponse, TaskResponse, Task } from "../types/task.types";
+import {
+  GetTaskResponse,
+  TaskResponse,
+  Task,
+  TaskField,
+} from "../types/task.types";
 import { handleError } from "@/utils/errorHandler";
-import { AppError } from "@/types/error.types";
+import { ErrorDetails } from "@/types/error.types";
 
 const API_URL = "/api/tasks";
 
@@ -15,14 +20,13 @@ export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
 // Add Task
 export const addTask = createAsyncThunk(
   "tasks/addTask",
-  async (task: Task, thunkAPI) => {
+  async (task: TaskField, thunkAPI) => {
     try {
       const response = await axios.post<TaskResponse>(`${API_URL}`, task);
       return response.data;
     } catch (error) {
-      console.log(error);
-      const message = handleError(error as AppError);
-      return thunkAPI.rejectWithValue(message);
+      const formErrors = handleError(error as ErrorDetails[]);
+      return thunkAPI.rejectWithValue(formErrors);
     }
   }
 );
@@ -30,21 +34,31 @@ export const addTask = createAsyncThunk(
 // Update Task
 export const updateTask = createAsyncThunk(
   "tasks/updateTask",
-  async (task: Task) => {
-    const response = await axios.put<TaskResponse>(
-      `${API_URL}/${task.id}`,
-      task
-    );
-    return response.data;
+  async (task: Task, thunkAPI) => {
+    try {
+      const response = await axios.put<TaskResponse>(
+        `${API_URL}/${task.id}`,
+        task
+      );
+      return response.data;
+    } catch (error) {
+      const formErrors = handleError(error as ErrorDetails[]);
+      return thunkAPI.rejectWithValue(formErrors);
+    }
   }
 );
 
 // Delete Task
 export const deleteTask = createAsyncThunk(
   "tasks/deleteTask",
-  async (id: string) => {
-    await axios.delete(`${API_URL}/${id}`);
-    return id;
+  async (id: string, thunkAPI) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      return id;
+    } catch (error) {
+      const formErrors = handleError(error as ErrorDetails[]);
+      return thunkAPI.rejectWithValue(formErrors);
+    }
   }
 );
 

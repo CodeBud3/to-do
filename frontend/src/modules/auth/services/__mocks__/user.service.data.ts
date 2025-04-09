@@ -1,14 +1,4 @@
-export const UNAUTHORIZED_PROFILE_RESPONSE = {
-  data: {
-    success: false,
-    message: "Authorization Error",
-    data: null,
-    error: {
-      code: "UNAUTHORIZED",
-      details: ["Unauthorized"],
-    },
-  },
-};
+export const UNAUTHORIZED_PROFILE_RESPONSE = [];
 
 export const AUTHORIZED_PROFILE_RESPONSE = {
   data: {
@@ -36,14 +26,4 @@ export const RESET_PASSWORD_SUCCESS_RESPONSE = {
   data: { success: true, message: "Password reset successfull." },
 };
 
-export const RESET_PASSWORD_FAILURE_RESPONSE = {
-  data: {
-    success: false,
-    message: "Authorization Error",
-    data: null,
-    error: {
-      code: "UNAUTHORIZED",
-      details: ["Unauthorized"],
-    },
-  },
-};
+export const RESET_PASSWORD_FAILURE_RESPONSE = null;

@@ -1,13 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Task } from "../models/Task";
-import mongoose from "mongoose";
 import sendResponse from "../../../utils/responseHelper";
-import {
-  ValidationError,
-  NotFoundError,
-  AuthorizationError,
-  AppError,
-} from "../../../utils/ErrorHandler";
+import { NotFoundError } from "../../../utils/ErrorHandler";
 import {
   commitTransaction,
   rollBackTransaction,
@@ -24,10 +18,7 @@ export const getTasks = async (
 ): Promise<void> => {
   try {
     // Type assertion for the user object added by passport authentication
-    const userId = req.user?._id;
-    if (!userId) {
-      return next(new AuthorizationError(["User not authenticated"]));
-    }
+    const userId = req.user?._id!;
 
     // Support filtering by query parameters
     const filters: any = { user_id: userId.toString() };
@@ -90,18 +81,8 @@ export const getTask = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const taskId = req.params.id;
-    const userId = req.user?._id;
-
-    // Validate MongoDB ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(taskId)) {
-      return next(new ValidationError(["Invalid task ID format"]));
-    }
-
-    // Ensure userId is defined
-    if (!userId) {
-      return next(new AuthorizationError(["User not authenticated"]));
-    }
+    const taskId = req.params.id!;
+    const userId = req.user?._id!;
 
     // Find task with owner check for security
     const task = await Task.findOne({
@@ -169,17 +150,7 @@ export const updateTask = async (
 ): Promise<void> => {
   try {
     const taskId = req.params.id;
-    const userId = req.user?._id;
-
-    // Validate MongoDB ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(taskId)) {
-      return next(new ValidationError(["Invalid task ID format"]));
-    }
-
-    // Ensure userId is defined
-    if (!userId) {
-      return next(new AuthorizationError(["User not authenticated"]));
-    }
+    const userId = req.user?._id!;
 
     // Get the existing task with owner check for security
     const existingTask = await Task.findOne({
@@ -200,10 +171,6 @@ export const updateTask = async (
       { $set: updateData },
       { new: true, runValidators: true }
     );
-
-    if (!updatedTask) {
-      return next(new AppError(500, "Failed to update task", "UPDATE_ERROR"));
-    }
 
     console.log(`Updated task ${taskId} for user ${userId}`);
 

@@ -9,12 +9,15 @@ export interface ErrorResponse {
 export interface ErrorResponseData {
   success: boolean;
   message: string;
-  error?: { details: ErrorDetails[] };
+  error?: ErrorData;
   data?: null;
 }
 
 export interface ErrorDetails {
-  code: string;
+  code?: string;
   message: string;
-  path: string[];
+  path?: string[];
+}
+export interface ErrorData {
+  details: ErrorDetails[];
 }

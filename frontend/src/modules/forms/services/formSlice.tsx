@@ -1,15 +1,22 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "@/configs/interceptors";
 import { Form, FormResponse } from "../types/form.types";
+import { handleError } from "@/utils/errorHandler";
+import { ErrorDetails } from "@/types/error.types";
 
 const API_URL = "/api/forms";
 
 // Fetch Form
 export const fetchForm = createAsyncThunk(
   "forms/fetchForm",
-  async (formType: string) => {
-    const response = await axios.get<FormResponse>(`${API_URL}/${formType}`);
-    return response.data;
+  async (formType: string, thunkAPI) => {
+    try {
+      const response = await axios.get<FormResponse>(`${API_URL}/${formType}`);
+      return response.data;
+    } catch (error) {
+      const formErrors = handleError(error as ErrorDetails[]);
+      return thunkAPI.rejectWithValue(formErrors);
+    }
   }
 );
 

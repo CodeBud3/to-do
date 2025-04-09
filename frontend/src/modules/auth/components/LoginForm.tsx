@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   applyTestAttributes,
   buildSchema,
+  displayErrors,
   getDefaultValues,
 } from "@/modules/auth/helpers/formHelper";
 import { FormElement } from "@/modules/auth/components/common/FormElement";
@@ -12,15 +13,15 @@ import { login } from "@/modules/auth/services/auth.service";
 import { useAuth } from "@/modules/auth/contexts/AuthContext";
 import { AuthResponse } from "@/modules/auth/types/auth.types";
 import { useEffect, useState } from "react";
-import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 import { passwordValidator } from "@/modules/auth/helpers/validators";
+import { FormError } from "@/modules/errors/error.types";
 
 const formSchema = z.object(buildSchema(loginConfig));
 
 export function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<FormError[]>([]);
   const { updateAuth } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,7 +49,7 @@ export function LoginForm() {
     setErrors([]);
     const result = validateOnSubmit(values);
     if (!result.success) {
-      setErrors(["Incorrect email or password."]);
+      setErrors([{ message: "Incorrect email or password." }]);
       setLoading(false);
       return;
     }
@@ -65,7 +66,7 @@ export function LoginForm() {
       })
       .catch((error) => {
         setLoading(false);
-        setErrors(handleError(error));
+        displayErrors(error, form, setErrors);
       });
   }
   return (
