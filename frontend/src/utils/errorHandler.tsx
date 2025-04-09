@@ -1,7 +1,7 @@
-import { AppError } from "@/types/error.types";
+import { AppError, ErrorDetails } from "@/types/error.types";
 
-export function handleError(err: AppError): string[] {
-  let errorMessage = ["Something went wrong!"];
+export function handleError(err: AppError): ErrorDetails[] | string[] {
+  let errorMessage: ErrorDetails[] | string[] = ["Something went wrong!"];
   if (err?.response?.data?.error?.details) {
     errorMessage = err.response.data.error.details;
   }

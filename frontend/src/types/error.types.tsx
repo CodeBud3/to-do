@@ -9,7 +9,7 @@ export interface ErrorResponse {
 export interface ErrorResponseData {
   success: boolean;
   message: string;
-  error?: ErrorDetails[];
+  error?: { details: ErrorDetails[] };
   data?: null;
 }
 
