@@ -4,24 +4,25 @@ import { z } from "zod";
 import {
   applyTestAttributes,
   buildSchema,
+  displayErrors,
   getDefaultValues,
 } from "@/modules/auth/helpers/formHelper";
 import { FormElement } from "@/modules/auth/components/common/FormElement";
 import { forgotPasswordConfig } from "@/modules/auth/helpers/authFormConfig";
 import { AuthResponse } from "@/modules/auth/types/auth.types";
 import { useState } from "react";
-import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 import { forgotPassword } from "@/modules/auth/services/user";
 import { useAlertDialog } from "@/hooks/AlertDialog/useAlertDialog";
 import { useNavigate } from "react-router-dom";
 import { AlertDialogComponent } from "@/hooks/AlertDialog/AlertDialogComponent";
+import { FormError } from "@/modules/errors/error.types";
 
 const formSchema = z.object(buildSchema(forgotPasswordConfig));
 
 export function ForgotPasswordForm() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<FormError[]>([]);
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,7 +48,7 @@ export function ForgotPasswordForm() {
       })
       .catch((error) => {
         setLoading(false);
-        setErrors(handleError(error));
+        displayErrors(error, form, setErrors);
       });
   }
   return (

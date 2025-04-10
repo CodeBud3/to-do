@@ -1,10 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import { User } from "../models/User";
-import { ValidationError } from "../../../utils/ErrorHandler";
+import { NotFoundError } from "../../../utils/ErrorHandler";
 import sendResponse from "../../../utils/responseHelper";
 import { generateForgotPasswordToken } from "../../auth/helpers/auth.helper";
 import { sendResetEmail } from "../../auth/helpers/email.helper";
 import { IUser } from "../types/auth.types";
+import {
+  commitTransaction,
+  rollBackTransaction,
+  startTransaction,
+} from "../../../config/db";
+import { deleteUserAndAssociations } from "../helpers/user.helpers";
 
 export const fetchUserDetails = (
   req: Request,
@@ -32,14 +38,18 @@ export const deleteUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  const session = await startTransaction();
   try {
     const email = req.params?.email;
-    const deletedUser = await User.findOneAndDelete({ email });
+    const deletedUser = await deleteUserAndAssociations(email, session);
     if (!deletedUser) {
-      return next(new ValidationError(["User not found"]));
+      await rollBackTransaction(session);
+      return next(new NotFoundError("User"));
     }
+    await commitTransaction(session);
     sendResponse(res, 200, true, "User deleted successfully");
   } catch (error: any) {
+    await rollBackTransaction(session);
     return next(error);
   }
 };

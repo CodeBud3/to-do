@@ -1,13 +1,18 @@
 import { z } from "zod";
 import { ErrorDetails } from "@/types/error.types";
+import { FormFieldOptions } from "@/modules/forms/types/form.types";
 
 export type InputType =
   | "checkbox"
   | "radio"
   | "text"
+  | "textarea"
+  | "select"
   | "password"
   | "number"
   | "date"
+  | "datetime"
+  | "multiselect"
   | "email"
   | "url";
 
@@ -17,11 +22,11 @@ export interface FormConfig<T extends string = string> {
   key: T;
   label: string;
   type: InputType;
-  validation?: z.ZodType<any>;
+  validation?: z.ZodType<unknown> | null | undefined;
   required?: boolean;
   errorMessage?: string;
   disabled?: boolean;
-  options?: any[];
+  options?: FormFieldOptions[];
   placeholder?: string;
   initialValue?: InitialValue;
   group?: number;

@@ -11,6 +11,8 @@ import {
   UNAUTHORIZED_PROFILE_RESPONSE,
 } from "@/modules/auth/services/__mocks__/user.service.data";
 import { LOGOUT_SUCCESS_RESPONSE } from "@/modules/auth/services/__mocks__/auth.service.data";
+import { Provider } from "react-redux";
+import store from "@/store/store";
 
 describe("Layout Component", () => {
   afterEach(() => {
@@ -26,11 +28,13 @@ describe("Layout Component", () => {
     });
     await act(async () => {
       render(
-        <AuthProvider>
-          <MemoryRouter>
-            <Navbar />
-          </MemoryRouter>
-        </AuthProvider>
+        <Provider store={store}>
+          <AuthProvider>
+            <MemoryRouter>
+              <Navbar />
+            </MemoryRouter>
+          </AuthProvider>
+        </Provider>
       );
     });
 
@@ -55,11 +59,13 @@ describe("Layout Component", () => {
     // vi.spyOn(AuthContext, "useAuth").mockReturnValue(authContextMock);
     await act(async () => {
       render(
-        <AuthProvider>
-          <MemoryRouter>
-            <Navbar />
-          </MemoryRouter>
-        </AuthProvider>
+        <Provider store={store}>
+          <AuthProvider>
+            <MemoryRouter>
+              <Navbar />
+            </MemoryRouter>
+          </AuthProvider>
+        </Provider>
       );
     });
 

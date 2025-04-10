@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/configs/appConfig";
+import { handleAppErrors } from "@/utils/errorHandler";
 import axios from "axios";
 
 // Create Axios instance
@@ -31,7 +32,7 @@ axiosInstance.interceptors.response.use(
         window.location.href = "/login";
       }
     }
-    return Promise.reject(error);
+    return Promise.reject(handleAppErrors(error));
   }
 );
 

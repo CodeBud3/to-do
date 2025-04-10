@@ -6,6 +6,7 @@ import {
   AuthResponse,
 } from "@/modules/auth/types/auth.types";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -18,6 +19,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [authloading, setAuthLoading] = useState<boolean>(false);
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!user) {
       setAuthLoading(true);
@@ -32,7 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(null);
         });
     }
-  }, []);
+  }, [user]);
   // Login Function
   const updateAuth = (user: User) => {
     setUser(user);
@@ -44,6 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     logOut()
       .then(() => {
         setUser(null);
+        dispatch({ type: "RESET_STORE" });
         setAuthLoading(false);
       })
       .catch(() => {

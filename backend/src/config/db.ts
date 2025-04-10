@@ -17,4 +17,26 @@ export const getMongoStore = () => {
     collectionName: "sessions",
   });
 };
+
+export const startTransaction =
+  async (): Promise<mongoose.mongo.ClientSession> => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    return session;
+  };
+
+export const commitTransaction = async (
+  session: mongoose.mongo.ClientSession
+) => {
+  await session.commitTransaction();
+  session.endSession();
+};
+
+export const rollBackTransaction = async (
+  session: mongoose.mongo.ClientSession
+) => {
+  await session.abortTransaction();
+  session.endSession();
+};
+
 export default connectDB;

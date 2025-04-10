@@ -1,8 +1,9 @@
 import { AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils"; // ShadCN utility for styling (optional)
+import { FormError } from "@/modules/errors/error.types";
 
 interface ErrorMessageProps {
-  errors?: string[] | string | null;
+  errors?: FormError[];
   className?: string;
 }
 
@@ -11,7 +12,7 @@ export const ErrorMessage = ({
   className,
   ...attributes
 }: ErrorMessageProps) => {
-  if (!errors) return null;
+  if (!errors?.length) return null;
 
   const errorList = Array.isArray(errors) ? errors : [errors];
 
@@ -26,7 +27,7 @@ export const ErrorMessage = ({
       </div>
       <ul className="mt-2 text-sm list-disc list-inside">
         {errorList.map((error, index) => (
-          <li key={index}>{error}</li>
+          <li key={index}>{error.message}</li>
         ))}
       </ul>
     </div>

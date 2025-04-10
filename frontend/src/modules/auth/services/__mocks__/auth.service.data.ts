@@ -13,19 +13,13 @@ export const LOGIN_SUCCESS_RESPONSE = {
   },
 };
 
-export const LOGIN_FAILURE_RESPONSE = {
-  response: {
-    data: {
-      success: false,
-      message: "Validation Error",
-      data: null,
-      error: {
-        code: "VALIDATION_ERROR",
-        details: ["Incorrect email or password."],
-      },
-    },
+export const LOGIN_FAILURE_RESPONSE = [
+  {
+    code: "formError",
+    path: ["body", "formError"],
+    message: "Incorrect email or password.",
   },
-};
+];
 
 export const REGISTER_SUCCESS_RESPONSE = {
   data: {
@@ -42,19 +36,13 @@ export const REGISTER_SUCCESS_RESPONSE = {
   },
 };
 
-export const REGISTER_FAILURE_RESPONSE = {
-  response: {
-    data: {
-      success: false,
-      message: "Validation Error",
-      data: null,
-      error: {
-        code: "VALIDATION_ERROR",
-        details: ["Email already registered"],
-      },
-    },
+export const REGISTER_FAILURE_RESPONSE = [
+  {
+    code: "formError",
+    path: ["body", "formError"],
+    message: "Email already registered.",
   },
-};
+];
 
 export const LOGOUT_SUCCESS_RESPONSE = {
   data: {

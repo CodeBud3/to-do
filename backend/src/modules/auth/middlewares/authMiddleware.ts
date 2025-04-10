@@ -2,12 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import { IUser } from "../../user/types/auth.types";
 import { AuthorizationError } from "../../../utils/ErrorHandler";
+import { IForm } from "../../form/types/form.types";
 
 declare global {
   namespace Express {
     interface User extends IUser {}
     interface Request {
       user?: User;
+      form?: IForm;
     }
   }
 }
@@ -28,7 +30,7 @@ export const authenticate = (
     { session: false },
     (err: Error, user: IUser) => {
       if (err || !user) {
-        return next(new AuthorizationError(["Unauthorized"]));
+        return next(new AuthorizationError());
       }
       req.user = user;
       next();
@@ -47,17 +49,13 @@ export const authenticate_admin = (
     { session: false },
     (err: Error, user: IUser) => {
       if (err || !user) {
-        return next(new AuthorizationError(["Unauthorized"]));
+        return next(new AuthorizationError());
       }
       if (
         user.role !== "admin" ||
         user.email === req.params.email?.toLowerCase()
       ) {
-        return next(
-          new AuthorizationError([
-            "Unauthorized. You are not allowed to perform this operation.",
-          ])
-        );
+        return next(new AuthorizationError());
       }
       req.user = user;
       next();

@@ -162,10 +162,22 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: auto;
   &.page-box-model-with-nav {
+    overflow: auto;
     height: calc(
       100vh - calc(var(--spacing) * 15)
     ); /* 15 is height of the nav-bar */
+  }
+}
+
+.tasks-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 1rem 1rem 1rem;
+  overflow-y: auto;
+
+  form > :last-child {
+    margin-top: auto;
   }
 }

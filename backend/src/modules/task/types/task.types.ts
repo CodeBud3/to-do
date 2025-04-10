@@ -1,15 +1,9 @@
 import { Document } from "mongoose";
 
+export type FieldType = string | string[] | number | boolean;
 export interface ITask extends Document {
-  title: string;
-  description?: string;
-  priority: "high" | "medium" | "low";
-  matrix: "urgent-important" | "not-urgent-important" | "urgent-not-important" | "not-urgent-not-important";
-  status: "todo" | "in-progress" | "done";
-  due_date?: Date;
-  stack_rank: number;
+  fields: { [key: string]: FieldType };
   user_id: string;
-  tag: "work" | "personal" | "errand" | "other";
   sequence_num: number;
   createdAt: Date;
   updatedAt: Date;

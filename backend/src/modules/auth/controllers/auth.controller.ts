@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ValidationError } from "../../../utils/ErrorHandler";
+import { FormValidationError } from "../../../utils/ErrorHandler";
 import sendResponse from "../../../utils/responseHelper";
 import {
   clearSession,
@@ -9,31 +9,42 @@ import {
 } from "../helpers/auth.helper";
 import { User } from "../../user/models/User";
 import { IUser } from "../../user/types/auth.types";
+import { createUser } from "../../user/helpers/user.helpers";
+import {
+  commitTransaction,
+  rollBackTransaction,
+  startTransaction,
+} from "../../../config/db";
 
 export const register = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
+  const session = await startTransaction();
   try {
     const { firstName, lastName, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return next(new ValidationError(["Email already registered"]));
+      return next(
+        new FormValidationError([{ message: "Email already registered." }])
+      );
     }
 
     // Create new user
-    const user = new User({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
+    const user = await createUser(
+      {
+        firstName,
+        lastName,
+        email,
+        password,
+      } as IUser,
+      session
+    );
 
-    await user.save();
-
+    await commitTransaction(session);
     // Generate JWT token
     generateToken(user, res);
 
@@ -45,9 +56,10 @@ export const register = async (
         email: user.email,
       },
     };
-    sendResponse(res, 201, true, "User registered successfully", data);
+    sendResponse(res, 201, true, "User registered successfully.", data);
   } catch (error: any) {
-    return next();
+    await rollBackTransaction(session);
+    return next(error);
   }
 };
 
@@ -62,13 +74,17 @@ export const login = async (
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      return next(new ValidationError(["Incorrect email or password."]));
+      return next(
+        new FormValidationError([{ message: "Incorrect email or password." }])
+      );
     }
 
     // Check password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      return next(new ValidationError(["Incorrect email or password."]));
+      return next(
+        new FormValidationError([{ message: "Incorrect email or password." }])
+      );
     }
 
     // Generate and set JWT token

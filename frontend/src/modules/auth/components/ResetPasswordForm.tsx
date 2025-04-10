@@ -4,17 +4,18 @@ import { z } from "zod";
 import {
   applyTestAttributes,
   buildSchema,
+  displayErrors,
   getDefaultValues,
 } from "@/modules/auth/helpers/formHelper";
 import { FormElement } from "@/modules/auth/components/common/FormElement";
 import { resetPasswordConfig } from "@/modules/auth/helpers/authFormConfig";
 import { useEffect, useState } from "react";
-import { handleError } from "@/utils/errorHandler";
 import { ErrorMessage } from "@/components/ui/errorMessage";
 import { resetPassword } from "@/modules/auth/services/user";
 import { useNavigate } from "react-router-dom";
 import { AlertDialogComponent } from "@/hooks/AlertDialog/AlertDialogComponent";
 import { useAlertDialog } from "@/hooks/AlertDialog/useAlertDialog";
+import { FormError } from "@/modules/errors/error.types";
 
 interface ResetPasswordProps {
   token: string;
@@ -29,7 +30,7 @@ const formSchema = z
 
 export function ResetPasswordForm({ token }: ResetPasswordProps) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<FormError[]>([]);
   const { alertParams, showAlert, closeAlert } = useAlertDialog();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,12 +44,13 @@ export function ResetPasswordForm({ token }: ResetPasswordProps) {
     if (form.formState.dirtyFields.confirmPassword) {
       form.trigger("confirmPassword");
     }
-  }, [passwordWatcher, form.trigger]);
+  }, [passwordWatcher, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setErrors([]);
-    const { confirmPassword, ...payload } = values;
+    const payload = { ...values };
+    delete payload.confirmPassword;
     resetPassword(payload, token)
       .then((data) => {
         setLoading(false);
@@ -65,7 +67,7 @@ export function ResetPasswordForm({ token }: ResetPasswordProps) {
       })
       .catch((error) => {
         setLoading(false);
-        setErrors(handleError(error));
+        displayErrors(error, form, setErrors);
       });
   }
   return (

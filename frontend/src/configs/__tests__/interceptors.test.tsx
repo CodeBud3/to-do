@@ -62,30 +62,30 @@ describe("Axios Interceptors", () => {
           data: { message: "Page not found" },
         },
       })
-    ).rejects.toMatchObject({
-      response: {
-        statusText: "NotFound",
-        status: 404,
-        data: { message: "Page not found" },
+    ).rejects.toMatchObject([
+      {
+        message: "Something went wrong!",
+        code: "INTERNAL_ERROR",
+        path: ["body", "formError"],
       },
-    });
+    ]);
   });
 
   test("should call response interceptor with 401", async () => {
     await expect(
       axiosInstance.interceptors.response.handlers[0].rejected({
         response: {
-          statusText: "NotFound",
-          status: 401,
-          data: { message: "Page not found" },
+          data: {
+            success: false,
+            message: "Validation Error",
+            data: null,
+            error: {
+              code: "VALIDATION_ERROR",
+              details: ["Incorrect email or password."],
+            },
+          },
         },
       })
-    ).rejects.toMatchObject({
-      response: {
-        statusText: "NotFound",
-        status: 401,
-        data: { message: "Page not found" },
-      },
-    });
+    ).rejects.toMatchObject(["Incorrect email or password."]);
   });
 });

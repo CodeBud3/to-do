@@ -30,7 +30,6 @@ export function UserProfile() {
         logout();
         break;
       default:
-        console.error(`Unhandled menu item: ${key}`);
     }
   };
   return (
