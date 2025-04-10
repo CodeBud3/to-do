@@ -11,23 +11,29 @@ import { validateRequest } from "../../../middlewares/validateReqMiddleware";
 import {
   createTaskSchema,
   reorderTasksSchema,
-  taskIdSchema,
+  paramsIdSchema,
   tasksFilterSchema,
+  updateTaskSchema,
 } from "../validators/task.validators";
 import { authenticate } from "../../auth/middlewares/authMiddleware";
-import { loadTaskForm } from "../middlewares/tasks.middleware";
+import { loadTaskForm, loadTaskRecord } from "../middlewares/tasks.middleware";
 
 const router = express.Router();
 
 // All task routes require authentication
 router.use(authenticate);
-router.use(loadTaskForm);
+
 // Apply task validation middleware
 router.get("/", validateRequest(tasksFilterSchema), getTasks);
-router.get("/:id", validateRequest(taskIdSchema), getTask);
-router.post("/", createTaskSchema, createTask);
-router.put("/:id", createTaskSchema, updateTask);
-router.delete("/:id", validateRequest(taskIdSchema), deleteTask);
+router.get("/:id", validateRequest(paramsIdSchema), getTask);
+router.post("/", loadTaskForm, createTaskSchema, createTask);
+router.put("/:id", loadTaskForm, updateTaskSchema, loadTaskRecord, updateTask);
+router.delete(
+  "/:id",
+  validateRequest(paramsIdSchema),
+  loadTaskRecord,
+  deleteTask
+);
 router.patch("/reorder", validateRequest(reorderTasksSchema), reorderTasks);
 
 export default router;

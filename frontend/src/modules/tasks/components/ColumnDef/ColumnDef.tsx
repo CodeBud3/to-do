@@ -1,66 +1,66 @@
-import { Button } from "@/components/ui/button";
-import {
-  CellContext,
-  Column,
-  ColumnDef,
-  HeaderContext,
-} from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-import { Task } from "../../types/task.types";
+import { CellContext, ColumnDef, HeaderContext } from "@tanstack/react-table";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormFields } from "@/modules/forms/types/form.types";
 import { fetchCellValue } from "@/modules/forms/utils/form.utils";
 
-const sortButton = ({ column }: { column: Column<Task> }, label: string) => {
-  // sorting to happen at server
-  return (
-    <Button
-      variant="ghost"
-      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    >
-      {label}
-      <ArrowUpDown className="ml-2 h-4 w-4" />
-    </Button>
-  );
-};
+import { TableSortButton } from "../DataTable/TableSortButton";
+import { RowActions } from "../DataTable/RowActions";
+import { Task } from "../../types/task.types";
 
-const tableActionColumn = {
-  id: "select",
-  header: ({ table }: HeaderContext<Task, unknown>) => (
-    <Checkbox
-      checked={
-        table.getIsAllPageRowsSelected() ||
-        (table.getIsSomePageRowsSelected() && "indeterminate")
-      }
-      onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-      aria-label="Select all"
-    />
-  ),
-  cell: ({ row }: CellContext<Task, unknown>) => (
-    <Checkbox
-      checked={row.getIsSelected()}
-      onCheckedChange={(value) => row.toggleSelected(!!value)}
-      aria-label="Select row"
-    />
-  ),
-  enableSorting: false,
-  enableHiding: false,
-};
+function actionsColumn() {
+  return {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }: CellContext<Task, unknown>) => (
+      <RowActions row={row}></RowActions>
+    ),
+  };
+}
+function checkboxColumn() {
+  return {
+    id: "select",
+    header: ({ table }: HeaderContext<Task, unknown>) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }: CellContext<Task, unknown>) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  };
+}
 
-export const fetchTableColumns = (fields: FormFields[]): ColumnDef<Task>[] => {
+export function fetchTableColumns(fields: FormFields[]): ColumnDef<Task>[] {
   if (!fields) {
     return [];
   }
   return [
-    tableActionColumn,
+    checkboxColumn(),
     ...fields.map((field) => {
       return {
         accessorKey: field.internalName,
-        header: (columnObj: HeaderContext<Task, unknown>) =>
-          sortButton(columnObj, field.label),
+        header: (columnObj: HeaderContext<Task, unknown>) => (
+          <TableSortButton<Task>
+            columnObj={columnObj}
+            field={field}
+          ></TableSortButton>
+        ),
         cell: ({ row }: CellContext<Task, unknown>) =>
-          fetchCellValue(row, field),
+          fetchCellValue<Task>(row, field),
       };
     }),
+    actionsColumn(),
   ];
-};
+}

@@ -10,6 +10,8 @@ export function handleAppErrors(error: AppError) {
   let errorMessage: ErrorDetails[] = [ERRORS.APP_ERROR];
   if (error.response?.data?.error?.details) {
     errorMessage = error.response.data.error.details;
+  } else if (error.response?.data?.message) {
+    errorMessage[0].message = error.response.data.message;
   }
   return errorMessage;
 }

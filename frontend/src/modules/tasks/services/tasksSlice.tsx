@@ -8,9 +8,13 @@ import {
 } from "../types/task.types";
 import { handleError } from "@/modules/errors/errorHandler";
 import { ErrorDetails } from "@/types/error.types";
+import { RootState } from "@/store/store";
 
 const API_URL = "/api/tasks";
-
+export interface AsyncThunkConfig {
+  state: RootState;
+  rejectValue: string; // or a custom error type
+}
 // Fetch Tasks
 export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
   const response = await axios.get<GetTaskResponse>(API_URL);

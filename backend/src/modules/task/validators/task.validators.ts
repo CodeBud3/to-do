@@ -16,11 +16,9 @@ const isValidObjectId = (id: string) => {
 // Create task schema validation
 
 // Schema for task ID validation
-export const taskIdSchema = z.object({
-  params: z.object({
-    id: z.string().refine(isValidObjectId, {
-      message: "Invalid task ID format",
-    }),
+export const idSchema = z.object({
+  id: z.string().refine(isValidObjectId, {
+    message: "Invalid task ID format",
   }),
 });
 
@@ -70,4 +68,30 @@ export const createTaskSchema = (
 };
 
 // Update task schema validation
-// export const updateTaskSchema = createTaskSchema.partial();
+export const updateTaskSchema = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const form = req.form!;
+  const schema = z.object({
+    params: idSchema,
+    body: z
+      .object({
+        sequence_num: z
+          .number()
+          .nonnegative("Sequence number must be non-negative"),
+        id: z.string().refine(isValidObjectId, {
+          message: "Invalid task ID format",
+        }),
+        fields: buildZodSchema(form.fields),
+      })
+      .strict({ message: "Unknown fields in request body" }),
+  });
+
+  validateRequest(schema)(req, res, next);
+};
+
+export const paramsIdSchema = z.object({
+  params: idSchema,
+});

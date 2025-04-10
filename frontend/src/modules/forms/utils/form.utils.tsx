@@ -1,4 +1,4 @@
-import { FieldType, Task } from "@/modules/tasks/types/task.types";
+import { FieldType } from "@/modules/tasks/types/task.types";
 import { FormFields } from "../types/form.types";
 import { Row } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -22,8 +22,12 @@ export const fetchRowValueByFieldType = (
       return value ? value.toString() : "--";
   }
 };
-export const fetchCellValue = (row: Row<Task>, field: FormFields) => {
+export function fetchCellValue<T>(row: Row<T>, field: FormFields) {
   const taskFields = row.original.fields;
   const rowValue = taskFields[field.internalName];
-  return <span>{fetchRowValueByFieldType(rowValue, field)}</span>;
-};
+  return (
+    <span className="py-2 px-3">
+      {fetchRowValueByFieldType(rowValue, field)}
+    </span>
+  );
+}
