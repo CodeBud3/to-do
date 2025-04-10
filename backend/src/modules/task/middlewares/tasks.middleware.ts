@@ -3,6 +3,7 @@ import { UserForm } from "../../form/models/UserForm";
 import { NotFoundError } from "../../../utils/ErrorHandler";
 import { Form } from "../../form/models/Form";
 import { IForm } from "../../form/types/form.types";
+import { Task } from "../models/Task";
 
 export const loadTaskForm = async (
   req: Request,
@@ -27,6 +28,27 @@ export const loadTaskForm = async (
       next(new NotFoundError("Task Form"));
     }
     req.form = form;
+    next();
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const loadTaskRecord = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const taskId = req.params.id!;
+    const user = req.user!;
+    // load task based on id and user
+    const taskRecord = await Task.findOne({ _id: taskId, userId: user.id });
+
+    if (!taskRecord) {
+      return next(new NotFoundError("Task"));
+    }
+    req.taskRecord = taskRecord;
     next();
   } catch (e) {
     next(e);

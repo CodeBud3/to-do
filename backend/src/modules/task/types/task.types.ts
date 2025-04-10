@@ -3,7 +3,7 @@ import { Document } from "mongoose";
 export type FieldType = string | string[] | number | boolean;
 export interface ITask extends Document {
   fields: { [key: string]: FieldType };
-  user_id: string;
+  userId: string;
   sequence_num: number;
   createdAt: Date;
   updatedAt: Date;

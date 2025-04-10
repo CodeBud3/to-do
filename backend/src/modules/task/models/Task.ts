@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { ITask } from "../types/task.types";
+import { applyTransform } from "../../../helpers/mongooseTransform";
 
 const taskSchema = new Schema(
   {
@@ -8,7 +9,7 @@ const taskSchema = new Schema(
       of: mongoose.Schema.Types.Mixed,
       default: {},
     },
-    user_id: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -24,10 +25,11 @@ const taskSchema = new Schema(
     // Add compound index for efficient user-specific ordering
     // This helps when querying tasks for a specific user with sorting
     indexes: [
-      { user_id: 1, sequence_num: 1 },
-      { user_id: 1, fields: 1 },
+      { userId: 1 },
+      { userId: 1, sequence_num: 1 },
+      { userId: 1, fields: 1 },
     ],
   }
 );
-
+applyTransform(taskSchema);
 export const Task = mongoose.model<ITask>("Task", taskSchema);

@@ -4,7 +4,7 @@ import {
   LoginCredentials,
 } from "@/modules/auth/types/auth.types";
 import { ErrorDetails } from "@/types/error.types";
-import { handleError } from "@/utils/errorHandler";
+import { handleError } from "@/modules/errors/errorHandler";
 
 const API_URL = "/api/users";
 

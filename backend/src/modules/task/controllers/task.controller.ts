@@ -21,7 +21,7 @@ export const getTasks = async (
     const userId = req.user?._id!;
 
     // Support filtering by query parameters
-    const filters: any = { user_id: userId.toString() };
+    const filters: any = { userId: userId.toString() };
     if (req.query.status) filters.status = req.query.status;
     if (req.query.priority) filters.priority = req.query.priority;
     if (req.query.tag) filters.tag = req.query.tag;
@@ -87,7 +87,7 @@ export const getTask = async (
     // Find task with owner check for security
     const task = await Task.findOne({
       _id: taskId,
-      user_id: userId.toString(),
+      userId: userId.toString(),
     });
 
     if (!task) {
@@ -113,7 +113,7 @@ export const createTask = async (
     const userId = req.user?._id!;
 
     // Get the highest sequence_num for this user to place the new task at the end
-    const highestSeqTask = await Task.findOne({ user_id: userId.toString() })
+    const highestSeqTask = await Task.findOne({ userId: userId.toString() })
       .sort({ sequence_num: -1 })
       .limit(1);
 
@@ -124,7 +124,7 @@ export const createTask = async (
       fields: {
         ...req.body,
       },
-      user_id: userId.toString(),
+      userId: userId.toString(),
       sequence_num:
         req.body.sequence_num !== undefined ? req.body.sequence_num : newSeqNum,
     };
@@ -151,26 +151,10 @@ export const updateTask = async (
   try {
     const taskId = req.params.id;
     const userId = req.user?._id!;
+    const taskRecord = req.taskRecord!;
 
-    // Get the existing task with owner check for security
-    const existingTask = await Task.findOne({
-      _id: taskId,
-      user_id: userId.toString(),
-    });
-
-    if (!existingTask) {
-      return next(new NotFoundError("Task"));
-    }
-
-    // Prepare update data
-    const updateData: any = { ...req.body };
-
-    // Find and update with safety checks
-    const updatedTask = await Task.findOneAndUpdate(
-      { _id: taskId, user_id: userId.toString() },
-      { $set: updateData },
-      { new: true, runValidators: true }
-    );
+    taskRecord.set({ ...req.body, userId });
+    const updatedTask = await taskRecord.save();
 
     console.log(`Updated task ${taskId} for user ${userId}`);
 
@@ -192,16 +176,9 @@ export const deleteTask = async (
   try {
     const taskId = req.params.id;
     const userId = req.user?._id!;
-
+    const taskRecord = req.taskRecord!;
     // Find and delete with owner check for security
-    const deletedTask = await Task.findOneAndDelete({
-      _id: taskId,
-      user_id: userId.toString(),
-    });
-
-    if (!deletedTask) {
-      return next(new NotFoundError("Task"));
-    }
+    await taskRecord.deleteOne();
 
     console.log(`Deleted task ${taskId} for user ${userId}`);
 
@@ -236,7 +213,7 @@ export const reorderTasks = async (
     for (const taskUpdate of tasks) {
       const task = await Task.findOne({
         _id: taskUpdate.id,
-        user_id: userId.toString(),
+        userId: userId.toString(),
       }).session(session);
 
       if (!task) {
@@ -279,7 +256,7 @@ export const reorderTasks = async (
 const resequenceTasks = async (userId: string): Promise<boolean> => {
   try {
     // Get all tasks for the user ordered by current sequence
-    const tasks = await Task.find({ user_id: userId }).sort({
+    const tasks = await Task.find({ userId: userId }).sort({
       sequence_num: 1,
     });
 

@@ -64,7 +64,7 @@ describe("Axios Interceptors", () => {
       })
     ).rejects.toMatchObject([
       {
-        message: "Something went wrong!",
+        message: "Page not found",
         code: "INTERNAL_ERROR",
         path: ["body", "formError"],
       },

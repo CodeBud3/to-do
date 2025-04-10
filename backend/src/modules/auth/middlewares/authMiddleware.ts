@@ -3,6 +3,7 @@ import passport from "passport";
 import { IUser } from "../../user/types/auth.types";
 import { AuthorizationError } from "../../../utils/ErrorHandler";
 import { IForm } from "../../form/types/form.types";
+import { ITask } from "../../task/types/task.types";
 
 declare global {
   namespace Express {
@@ -10,6 +11,7 @@ declare global {
     interface Request {
       user?: User;
       form?: IForm;
+      taskRecord?: ITask;
     }
   }
 }

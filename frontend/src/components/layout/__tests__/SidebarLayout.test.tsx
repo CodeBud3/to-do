@@ -17,6 +17,7 @@ import Dashboard from "@/modules/dashboard/pages/DashboardPage";
 import TasksPage from "@/modules/tasks/pages/TasksPage";
 import { Provider } from "react-redux";
 import store from "@/store/store";
+import { SheetProvider } from "@/contexts/SheetContext";
 
 vi.mock("@/hooks/use-mobile", () => ({
   useIsMobile: () => false,
@@ -38,13 +39,15 @@ describe("Sidebar Layout component with dashboard", () => {
     await act(async () => {
       render(
         <Provider store={store}>
-          <AuthProvider>
-            <MemoryRouter>
-              <SidebarLayout>
-                <Dashboard></Dashboard>
-              </SidebarLayout>
-            </MemoryRouter>
-          </AuthProvider>
+          <SheetProvider>
+            <AuthProvider>
+              <MemoryRouter>
+                <SidebarLayout>
+                  <Dashboard></Dashboard>
+                </SidebarLayout>
+              </MemoryRouter>
+            </AuthProvider>
+          </SheetProvider>
         </Provider>
       );
     });
@@ -80,13 +83,15 @@ describe("Sidebar Layout component with Tasks", () => {
     await act(async () => {
       render(
         <Provider store={store}>
-          <AuthProvider>
-            <MemoryRouter>
-              <SidebarLayout>
-                <TasksPage></TasksPage>
-              </SidebarLayout>
-            </MemoryRouter>
-          </AuthProvider>
+          <SheetProvider>
+            <AuthProvider>
+              <MemoryRouter>
+                <SidebarLayout>
+                  <TasksPage></TasksPage>
+                </SidebarLayout>
+              </MemoryRouter>
+            </AuthProvider>
+          </SheetProvider>
         </Provider>
       );
     });

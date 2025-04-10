@@ -4,7 +4,7 @@ import {
   SignUpCredentials,
 } from "@/modules/auth/types/auth.types";
 import axios from "@/configs/interceptors";
-import { handleError } from "@/utils/errorHandler";
+import { handleError } from "@/modules/errors/errorHandler";
 import { ErrorDetails } from "@/types/error.types";
 
 const API_URL = "/api/auth";

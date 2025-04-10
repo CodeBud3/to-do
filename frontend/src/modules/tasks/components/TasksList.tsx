@@ -4,12 +4,15 @@ import { fetchTasks } from "../services/tasksSlice";
 import { RootState, AppDispatch } from "../../../store/store";
 import { fetchTableColumns } from "./ColumnDef/ColumnDef";
 import { DataTable } from "./DataTable/DataTable";
-import { TaskForm } from "./TaskForm/TaskForm";
+import TaskForm from "./TaskForm/TaskForm";
 import { fetchForm } from "@/modules/forms/services/formSlice";
 import { ColumnDef } from "@tanstack/react-table";
-import { Task } from "../types/task.types";
+import { Task, TaskField } from "../types/task.types";
+import { Button } from "@/components/ui/button";
+import { useSheet } from "@/contexts/SheetContext";
 
 export default function TasksList() {
+  const { openSheet, closeSheet } = useSheet();
   const dispatch = useDispatch<AppDispatch>();
   const { tasks } = useSelector((state: RootState) => state.tasks);
   const { forms } = useSelector((state: RootState) => state.forms);
@@ -32,7 +35,21 @@ export default function TasksList() {
       {forms.taskForm && (
         <>
           <div className="table-actions flex justify-end">
-            <TaskForm taskForm={forms.taskForm} />
+            <Button
+              variant="default"
+              onClick={() =>
+                openSheet(
+                  <TaskForm<TaskField>
+                    closeSheet={closeSheet}
+                    taskForm={forms.taskForm}
+                    action="add-task"
+                  />,
+                  "Add Task"
+                )
+              }
+            >
+              Add Task
+            </Button>
           </div>
           <div className="py-3">
             <DataTable columns={columns} data={tasks} />
