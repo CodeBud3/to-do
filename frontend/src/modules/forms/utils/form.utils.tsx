@@ -1,4 +1,4 @@
-import { FieldType } from "@/modules/tasks/types/task.types";
+import { FieldType, Task } from "@/modules/tasks/types/task.types";
 import { FormFields } from "../types/form.types";
 import { Row } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -22,7 +22,7 @@ export const fetchRowValueByFieldType = (
       return value ? value.toString() : "--";
   }
 };
-export function fetchCellValue<T>(row: Row<T>, field: FormFields) {
+export function fetchCellValue<T extends Task>(row: Row<T>, field: FormFields) {
   const taskFields = row.original.fields;
   const rowValue = taskFields[field.internalName];
   return (

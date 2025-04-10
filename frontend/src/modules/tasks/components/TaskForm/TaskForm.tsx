@@ -24,7 +24,10 @@ interface TaskFormProps<T> {
   action: "add-task" | "edit-task";
   record?: T;
 }
-function extractFields<T extends Task | undefined>(record: T, action: string) {
+function extractFields<T extends Task | undefined>(
+  record: T | undefined,
+  action: string
+) {
   let fields = null;
   if (record?.fields && action == "edit-task") {
     fields = record.fields;
@@ -32,7 +35,7 @@ function extractFields<T extends Task | undefined>(record: T, action: string) {
   return fields;
 }
 
-function TaskForm<T>({
+function TaskForm<T extends Task>({
   taskForm,
   closeSheet,
   action,
