@@ -6,7 +6,7 @@ import {
   Task,
   TaskField,
 } from "../types/task.types";
-import { handleError } from "@/utils/errorHandler";
+import { handleError } from "@/modules/errors/errorHandler";
 import { ErrorDetails } from "@/types/error.types";
 
 const API_URL = "/api/tasks";

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "@/configs/interceptors";
 import { Form, FormResponse } from "../types/form.types";
-import { handleError } from "@/utils/errorHandler";
+import { handleError } from "@/modules/errors/errorHandler";
 import { ErrorDetails } from "@/types/error.types";
 
 const API_URL = "/api/forms";

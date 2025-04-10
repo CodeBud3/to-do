@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/configs/appConfig";
-import { handleAppErrors } from "@/utils/errorHandler";
+import { handleAppErrors } from "@/modules/errors/errorHandler";
 import axios from "axios";
 
 // Create Axios instance
