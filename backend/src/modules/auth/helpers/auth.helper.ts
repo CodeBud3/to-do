@@ -131,7 +131,7 @@ export const validateLoginAttempt = (user: IUser) => {
   if (accountLocked && lockTimeLeft > 0) {
     return new FormValidationError([
       {
-        message: `Account is locked. Reset your password or try again in ${lockTimeLeft} seconds.`,
+        message: `Account locked due to too many failed attempts. Reset your password or try again in ${lockTimeLeft} seconds.`,
       },
     ]);
   }
