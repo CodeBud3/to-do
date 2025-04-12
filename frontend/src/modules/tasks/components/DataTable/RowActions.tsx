@@ -49,13 +49,18 @@ export function RowActions({ row }: RowActionsProps) {
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
+          <Button
+            variant="ghost"
+            className="h-8 w-8 p-0"
+            {...applyTestAttributes("table-row", "actions")}
+          >
             <span className="sr-only">Open menu</span>
             <MoreVertical />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
+            {...applyTestAttributes("row-item", "edit")}
             onClick={() =>
               openSheet(
                 <TaskForm<Task>
@@ -70,7 +75,10 @@ export function RowActions({ row }: RowActionsProps) {
           >
             <Pencil /> <span>Edit</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => showAlert(params)}>
+          <DropdownMenuItem
+            {...applyTestAttributes("row-item", "delete")}
+            onClick={() => showAlert(params)}
+          >
             <Trash2 />
             <span>Delete</span>
           </DropdownMenuItem>

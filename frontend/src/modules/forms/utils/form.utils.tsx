@@ -2,6 +2,7 @@ import { FieldType, Task } from "@/modules/tasks/types/task.types";
 import { FormFields } from "../types/form.types";
 import { Row } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 
 export const fetchRowValueByFieldType = (
   value: FieldType,
@@ -26,7 +27,10 @@ export function fetchCellValue<T extends Task>(row: Row<T>, field: FormFields) {
   const taskFields = row.original.fields;
   const rowValue = taskFields[field.internalName];
   return (
-    <span className="py-2 px-3">
+    <span
+      className="py-2 px-3"
+      {...applyTestAttributes("table-body-cell", field.internalName)}
+    >
       {fetchRowValueByFieldType(rowValue, field)}
     </span>
   );
