@@ -1,9 +1,14 @@
 import jwt from "jsonwebtoken";
-import { dayToMs } from "../../../helpers/common.helper";
-import { Response } from "express";
+import { dayToMs, minToMS } from "../../../helpers/common.helper";
+import { NextFunction, Response } from "express";
 import { User } from "../../user/models/User";
 import { getMongoStore } from "../../../config/db";
 import { IUser } from "../../user/types/auth.types";
+import { FormValidationError } from "../../../utils/ErrorHandler";
+import {
+  LOCKED_FOR_IN_MINS,
+  MAX_NO_OF_LOGIN_ATTEMPTS,
+} from "../constants/auth.constants";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 export const SESSION_KEY = process.env.SESSION_KEY as string;
@@ -102,4 +107,33 @@ export const handleAuthResponse = async (
   } catch (error) {
     return done(error, false);
   }
+};
+
+export const updateFailedLoggedInAttempts = async (user: IUser) => {
+  user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+  if (user.failedLoginAttempts >= MAX_NO_OF_LOGIN_ATTEMPTS) {
+    user.lockUntil = new Date(Date.now() + minToMS(LOCKED_FOR_IN_MINS));
+  }
+  await user.save();
+};
+
+export const resetFailedLoggedInAttempts = async (user: IUser) => {
+  if (user.failedLoginAttempts != 0 || user.lockUntil) {
+    user.failedLoginAttempts = 0;
+    user.lockUntil = undefined;
+    await user.save();
+  }
+};
+
+export const validateLoginAttempt = (user: IUser) => {
+  const { accountLocked, lockTimeLeft } = user.isLocked();
+  console.log(accountLocked, lockTimeLeft);
+  if (accountLocked && lockTimeLeft > 0) {
+    return new FormValidationError([
+      {
+        message: `Account is locked. Reset your password or try again in ${lockTimeLeft} seconds.`,
+      },
+    ]);
+  }
+  return null;
 };
