@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
-import { IUser } from "../types/auth.types";
+import { IUser, UserLocked } from "../types/auth.types";
+import { MAX_NO_OF_LOGIN_ATTEMPTS } from "../../auth/constants/auth.constants";
 
 const userSchema = new Schema(
   {
@@ -42,6 +43,13 @@ const userSchema = new Schema(
       enum: ["google", "microsoft", "apple"],
       default: null,
     },
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockUntil: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
@@ -53,6 +61,8 @@ userSchema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+    this.failedLoginAttempts = 0;
+    this.lockUntil = undefined;
     next();
   } catch (error: any) {
     next(error);
@@ -64,6 +74,16 @@ userSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
+};
+
+userSchema.methods.isLocked = function (): UserLocked {
+  if (this.failedLoginAttempts >= MAX_NO_OF_LOGIN_ATTEMPTS) {
+    const lockTimeLeft = Math.round(
+      (this.lockUntil.getTime() - Date.now()) / 1000
+    );
+    return { accountLocked: true, lockTimeLeft };
+  }
+  return { accountLocked: false, lockTimeLeft: 0 };
 };
 
 export const User = mongoose.model<IUser>("User", userSchema);
