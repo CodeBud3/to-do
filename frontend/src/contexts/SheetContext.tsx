@@ -6,6 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 
 type SheetContextType = {
   openSheet: (content: ReactNode, title?: string) => void;
@@ -43,7 +44,9 @@ export const SheetProvider = ({ children }: { children: ReactNode }) => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>{title}</SheetTitle>
+            <SheetTitle {...applyTestAttributes("sheet", "title")}>
+              {title}
+            </SheetTitle>
           </SheetHeader>
           {content}
         </SheetContent>

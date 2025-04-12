@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
+import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 
 interface DateTimePickerFormProps {
   value: string;
@@ -65,6 +66,7 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
     <Popover open={openPopOver} onOpenChange={setOpenPopOver}>
       <PopoverTrigger asChild>
         <Button
+          {...applyTestAttributes("date-time", "trigger")}
           variant={"outline"}
           className={cn(
             "w-full pl-3 text-left font-normal",
@@ -90,10 +92,18 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
               initialFocus
             />
             <div className="flex gap-3 justify-center">
-              <Button onClick={onCancel} variant="secondary">
+              <Button
+                {...applyTestAttributes("date-time", "cancel")}
+                onClick={onCancel}
+                variant="secondary"
+              >
                 Cancel
               </Button>
-              <Button onClick={onSave} variant="default">
+              <Button
+                {...applyTestAttributes("date-time", "save")}
+                onClick={onSave}
+                variant="default"
+              >
                 Save
               </Button>
             </div>
@@ -105,6 +115,7 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
                   .reverse()
                   .map((hour) => (
                     <Button
+                      {...applyTestAttributes("time-hour", hour.toString())}
                       key={hour}
                       size="icon"
                       variant={
@@ -125,6 +136,7 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
               <div className="flex sm:flex-col p-2">
                 {Array.from({ length: 12 }, (_, i) => i * 5).map((minute) => (
                   <Button
+                    {...applyTestAttributes("time-minutes", minute.toString())}
                     key={minute}
                     size="icon"
                     variant={
@@ -147,6 +159,7 @@ export function DateTimePickerForm(props: DateTimePickerFormProps) {
               <div className="flex sm:flex-col p-2">
                 {["AM", "PM"].map((ampm) => (
                   <Button
+                    {...applyTestAttributes("time-format", ampm)}
                     key={ampm}
                     size="icon"
                     variant={

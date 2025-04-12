@@ -10,6 +10,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Task, TaskField } from "../types/task.types";
 import { Button } from "@/components/ui/button";
 import { useSheet } from "@/contexts/SheetContext";
+import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 
 export default function TasksList() {
   const { openSheet, closeSheet } = useSheet();
@@ -42,6 +43,7 @@ export default function TasksList() {
                   <TaskForm<TaskField>
                     closeSheet={closeSheet}
                     taskForm={forms.taskForm}
+                    {...applyTestAttributes("task-add", "btn")}
                     action="add-task"
                   />,
                   "Add Task"
