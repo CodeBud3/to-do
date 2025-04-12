@@ -5,6 +5,7 @@ import {
 } from "@/modules/auth/types/auth.types";
 import { ErrorDetails } from "@/types/error.types";
 import { handleError } from "@/modules/errors/errorHandler";
+import { AxiosRequestConfig } from "axios";
 
 const API_URL = "/api/users";
 
@@ -35,10 +36,15 @@ export const resetPassword = async (
   token: string
 ): Promise<AuthResponse> => {
   try {
+    const config: AxiosRequestConfig<LoginCredentials> = {};
     if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      config.headers = { Authorization: `Bearer ${token}` };
     }
-    const response = await axios.post(`${API_URL}/reset-password`, payload);
+    const response = await axios.post(
+      `${API_URL}/reset-password`,
+      payload,
+      config
+    );
     return response.data;
   } catch (error) {
     const formErrors = handleError(error as ErrorDetails[]);
