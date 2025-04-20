@@ -6,6 +6,9 @@ import {
   COOKIE_CONFIG,
   generateApiToken,
   generateToken,
+  resetFailedLoggedInAttempts,
+  updateFailedLoggedInAttempts,
+  validateLoginAttempt,
 } from "../helpers/auth.helper";
 import { User } from "../../user/models/User";
 import { IUser } from "../../user/types/auth.types";
@@ -79,13 +82,20 @@ export const login = async (
       );
     }
 
+    const accountLocked = validateLoginAttempt(user);
+    if (accountLocked) {
+      return next(accountLocked);
+    }
     // Check password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
+      updateFailedLoggedInAttempts(user);
       return next(
         new FormValidationError([{ message: "Incorrect email or password." }])
       );
     }
+
+    resetFailedLoggedInAttempts(user);
 
     // Generate and set JWT token
     generateToken(user, res);

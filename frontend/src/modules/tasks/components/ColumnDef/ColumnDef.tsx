@@ -7,6 +7,7 @@ import { fetchCellValue } from "@/modules/forms/utils/form.utils";
 import { TableSortButton } from "../DataTable/TableSortButton";
 import { RowActions } from "../DataTable/RowActions";
 import { Task } from "../../types/task.types";
+import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 
 function actionsColumn() {
   return {
@@ -52,10 +53,14 @@ export function fetchTableColumns(fields: FormFields[]): ColumnDef<Task>[] {
       return {
         accessorKey: field.internalName,
         header: (columnObj: HeaderContext<Task, unknown>) => (
-          <TableSortButton<Task>
-            columnObj={columnObj}
-            field={field}
-          ></TableSortButton>
+          <span
+            {...applyTestAttributes("table-header-cell", field.internalName)}
+          >
+            <TableSortButton<Task>
+              columnObj={columnObj}
+              field={field}
+            ></TableSortButton>
+          </span>
         ),
         cell: ({ row }: CellContext<Task, unknown>) =>
           fetchCellValue<Task>(row, field),

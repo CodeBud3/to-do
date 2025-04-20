@@ -122,12 +122,19 @@ export const getInputByType = (
           </FormLabel>
           <FormControl>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger
+                {...applyTestAttributes("select-field", c.key)}
+                className="w-full"
+              >
                 <SelectValue placeholder={c.placeholder} />
               </SelectTrigger>
               <SelectContent>
                 {c.options?.map((option) => (
-                  <SelectItem key={option.key} value={option.key}>
+                  <SelectItem
+                    {...applyTestAttributes("select-option", option.key)}
+                    key={option.key}
+                    value={option.key}
+                  >
                     {option.label}
                   </SelectItem>
                 ))}
