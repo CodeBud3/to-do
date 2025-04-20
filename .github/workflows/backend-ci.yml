@@ -12,8 +12,6 @@ jobs:
   test-backend:
     name: Run Unit Tests
     runs-on: ubuntu-latest
-    env:
-      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -76,8 +74,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          echo "Branch: $BRANCH_NAME"
-          docker build -t rakesh013595/to-do:$BRANCH_NAME .
-
-      - name: Push Docker image
-        run: docker push rakesh013595/to-do:$BRANCH_NAME
+          RAW_BRANCH="${{ github.head_ref || github.ref_name }}"
+          SAFE_BRANCH=$(echo "$RAW_BRANCH" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          echo "Sanitized Branch: $SAFE_BRANCH"
+          docker build -t rakesh013595/to-do:$SAFE_BRANCH .
+          docker push rakesh013595/to-do:$SAFE_BRANCH

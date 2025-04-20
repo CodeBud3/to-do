@@ -5,6 +5,7 @@ import { createApp } from "../app";
 let mongo: MongoMemoryServer;
 
 beforeAll(async () => {
+  jest.spyOn(console, "error").mockImplementation(() => {});
   mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri();
   await mongoose.connect(mongoUri);
