@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { Task } from "../models/Task";
-import sendResponse from "../../../utils/responseHelper";
 import { NotFoundError } from "../../../utils/ErrorHandler";
+import sendResponse from "../../../utils/responseHelper";
+import { TaskService } from "../services/task.service";
 import {
   commitTransaction,
   rollBackTransaction,
@@ -17,54 +18,31 @@ export const getTasks = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // Type assertion for the user object added by passport authentication
-    const userId = req.user?._id!;
-
-    // Support filtering by query parameters
-    const filters: any = { userId: userId.toString() };
-    if (req.query.status) filters.status = req.query.status;
-    if (req.query.priority) filters.priority = req.query.priority;
-    if (req.query.tag) filters.tag = req.query.tag;
-
-    // Support for date range filtering
-    if (req.query.due_date_start || req.query.due_date_end) {
-      filters.due_date = {};
-      if (req.query.due_date_start) {
-        filters.due_date.$gte = new Date(req.query.due_date_start as string);
-      }
-      if (req.query.due_date_end) {
-        filters.due_date.$lte = new Date(req.query.due_date_end as string);
-      }
-    }
-
-    // Pagination
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 50;
-    const skip = (page - 1) * limit;
-
-    // Sorting
-    const sortBy = (req.query.sort_by as string) || "sequence_num";
-    const order = (req.query.order as string) === "desc" ? -1 : 1;
-    const sort: any = {};
-    sort[sortBy] = order;
-
-    // Execute query with pagination and sorting
-    const tasks = await Task.find(filters).sort(sort).skip(skip).limit(limit);
-
-    // Get total count for pagination metadata
-    const totalTasks = await Task.countDocuments(filters);
-
-    // Log the operation
-    console.log(`Retrieved ${tasks.length} tasks for user ${userId}`);
-
+    // Extract request parameters using service helper methods
+    const filterOptions = TaskService.extractFilterOptions(req);
+    const sortOptions = TaskService.extractSortOptions(req);
+    const paginationOptions = TaskService.extractPaginationOptions(req);
+    
+    // Get tasks with filtering, sorting and pagination via service
+    const { tasks, total, page, limit, pages } = await TaskService.getTasks(
+      filterOptions,
+      sortOptions,
+      paginationOptions
+    );
+    
+    // Send response
     sendResponse(res, 200, true, "Tasks retrieved successfully", {
       tasks,
       pagination: {
-        total: totalTasks,
+        total,
         page,
         limit,
-        pages: Math.ceil(totalTasks / limit),
+        pages
       },
+      sort: {
+        field: sortOptions.field,
+        order: sortOptions.order
+      }
     });
   } catch (error) {
     console.error("Error fetching tasks:", error);
