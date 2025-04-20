@@ -77,5 +77,6 @@ jobs:
           RAW_BRANCH="${{ github.head_ref || github.ref_name }}"
           SAFE_BRANCH=$(echo "$RAW_BRANCH" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
           echo "Sanitized Branch: $SAFE_BRANCH"
+          cd backend
           docker build -t rakesh013595/to-do:$SAFE_BRANCH .
           docker push rakesh013595/to-do:$SAFE_BRANCH
