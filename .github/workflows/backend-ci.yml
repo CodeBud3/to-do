@@ -53,7 +53,7 @@ jobs:
       - name: Run Jest Tests
         run: |
           cd backend
-          NODE_OPTIONS='--max-old-space-size=2048' jest --detectOpenHandles
+          npm run test
   build-backend:
     name: Build image
     runs-on: ubuntu-latest
@@ -77,5 +77,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
+          cd backend
           docker build -t rakesh013595/to-do:${{ steps.vars.outputs.branch_tag }} .
           docker push rakesh013595/to-do:${{ steps.vars.outputs.branch_tag }}
