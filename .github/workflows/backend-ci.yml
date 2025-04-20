@@ -1,0 +1,81 @@
+name: Backend
+
+on:
+  push:
+    branches: ["prestaging"]
+  pull_request:
+    branches: ["prestaging"]
+    paths:
+      - "backend/**" # Runs only if files in backend/ change
+
+jobs:
+  test-backend:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Create .env.test file
+        run: |
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env.test
+          echo "GMAIL_CLIENT_ID=${{ secrets.GMAIL_CLIENT_ID }}" >> .env.test
+          echo "GMAIL_CLIENT_SECRET=${{ secrets.GMAIL_CLIENT_SECRET }}" >> .env.test
+          echo "GMAIL_REFRESH_TOKEN=${{ secrets.GMAIL_REFRESH_TOKEN }}" >> .env.test
+          echo "GOOGLE_OAUTH2_CLIENT_ID=${{ secrets.GOOGLE_OAUTH2_CLIENT_ID }}" >> .env.test
+          echo "GOOGLE_OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}" >> .env.test
+          echo "MONDO_DB_CONNECT=${{ secrets.MONDO_DB_CONNECT }}" >> .env.test
+          echo "MS_OAUTH2_CLIENT_ID=${{ secrets.MS_OAUTH2_CLIENT_ID }}" >> .env.test
+          echo "MS_OAUTH2_CLIENT_SECRET=${{ secrets.MS_OAUTH2_CLIENT_SECRET }}" >> .env.test
+          echo "MS_OAUTH2_TENANT_ID=${{ secrets.MS_OAUTH2_TENANT_ID }}" >> .env.test
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env.test
+          echo "PORT=5000" >> .env.test
+          echo "NODE_ENV=unit-test" >> .env.test
+          echo "SESSION_KEY=session-token" >> .env.test
+          echo "CLIENT_URL=http://localhost:5173" >> .env.test
+          echo "HOST_URL=http://localhost:5000" >> .env.test
+          echo "GOOGLE_OAUTH2_REDIRECT_URI=/api/auth/google/callback" >> .env.test
+          echo "MS_OAUTH2_REDIRECT_URL=/api/auth/microsoft/callback" >> .env.test
+          echo "GMAIL_REDIRECT_URI = https://developers.google.com/oauthplayground" >> .env.test
+          echo "EMAIL_USER=codebuddev@gmail.com" >> .env.test
+
+      - name: Run Jest Tests
+        run: |
+          cd backend
+          NODE_OPTIONS='--max-old-space-size=2048' jest --detectOpenHandles
+  build-backend:
+    name: Build image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: Extract branch name
+        id: vars
+        run: echo "branch_tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t rakesh013595/to-do:${{ steps.vars.outputs.branch_tag }} .
+          docker push rakesh013595/to-do:${{ steps.vars.outputs.branch_tag }}
