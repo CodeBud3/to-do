@@ -15,48 +15,51 @@ import authRoutes from "./modules/auth/routes/auth.routes";
 import userRoutes from "./modules/user/routes/user.routes";
 import taskRoutes from "./modules/task/routes/task.routes";
 import formRoutes from "./modules/form/routes/form.routes";
-// Middleware
-const app: Express = express();
+import { MongoClient } from "mongodb";
+import { getMongoStore } from "./config/db";
+export const createApp = (mongoClient: MongoClient) => {
+  // Middleware
+  const app: Express = express();
 
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true, // Allow cookies to be sent
-  })
-);
-app.use(morgan("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-process.env.NODE_ENV != "dev" && app.set("trust proxy", 1);
-app.use(cookieParser());
-app.use(session(SESSION_CONFIG));
-app.use(passport.initialize());
-app.use(passport.session());
+  app.use(
+    cors({
+      origin: process.env.CLIENT_URL,
+      credentials: true, // Allow cookies to be sent
+    })
+  );
+  app.use(morgan("dev"));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  process.env.NODE_ENV != "dev" && app.set("trust proxy", 1);
+  app.use(cookieParser());
+  app.use(session({ ...SESSION_CONFIG, store: getMongoStore(mongoClient) }));
+  app.use(passport.initialize());
+  app.use(passport.session());
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/tasks", taskRoutes);
-app.use("/api/forms", formRoutes);
-// Health check
-app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
-});
+  // Routes
+  app.use("/api/auth", authRoutes);
+  app.use("/api/users", userRoutes);
+  app.use("/api/tasks", taskRoutes);
+  app.use("/api/forms", formRoutes);
+  // Health check
+  app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
 
-// Swagger API Documentation with protection
-app.use(
-  "/api-docs",
-  swaggerProtect,
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    explorer: true,
-    customCss: ".swagger-ui .topbar { display: none }",
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-  })
-);
+  // Swagger API Documentation with protection
+  app.use(
+    "/api-docs",
+    swaggerProtect,
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, {
+      explorer: true,
+      customCss: ".swagger-ui .topbar { display: none }",
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+    })
+  );
 
-app.use(errorMiddleware);
-
-export default app;
+  app.use(errorMiddleware);
+  return app;
+};

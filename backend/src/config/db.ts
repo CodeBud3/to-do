@@ -1,19 +1,21 @@
 import MongoStore from "connect-mongo";
 import mongoose from "mongoose";
+import { MongoClient } from "mongodb";
 
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONDO_DB_CONNECT!);
     console.log(`MongoDB Connected: ${conn?.connection.host}`);
+    return mongoose.connection.getClient();
   } catch (error: any) {
     console.error(`Error: ${error.message}`);
     process.exit(1); // Exit process on failure
   }
 };
 
-export const getMongoStore = () => {
+export const getMongoStore = (mongoClient: MongoClient) => {
   return MongoStore.create({
-    client: mongoose.connection.getClient(), // Use the existing connection
+    client: mongoClient, // Use the existing connection
     collectionName: "sessions",
   });
 };
