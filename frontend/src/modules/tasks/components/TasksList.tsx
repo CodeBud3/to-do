@@ -22,7 +22,7 @@ export default function TasksList() {
     [forms]
   );
   useEffect(() => {
-    dispatch(fetchTasks());
+    dispatch(fetchTasks({ viewType: 'list' }));
   }, [dispatch]);
 
   useEffect(() => {
