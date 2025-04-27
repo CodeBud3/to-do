@@ -20,9 +20,13 @@ export const getTasks = async (
     // Type assertion for the user object added by passport authentication
     const userId = req.user?._id!;
 
+    // Check if Kanban view is requested
+    const viewType = req.query.view_type as string || 'list';
+    const isKanbanView = viewType === 'kanban';
+
     // Support filtering by query parameters
     const filters: any = { userId: userId.toString() };
-    if (req.query.status) filters.status = req.query.status;
+    if (req.query.status && !isKanbanView) filters.status = req.query.status;
     if (req.query.priority) filters.priority = req.query.priority;
     if (req.query.tag) filters.tag = req.query.tag;
 
@@ -37,10 +41,10 @@ export const getTasks = async (
       }
     }
 
-    // Pagination
+    // Pagination (only for list view)
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 50;
-    const skip = (page - 1) * limit;
+    const limit = !isKanbanView ? (parseInt(req.query.limit as string) || 50) : 0;
+    const skip = !isKanbanView ? (page - 1) * limit : 0;
 
     // Sorting
     const sortBy = (req.query.sort_by as string) || "sequence_num";
@@ -48,24 +52,87 @@ export const getTasks = async (
     const sort: any = {};
     sort[sortBy] = order;
 
-    // Execute query with pagination and sorting
-    const tasks = await Task.find(filters).sort(sort).skip(skip).limit(limit);
+    // For Kanban view, we need to fetch all tasks regardless of status
+    const tasksQuery = Task.find(filters).sort(sort);
+    
+    // Apply pagination for list view
+    if (!isKanbanView && limit > 0) {
+      tasksQuery.skip(skip).limit(limit);
+    }
 
-    // Get total count for pagination metadata
-    const totalTasks = await Task.countDocuments(filters);
+    const tasks = await tasksQuery.exec();
+    const totalTasks = !isKanbanView && limit > 0 
+      ? await Task.countDocuments(filters)
+      : tasks.length;
 
-    // Log the operation
-    console.log(`Retrieved ${tasks.length} tasks for user ${userId}`);
-
-    sendResponse(res, 200, true, "Tasks retrieved successfully", {
-      tasks,
-      pagination: {
-        total: totalTasks,
-        page,
-        limit,
-        pages: Math.ceil(totalTasks / limit),
-      },
-    });
+    // For Kanban view, group tasks by status
+    if (isKanbanView) {
+      // Fetch all available status options from the form constants
+      const statusColumns = [
+        { key: "back_log", label: "Back Log" },
+        { key: "to_do", label: "To do" },
+        { key: "in_progress", label: "In Progress" },
+        { key: "completed", label: "Completed" }
+      ];
+      
+      // Helper function to safely get field value from either Map or Object structure
+      const getFieldValue = (task: any, fieldName: string): any => {
+        if (!task || !task.fields) return null;
+        
+        // If fields is a Map
+        if (task.fields instanceof Map) {
+          return task.fields.get(fieldName);
+        }
+        
+        // If fields is a plain object
+        return task.fields[fieldName];
+      };
+      
+      // Group tasks by status
+      const groupedTasks = statusColumns.reduce((acc: any, statusCol) => {
+        const statusKey = statusCol.key;
+        
+        // Filter tasks with matching status
+        const matchingTasks = tasks.filter(task => {
+          const taskStatus = getFieldValue(task, 'status');
+          const matches = taskStatus === statusKey;
+          
+          return matches;
+        });
+        
+        acc[statusKey] = {
+          id: statusKey,
+          title: statusCol.label,
+          tasks: matchingTasks,
+          count: matchingTasks.length
+        };
+        return acc;
+      }, {});
+      
+      // For Kanban response, include columns and grouped tasks
+      sendResponse(res, 200, true, "Tasks retrieved successfully", {
+        viewType: 'kanban',
+        columns: statusColumns,
+        groupedTasks,
+        total: totalTasks
+      });
+    } else {
+      // Standard list view response
+      sendResponse(res, 200, true, "Tasks retrieved successfully", {
+        viewType: 'list',
+        tasks,
+        pagination: {
+          total: totalTasks,
+          page,
+          limit,
+          pages: Math.ceil(totalTasks / limit)
+        },
+        sort: {
+          field: sortBy,
+          order: order === 1 ? "asc" : "desc"
+        }
+      });
+    }
   } catch (error) {
     console.error("Error fetching tasks:", error);
     next(error);
@@ -251,26 +318,46 @@ export const reorderTasks = async (
 };
 
 /**
- * Helper function to re-sequence tasks after deletion
+ * Helper function to resequence tasks when some are deleted or reordered
  */
-const resequenceTasks = async (userId: string): Promise<boolean> => {
+const resequenceTasks = async (
+  userId: string
+): Promise<boolean> => {
   try {
-    // Get all tasks for the user ordered by current sequence
-    const tasks = await Task.find({ userId: userId }).sort({
-      sequence_num: 1,
-    });
+    // Get all tasks for this user, sorted by sequence number
+    const tasks = await Task.find({ userId })
+      .sort({ sequence_num: 1 })
+      .lean();
 
-    // Update sequence numbers to be consecutive
-    const updatePromises = tasks.map((task, index) => {
-      return Task.findByIdAndUpdate(task.id.toString(), {
-        sequence_num: index,
-      });
-    });
+    // If there are no tasks or just one task, no resequencing is needed
+    if (tasks.length <= 1) {
+      return true;
+    }
 
-    await Promise.all(updatePromises);
-    console.log(`Resequenced ${tasks.length} tasks for user ${userId}`);
+    // Start a transaction for batch updates
+    const session = await startTransaction();
 
-    return true;
+    try {
+      // Resequence tasks with increments of 1024 to allow for future insertions
+      const updates = tasks.map((task, index) => ({
+        updateOne: {
+          filter: { _id: task._id },
+          update: { $set: { sequence_num: (index + 1) * 1024 } }
+        }
+      }));
+
+      // Execute the batch update
+      await Task.bulkWrite(updates, { session });
+      
+      // Commit the transaction
+      await commitTransaction(session);
+      
+      return true;
+    } catch (error) {
+      // Roll back the transaction on error
+      await rollBackTransaction(session);
+      throw error;
+    }
   } catch (error) {
     console.error("Error resequencing tasks:", error);
     return false;

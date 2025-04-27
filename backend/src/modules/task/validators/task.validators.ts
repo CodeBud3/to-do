@@ -44,11 +44,24 @@ export const reorderTasksSchema = z.object({
 export const tasksFilterSchema = z.object({
   query: z
     .object({
-      status: z.enum(["todo", "in-progress", "done"]).optional(),
+      status: z.enum(["to_do", "in_progress", "completed", "back_log"]).optional(),
       priority: z.enum(["high", "medium", "low"]).optional(),
       tag: z.enum(["work", "personal", "errand", "other"]).optional(),
+      view_type: z.enum(["list", "kanban"]).optional(),
       sort_by: z
-        .enum(["due_date", "priority", "sequence_num", "created_at"])
+        .enum([
+          "title", 
+          "description", 
+          "priority", 
+          "status", 
+          "matrix", 
+          "due_date", 
+          "tag", 
+          "sequence_num", 
+          "stack_rank", 
+          "createdAt", 
+          "updatedAt"
+        ])
         .optional(),
       order: z.enum(["asc", "desc"]).optional(),
       page: z.string().regex(/^\d+$/, "Page must be a number").optional(),
