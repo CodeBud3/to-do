@@ -37,7 +37,3 @@ export const passwordValidator = z
   .regex(/[@$!%*?&]/, {
     message: "Must include at least one special character (@$!%*?&).",
   });
-
-export const tncValidator = z.boolean().refine((val) => val === true, {
-  message: "You must agree to the Terms and Conditions.",
-});
