@@ -15,11 +15,37 @@ export interface AsyncThunkConfig {
   state: RootState;
   rejectValue: string; // or a custom error type
 }
+
+// Sort parameters interface
+export interface SortParams {
+  sort_by?: string;
+  order?: 'asc' | 'desc';
+}
+
 // Fetch Tasks
-export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
-  const response = await axios.get<GetTaskResponse>(API_URL);
-  return response.data;
-});
+export const fetchTasks = createAsyncThunk(
+  "tasks/fetchTasks", 
+  async (sortParams?: SortParams) => {
+    // Construct query parameters for sorting
+    let url = API_URL;
+    if (sortParams) {
+      const queryParams = new URLSearchParams();
+      if (sortParams.sort_by) {
+        queryParams.append('sort_by', sortParams.sort_by);
+      }
+      if (sortParams.order) {
+        queryParams.append('order', sortParams.order);
+      }
+      const queryString = queryParams.toString();
+      if (queryString) {
+        url = `${API_URL}?${queryString}`;
+      }
+    }
+    
+    const response = await axios.get<GetTaskResponse>(url);
+    return response.data;
+  }
+);
 
 // Add Task
 export const addTask = createAsyncThunk(
@@ -70,6 +96,10 @@ interface TaskState {
   tasks: Task[];
   loading: boolean;
   error: string | null;
+  currentSort?: {
+    field: string;
+    order: 'asc' | 'desc';
+  };
 }
 
 const initialState: TaskState = {
@@ -81,7 +111,14 @@ const initialState: TaskState = {
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers: {},
+  reducers: {
+    setSortField: (state, action: PayloadAction<{ field: string, order: 'asc' | 'desc' }>) => {
+      state.currentSort = {
+        field: action.payload.field,
+        order: action.payload.order
+      };
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTasks.pending, (state) => {
@@ -92,6 +129,13 @@ const tasksSlice = createSlice({
         (state, action: PayloadAction<GetTaskResponse>) => {
           state.loading = false;
           state.tasks = action.payload?.data?.tasks;
+          // Update current sort if returned from API
+          if (action.payload?.data?.sort) {
+            state.currentSort = {
+              field: action.payload.data.sort.field,
+              order: action.payload.data.sort.order as 'asc' | 'desc'
+            };
+          }
         }
       )
       .addCase(fetchTasks.rejected, (state, action) => {

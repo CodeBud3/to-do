@@ -83,7 +83,7 @@ export const DEFAULT_TASK_FIELDS: IFormFields[] = [
       },
       {
         key: "not_urgent_not_important",
-        label: "Not urgent and important",
+        label: "Not urgent and not important",
       },
     ],
   },

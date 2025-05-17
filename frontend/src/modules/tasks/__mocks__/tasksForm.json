@@ -49,7 +49,7 @@
     },
     {
       "id": "fieldId6",
-      "key": "due_data",
+      "key": "due_date",
       "label": "Due date",
       "type": "datetime",
       "placeholder": "Choose date & time",

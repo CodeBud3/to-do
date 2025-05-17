@@ -15,16 +15,22 @@ import { applyTestAttributes } from "@/modules/auth/helpers/formHelper";
 export default function TasksList() {
   const { openSheet, closeSheet } = useSheet();
   const dispatch = useDispatch<AppDispatch>();
-  const { tasks } = useSelector((state: RootState) => state.tasks);
+  const { tasks, currentSort } = useSelector((state: RootState) => state.tasks);
   const { forms } = useSelector((state: RootState) => state.forms);
   const columns: ColumnDef<Task>[] = useMemo(
     () => fetchTableColumns(forms.taskForm?.fields),
     [forms]
   );
+
+  // Fetch tasks with initial sorting when component mounts
   useEffect(() => {
-    dispatch(fetchTasks());
+    // Default sort by sequence_num if no sort is set
+    const initialSort = currentSort || { sort_by: 'sequence_num', order: 'asc' };
+    dispatch(fetchTasks(initialSort));
+    // Only run once on component mount
   }, [dispatch]);
 
+  // Fetch form definition if not already loaded
   useEffect(() => {
     if (!forms.taskForm) {
       dispatch(fetchForm("taskForm"));

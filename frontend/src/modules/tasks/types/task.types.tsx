@@ -13,6 +13,16 @@ export interface TaskResponse {
 
 export interface TaskDataResponse {
   tasks: Task[];
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  };
+  sort?: {
+    field: string;
+    order: 'asc' | 'desc';
+  };
 }
 
 export interface GetTaskResponse {

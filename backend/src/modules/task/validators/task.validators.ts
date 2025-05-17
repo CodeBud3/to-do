@@ -48,7 +48,19 @@ export const tasksFilterSchema = z.object({
       priority: z.enum(["high", "medium", "low"]).optional(),
       tag: z.enum(["work", "personal", "errand", "other"]).optional(),
       sort_by: z
-        .enum(["due_date", "priority", "sequence_num", "created_at"])
+        .enum([
+          "title", 
+          "description", 
+          "priority", 
+          "status", 
+          "matrix", 
+          "due_date", 
+          "tag", 
+          "sequence_num", 
+          "stack_rank", 
+          "createdAt", 
+          "updatedAt"
+        ])
         .optional(),
       order: z.enum(["asc", "desc"]).optional(),
       page: z.string().regex(/^\d+$/, "Page must be a number").optional(),
