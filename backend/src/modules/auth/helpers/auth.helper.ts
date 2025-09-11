@@ -25,7 +25,6 @@ export const SESSION_CONFIG: any = {
   secret: process.env.SESSION_SECRET!,
   resave: false,
   saveUninitialized: false,
-  store: getMongoStore(),
   cookie: COOKIE_CONFIG,
 };
 
